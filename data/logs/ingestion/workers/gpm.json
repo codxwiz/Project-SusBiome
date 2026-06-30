@@ -1,0 +1,19 @@
+{
+  "provider": "gpm",
+  "pid": 87743,
+  "running": true,
+  "started_at": "2026-06-30T06:54:51.944251+00:00",
+  "start_date": "2006-01-01",
+  "end_date": "2025-12-31",
+  "log": "/Users/ThotKash/Desktop/Project-SusBiome/data/logs/ingestion/workers/gpm.log",
+  "command": [
+    "/Users/ThotKash/Desktop/Project-SusBiome/venv312/bin/python",
+    "-m",
+    "scripts.ingestion.historical_weather",
+    "gpm",
+    "--start",
+    "2006-01-01",
+    "--end",
+    "2025-12-31"
+  ]
+}

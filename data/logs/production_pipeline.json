@@ -1,0 +1,29 @@
+{
+  "updated_at": "2026-06-30T07:49:11.052808+00:00",
+  "stage": "blocked_collection",
+  "status": "blocked",
+  "reason": "Historical weather collection is incomplete.",
+  "collection": {
+    "era5_months": 12,
+    "era5_valid_months": 12,
+    "gpm_days": 2846,
+    "era5_checkpoint": {
+      "updated_at": "2026-06-30 07:47:58.322465+00:00",
+      "last_month": "2006-12",
+      "requested": 240,
+      "completed": 12,
+      "skipped": 0,
+      "failed": 0,
+      "downloaded_bytes": 300697640
+    },
+    "gpm_checkpoint": {
+      "updated_at": "2026-06-30 07:49:10.615762+00:00",
+      "last_date": "2013-10-16",
+      "requested": 7305,
+      "completed": 2683,
+      "skipped": 163,
+      "failed": 0,
+      "downloaded_bytes": 136993827
+    }
+  }
+}

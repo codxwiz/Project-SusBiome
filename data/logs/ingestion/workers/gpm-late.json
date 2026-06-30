@@ -1,0 +1,19 @@
+{
+  "provider": "gpm-late",
+  "pid": 94755,
+  "running": true,
+  "started_at": "2026-06-30T13:38:51.374538+00:00",
+  "start_date": "2025-10-01",
+  "end_date": "2026-06-29",
+  "log": "/Users/ThotKash/Desktop/Project-SusBiome/data/logs/ingestion/workers/gpm-late.log",
+  "command": [
+    "/Users/ThotKash/Desktop/Project-SusBiome/venv312/bin/python",
+    "-m",
+    "scripts.ingestion.historical_weather",
+    "gpm-late",
+    "--start",
+    "2025-10-01",
+    "--end",
+    "2026-06-29"
+  ]
+}

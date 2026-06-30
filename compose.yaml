@@ -1,0 +1,30 @@
+services:
+  api:
+    build: .
+    init: true
+    read_only: true
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      SUSBIOME_ENV: production
+      SUSBIOME_ALLOWED_HOSTS: localhost,127.0.0.1
+      SUSBIOME_WEB_CONCURRENCY: 1
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models:ro
+    tmpfs:
+      - /tmp:size=64m
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health/ready', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G

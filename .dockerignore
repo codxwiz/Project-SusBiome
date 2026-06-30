@@ -1,0 +1,13 @@
+.git
+.env
+.DS_Store
+__pycache__
+*.pyc
+venv
+venv312
+data
+models/*.pkl
+models/*.joblib
+models/releases
+models/candidates
+notebooks
