@@ -16,6 +16,7 @@ data/fusion/
 data/gold/
 data/prediction/
 data/risk/
+data/serving/
 data/raw/
 data/processed/
 data/training/

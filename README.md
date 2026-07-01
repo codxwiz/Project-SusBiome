@@ -139,6 +139,58 @@ The review queue is written to
 Live API inference reads `data/serving/current_features.parquet`; historical
 training data is never used as the default serving input.
 
+## District Operations
+
+The district serving layer is separate from historical model training. It
+publishes 3, 7, and 14 day weather outlooks for all 133 Northeast districts,
+static land susceptibility factors, confidence grades, and mitigation actions.
+
+```bash
+# Fetch and validate the pinned 2021 ADM2 source, then reconcile current districts
+python -m scripts.geospatial.districts all
+
+# Collect all 133 district-point forecasts and 3/7/14 day contracts
+python -m scripts.forecast.open_meteo collect
+
+# Sample terrain, then combine it with verified historical hazard frequency
+python -m scripts.susceptibility.static all
+
+# Publish the district serving artifact
+python -m scripts.serving.district_assessment build
+```
+
+The pinned geoBoundaries layer is sourced from LGD-derived 2021 data. The
+reconciliation manifest currently has unique usable polygons for 113 of 133
+current districts. The remaining newer or split districts are marked
+`legacy_parent` and are not represented using copied parent polygons.
+
+Terrain and historical event frequency are currently available. River/drainage,
+ESA WorldCover, soil, and social-exposure factors remain explicit nulls. Until
+those layers reach at least 80% mean factor coverage, confidence is capped at C.
+The current assessment scope is land hazard only, not population, building, or
+financial vulnerability.
+
+Open-Meteo outlook thresholds are published as `forecast_signal`, never as ML
+probability. `assessment_available` remains false until validated horizon-aware
+flood and cyclone models publish `data/serving/district_hazard_probabilities.parquet`.
+This prevents monitoring thresholds from being presented as trained risk.
+
+Run the complete daily refresh manually with:
+
+```bash
+python -m scripts.production_pipeline operational
+```
+
+This lock-protected command catches NASA GPM Late up through yesterday, refreshes
+the forecast, and atomically rebuilds district serving data. A macOS `launchd`
+template is provided at `deploy/com.susbiome.refresh.plist.example`; install it
+only after environment variables and Earthdata credentials are available to the
+background process.
+
+Open-Meteo forecast data is CC BY 4.0 and requires attribution. The free public
+endpoint is intended for non-commercial use; production commercial deployment
+must use an appropriate licensed endpoint or a self-hosted service.
+
 ## Tests
 
 ```bash
@@ -160,9 +212,22 @@ not serve prediction requests until valid models are installed.
 
 API input and output paths are restricted to the project `data` directory.
 
+Read-only district routes remain available when model services are degraded:
+
+```text
+GET /api/districts?state=Assam
+GET /api/districts/{state}/{district}/forecast?horizon_days=7
+GET /api/districts/{state}/{district}/assessment?horizon_days=7
+GET /api/districts/{state}/{district}/report
+```
+
+Forecast responses identify representative-point spatial support and include an
+official-warning disclaimer. Assessment responses keep hazard probability,
+susceptibility, exposure mode, confidence, and forecast signal as separate fields.
+
 ## Dashboard
 
-After prediction and risk datasets have been generated:
+The operational dashboard starts once the district assessment artifact exists:
 
 ```bash
 streamlit run scripts/dashboard/app.py

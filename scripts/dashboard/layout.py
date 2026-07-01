@@ -25,19 +25,13 @@ Author : Project SusBiome
 
 from __future__ import annotations
 
+import json
+
 import pandas as pd
 import streamlit as st  # type: ignore
 
-from scripts.dashboard.charts import (
-    DashboardCharts,
-)
-
 from scripts.dashboard.loader import (
     DashboardLoader,
-)
-
-from scripts.dashboard.maps import (
-    DashboardMaps,
 )
 
 from scripts.dashboard.models import (
@@ -49,11 +43,6 @@ from scripts.dashboard.models import (
     SIDEBAR_STATE,
 )
 
-from scripts.dashboard.tables import (
-    DashboardTables,
-)
-
-
 class DashboardLayout:
     """
     Dashboard layout.
@@ -64,12 +53,17 @@ class DashboardLayout:
     ) -> None:
 
         self.loader = DashboardLoader()
+        self.maps = None
+        self.charts = None
+        self.tables = None
+        if not self.loader.status().assessment:
+            from scripts.dashboard.charts import DashboardCharts
+            from scripts.dashboard.maps import DashboardMaps
+            from scripts.dashboard.tables import DashboardTables
 
-        self.maps = DashboardMaps()
-
-        self.charts = DashboardCharts()
-
-        self.tables = DashboardTables()
+            self.maps = DashboardMaps()
+            self.charts = DashboardCharts()
+            self.tables = DashboardTables()
 
     # ======================================================
     # PAGE
@@ -391,6 +385,10 @@ class DashboardLayout:
 
         self.sidebar()
 
+        if self.loader.status().assessment:
+            self.operational_build()
+            return
+
         _, risk = self.loader.load_all()
 
         risk, state, district = self.district_selection(risk)
@@ -414,5 +412,73 @@ class DashboardLayout:
         self.tables_section(
             risk,
         )
+
+        self.footer()
+
+    def operational_build(self) -> None:
+        """Render the district-first operational assessment."""
+        assessment = self.loader.assessment()
+        assessment, state, district = self.district_selection(assessment)
+        horizons = sorted(assessment["horizon_days"].astype(int).unique().tolist())
+        horizon = st.sidebar.segmented_control(
+            "Forecast horizon", horizons, default=7 if 7 in horizons else horizons[0]
+        )
+        row = assessment.loc[assessment["horizon_days"].eq(int(horizon))].iloc[0]
+
+        self.header()
+        st.subheader(f"{district}, {state}")
+        st.caption(f"{int(horizon)}-day outlook through {pd.Timestamp(row['valid_to']).date()}")
+
+        col1, col2, col3, col4 = st.columns(4)
+        col1.metric("Rainfall", f"{row['precipitation_sum_mm']:.1f} mm")
+        col2.metric("Maximum gust", f"{row['wind_gust_max_kmh']:.1f} km/h")
+        col3.metric("Confidence", row["confidence_grade"])
+        col4.metric(
+            "Model assessment", "Available" if row["assessment_available"] else "Pending"
+        )
+
+        overview, factors, guidance = st.tabs(["Outlook", "Factors", "Actions"])
+        with overview:
+            signal = pd.DataFrame(
+                {
+                    "Hazard": ["Flood", "Cyclone", "Drought"],
+                    "Forecast signal": [
+                        row["flood_forecast_signal"],
+                        row["cyclone_forecast_signal"],
+                        row["drought_forecast_signal"],
+                    ],
+                    "Risk level": [
+                        row["flood_risk_level"],
+                        row["cyclone_risk_level"],
+                        row["drought_risk_level"],
+                    ],
+                }
+            )
+            st.dataframe(signal, hide_index=True, width="stretch")
+            st.caption(row["confidence_reason"])
+        with factors:
+            factor_data = pd.DataFrame(
+                {
+                    "Factor": [
+                        "Flood susceptibility", "Cyclone susceptibility",
+                        "Drought susceptibility", "Static factor coverage",
+                        "Boundary support",
+                    ],
+                    "Value": [
+                        f"{row['flood_susceptibility']:.2f}",
+                        f"{row['cyclone_susceptibility']:.2f}",
+                        f"{row['drought_susceptibility']:.2f}",
+                        f"{100 * row['static_factor_coverage']:.0f}%",
+                        row["boundary_status"],
+                    ],
+                }
+            )
+            st.dataframe(factor_data, hide_index=True, width="stretch")
+        with guidance:
+            for action in json.loads(row["mitigation_actions"]):
+                st.markdown(f"- {action}")
+            st.warning(
+                "Decision-support estimate, not an official warning. Follow IMD and local authorities."
+            )
 
         self.footer()

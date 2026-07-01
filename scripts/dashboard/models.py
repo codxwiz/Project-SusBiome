@@ -36,9 +36,9 @@ from scripts.sources.common.config import PROJECT_ROOT
 
 DASHBOARD_NAME = "Project SusBiome Dashboard"
 
-DASHBOARD_VERSION = "1.0.0"
+DASHBOARD_VERSION = "1.1.0"
 
-PAGE_TITLE = "Flood • Drought • Cyclone Intelligence"
+PAGE_TITLE = "SusBiome District Outlook"
 
 PAGE_ICON = "🌍"
 
@@ -72,6 +72,8 @@ RISK_DATASET = (
     / "risk.parquet"
 
 )
+
+ASSESSMENT_DATASET = DATA_DIRECTORY / "serving" / "district_assessments.parquet"
 
 LOCATIONS_DATASET = DATA_DIRECTORY / "raw" / "locations.csv"
 
@@ -173,6 +175,8 @@ class DatasetStatus:
 
     risk: bool
 
+    assessment: bool = False
+
 
 @dataclass(slots=True, frozen=True)
 class MapConfig:
@@ -223,6 +227,8 @@ __all__ = [
     "PREDICTION_DATASET",
 
     "RISK_DATASET",
+
+    "ASSESSMENT_DATASET",
 
     "LOCATIONS_DATASET",
 

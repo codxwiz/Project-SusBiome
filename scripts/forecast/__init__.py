@@ -1,0 +1,1 @@
+"""Operational weather forecast ingestion."""

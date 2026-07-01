@@ -15,6 +15,7 @@ from scripts.ingestion.historical_weather import GPM_EXPECTED_DAYS, status as in
 from scripts.labels.verified import run as align_verified_events
 from scripts.ml.registry import ModelRegistry
 from scripts.ml.trainer import MLTrainer
+from scripts.operations.refresh import refresh as refresh_operational
 from scripts.quality.audit import audit_sources, audit_training, run as audit_artifacts
 from scripts.sources.common.config import PROJECT_ROOT
 
@@ -142,6 +143,8 @@ def main() -> None:
     finalize_parser.add_argument("--force", action="store_true")
     subparsers.add_parser("status")
     subparsers.add_parser("rollback")
+    operational_parser = subparsers.add_parser("operational")
+    operational_parser.add_argument("--skip-gpm", action="store_true")
     arguments = parser.parse_args()
     if arguments.command == "prepare":
         result = prepare(
@@ -158,6 +161,8 @@ def main() -> None:
         result = finalize(arguments.start_year, arguments.end_year, force=arguments.force)
     elif arguments.command == "status":
         result = pipeline_status()
+    elif arguments.command == "operational":
+        result = refresh_operational(skip_gpm=arguments.skip_gpm)
     else:
         result = ModelRegistry().rollback()
     print(json.dumps(result, indent=2, default=str))
@@ -165,6 +170,8 @@ def main() -> None:
         raise SystemExit(1)
     if arguments.command == "finalize" and result["status"] != "complete":
         raise SystemExit(2)
+    if arguments.command == "operational" and result["status"] != "complete":
+        raise SystemExit(3)
 
 
 if __name__ == "__main__":

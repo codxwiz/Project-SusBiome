@@ -1,0 +1,1 @@
+"""Static district susceptibility features."""

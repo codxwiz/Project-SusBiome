@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pandas as pd
@@ -172,6 +173,82 @@ def audit_models() -> list[Finding]:
     return findings
 
 
+def audit_operational() -> list[Finding]:
+    findings: list[Finding] = []
+    boundary_path = PROJECT_ROOT / "data/silver/geospatial/district_boundary_manifest.csv"
+    forecast_path = PROJECT_ROOT / "data/silver/forecast/district_horizons.parquet"
+    static_path = PROJECT_ROOT / "data/silver/susceptibility/district_static.parquet"
+    assessment_path = PROJECT_ROOT / "data/serving/district_assessments.parquet"
+    if not boundary_path.exists():
+        findings.append(Finding("ERROR", "operational.boundaries", "Boundary registry is missing."))
+    else:
+        boundaries = pd.read_csv(boundary_path)
+        usable = int(boundaries["district_wide_usable"].astype(bool).sum())
+        duplicate_ids = int(
+            boundaries.loc[boundaries["district_wide_usable"].astype(bool), "source_id"]
+            .duplicated().sum()
+        )
+        if len(boundaries) != 133:
+            findings.append(
+                Finding("ERROR", "operational.district_registry", f"Found {len(boundaries)}/133 districts.")
+            )
+        if usable != 133:
+            findings.append(
+                Finding(
+                    "ERROR", "operational.boundary_coverage",
+                    f"Found current usable polygons for {usable}/133 districts.",
+                )
+            )
+        if duplicate_ids:
+            findings.append(
+                Finding("ERROR", "operational.boundary_uniqueness", f"Found {duplicate_ids} duplicate polygons.")
+            )
+    if not forecast_path.exists():
+        findings.append(Finding("ERROR", "operational.forecast", "District forecast is missing."))
+    else:
+        forecast = pd.read_parquet(forecast_path)
+        expected = 133 * 3
+        if len(forecast) != expected:
+            findings.append(
+                Finding("ERROR", "operational.forecast_completeness", f"Found {len(forecast)}/{expected} rows.")
+            )
+        collected = pd.to_datetime(forecast["collected_at"], utc=True, errors="coerce").max()
+        age_hours = (
+            float("inf")
+            if pd.isna(collected)
+            else (datetime.now(UTC) - collected.to_pydatetime()).total_seconds() / 3600
+        )
+        if age_hours > 36:
+            findings.append(
+                Finding("ERROR", "operational.forecast_freshness", f"Forecast age is {age_hours:.1f} hours.")
+            )
+    if not static_path.exists():
+        findings.append(Finding("ERROR", "operational.susceptibility", "Static factors are missing."))
+    else:
+        static = pd.read_parquet(static_path)
+        coverage = float(static["static_factor_coverage"].mean())
+        if coverage < 0.8:
+            findings.append(
+                Finding(
+                    "ERROR", "operational.static_factor_coverage",
+                    f"Mean static-factor coverage is {coverage:.1%}; require at least 80%.",
+                )
+            )
+    if not assessment_path.exists():
+        findings.append(Finding("ERROR", "operational.assessment", "Serving assessment is missing."))
+    else:
+        assessment = pd.read_parquet(assessment_path)
+        available = int(assessment["assessment_available"].sum())
+        if available != len(assessment):
+            findings.append(
+                Finding(
+                    "ERROR", "operational.model_assessments",
+                    f"Validated model probabilities are available for {available}/{len(assessment)} rows.",
+                )
+            )
+    return findings
+
+
 def audit_sources() -> list[Finding]:
     findings = []
     era5 = list((PROJECT_ROOT / "data/silver/weather/era5").glob("year=*/*.parquet"))
@@ -238,7 +315,9 @@ def audit_sources() -> list[Finding]:
 
 
 def run(training_path: Path = TRAINING_DATASET) -> dict:
-    findings = [*audit_sources(), *audit_training(training_path), *audit_models()]
+    findings = [
+        *audit_sources(), *audit_operational(), *audit_training(training_path), *audit_models()
+    ]
     return {
         "ready": not any(item.severity == "ERROR" for item in findings),
         "findings": [asdict(item) for item in findings],

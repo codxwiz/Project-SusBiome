@@ -42,6 +42,10 @@ from scripts.api.routers.health import (
     router as health_router,
 )
 
+from scripts.api.routers.districts import (
+    router as districts_router,
+)
+
 from scripts.api.routers.prediction import (
     router as prediction_router,
 )
@@ -136,6 +140,14 @@ def root() -> dict:
 app.include_router(
 
     health_router,
+
+    prefix=API_PREFIX,
+
+)
+
+app.include_router(
+
+    districts_router,
 
     prefix=API_PREFIX,
 

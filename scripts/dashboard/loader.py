@@ -29,6 +29,7 @@ import numpy as np
 import pandas as pd
 
 from scripts.dashboard.models import (
+    ASSESSMENT_DATASET,
     DatasetStatus,
     LOCATIONS_DATASET,
     PREDICTION_DATASET,
@@ -50,6 +51,8 @@ class DashboardLoader:
         self._prediction: pd.DataFrame | None = None
 
         self._risk: pd.DataFrame | None = None
+
+        self._assessment: pd.DataFrame | None = None
 
     # ======================================================
     # LOAD DATASET
@@ -177,6 +180,12 @@ class DashboardLoader:
             raise ValueError("Location registry contains duplicate districts.")
         return locations.sort_values(["state", "district"]).reset_index(drop=True)
 
+    def assessment(self) -> pd.DataFrame:
+        """Load the operational district assessment and forecast contract."""
+        if self._assessment is None:
+            self._assessment = self.load(ASSESSMENT_DATASET)
+        return self._assessment.copy()
+
     @staticmethod
     def filter_district(dataframe: pd.DataFrame, location: pd.Series) -> pd.DataFrame:
         """Select an explicit district or its nearest representative grid cell."""
@@ -218,6 +227,8 @@ class DashboardLoader:
 
         self._risk = None
 
+        self._assessment = None
+
         logger.info(
             "Dashboard cache cleared."
         )
@@ -239,6 +250,8 @@ class DashboardLoader:
 
             risk=RISK_DATASET.exists(),
 
+            assessment=ASSESSMENT_DATASET.exists(),
+
         )
 
     # ======================================================
@@ -257,11 +270,7 @@ class DashboardLoader:
 
         return (
 
-            status.prediction
-
-            and
-
-            status.risk
+            status.assessment or (status.prediction and status.risk)
 
         )
 
