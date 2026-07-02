@@ -1,0 +1,172 @@
+{
+  "created_at": "2026-07-02T22:11:56.143762+00:00",
+  "production_eligible": false,
+  "targets": {
+    "flood_risk_7d": {
+      "full_validation_period": {
+        "start": "2020-01-01",
+        "end": "2022-12-30"
+      },
+      "full_test_period": {
+        "start": "2022-12-31",
+        "end": "2025-12-31"
+      },
+      "full_validation_rows": 2212995,
+      "full_test_rows": 2217037,
+      "validation_score_summary": {
+        "minimum": 3.901167511526016e-05,
+        "median": 0.0008076423014034212,
+        "maximum": 0.9842831731200384
+      },
+      "test_score_summary": {
+        "minimum": 4.551051550729493e-05,
+        "median": 0.0008076423014034212,
+        "maximum": 0.9911896605103909
+      },
+      "event_ranking_metrics": {
+        "independent_events": 7,
+        "median_best_daily_rank_fraction": 0.11875309252845126,
+        "top_0.001_fraction": {
+          "detected_events": 0,
+          "event_recall": 0.0
+        },
+        "top_0.005_fraction": {
+          "detected_events": 0,
+          "event_recall": 0.0
+        },
+        "top_0.01_fraction": {
+          "detected_events": 1,
+          "event_recall": 0.14285714285714285
+        },
+        "top_0.05_fraction": {
+          "detected_events": 3,
+          "event_recall": 0.42857142857142855
+        }
+      },
+      "alert_budget_metrics": {
+        "0.001": {
+          "threshold": 0.4616757331576565,
+          "alerted_rows": 1846,
+          "alerted_row_fraction": 0.000832642847187485,
+          "mean_alerts_per_day": 1.682771194165907,
+          "maximum_alerts_per_day": 31,
+          "independent_events": 7,
+          "detected_events": 0,
+          "event_recall": 0.0,
+          "false_alarm_days": 332,
+          "negative_days": 1097,
+          "false_alarm_day_rate": 0.30264357338195075
+        },
+        "0.005": {
+          "threshold": 0.0902001292612753,
+          "alerted_rows": 10727,
+          "alerted_row_fraction": 0.0048384397734453684,
+          "mean_alerts_per_day": 9.77848678213309,
+          "maximum_alerts_per_day": 109,
+          "independent_events": 7,
+          "detected_events": 2,
+          "event_recall": 0.2857142857142857,
+          "false_alarm_days": 651,
+          "negative_days": 1097,
+          "false_alarm_day_rate": 0.593436645396536
+        },
+        "0.01": {
+          "threshold": 0.03337666387060718,
+          "alerted_rows": 21914,
+          "alerted_row_fraction": 0.009884363679992712,
+          "mean_alerts_per_day": 19.976298997265268,
+          "maximum_alerts_per_day": 179,
+          "independent_events": 7,
+          "detected_events": 3,
+          "event_recall": 0.42857142857142855,
+          "false_alarm_days": 746,
+          "negative_days": 1097,
+          "false_alarm_day_rate": 0.6800364630811303
+        }
+      }
+    },
+    "cyclone_risk_3d": {
+      "full_validation_period": {
+        "start": "2020-01-01",
+        "end": "2022-12-30"
+      },
+      "full_test_period": {
+        "start": "2022-12-31",
+        "end": "2025-12-31"
+      },
+      "full_validation_rows": 2212995,
+      "full_test_rows": 2217037,
+      "validation_score_summary": {
+        "minimum": 0.0,
+        "median": 0.0,
+        "maximum": 0.6484180433737355
+      },
+      "test_score_summary": {
+        "minimum": 0.0,
+        "median": 0.0,
+        "maximum": 0.6328766370767429
+      },
+      "event_ranking_metrics": {
+        "independent_events": 2,
+        "median_best_daily_rank_fraction": 0.004700643245917862,
+        "top_0.001_fraction": {
+          "detected_events": 1,
+          "event_recall": 0.5
+        },
+        "top_0.005_fraction": {
+          "detected_events": 1,
+          "event_recall": 0.5
+        },
+        "top_0.01_fraction": {
+          "detected_events": 2,
+          "event_recall": 1.0
+        },
+        "top_0.05_fraction": {
+          "detected_events": 2,
+          "event_recall": 1.0
+        }
+      },
+      "alert_budget_metrics": {
+        "0.001": {
+          "threshold": 0.39609458756592386,
+          "alerted_rows": 1539,
+          "alerted_row_fraction": 0.0006941697409650809,
+          "mean_alerts_per_day": 1.4029170464904284,
+          "maximum_alerts_per_day": 112,
+          "independent_events": 2,
+          "detected_events": 0,
+          "event_recall": 0.0,
+          "false_alarm_days": 36,
+          "negative_days": 1097,
+          "false_alarm_day_rate": 0.032816773017319965
+        },
+        "0.005": {
+          "threshold": 0.20017655485954816,
+          "alerted_rows": 7332,
+          "alerted_row_fraction": 0.0033071166606601513,
+          "mean_alerts_per_day": 6.6836827711941655,
+          "maximum_alerts_per_day": 342,
+          "independent_events": 2,
+          "detected_events": 0,
+          "event_recall": 0.0,
+          "false_alarm_days": 71,
+          "negative_days": 1097,
+          "false_alarm_day_rate": 0.06472196900638104
+        },
+        "0.01": {
+          "threshold": 0.11957694223085477,
+          "alerted_rows": 15819,
+          "alerted_row_fraction": 0.007135198916391562,
+          "mean_alerts_per_day": 14.420237010027348,
+          "maximum_alerts_per_day": 618,
+          "independent_events": 2,
+          "detected_events": 0,
+          "event_recall": 0.0,
+          "false_alarm_days": 106,
+          "negative_days": 1097,
+          "false_alarm_day_rate": 0.09662716499544212
+        }
+      }
+    }
+  }
+}

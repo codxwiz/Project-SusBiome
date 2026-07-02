@@ -108,11 +108,14 @@ class ModelRegistry:
         return state
 
     def active_model_path(self, hazard: str, fallback: Path | None = None) -> Path:
-        active = self.state().get("active_release")
+        state = self.state()
+        active = state.get("active_release")
         if not active:
-            if fallback is None:
-                raise FileNotFoundError(f"No active release for {hazard}.")
-            return fallback
+            if not self.state_path.exists() and fallback is not None:
+                return fallback
+            reason = state.get("quarantine_reason")
+            detail = f" Quarantine reason: {reason}" if reason else ""
+            raise FileNotFoundError(f"No active release for {hazard}.{detail}")
         manifest = self.verify(active)
         metadata = manifest.get("models", {}).get(hazard)
         if metadata is None:
@@ -124,3 +127,17 @@ class ModelRegistry:
         if not previous:
             raise RuntimeError("No previous model release is available.")
         return self.promote(previous)
+
+    def deactivate(self, reason: str) -> dict:
+        """Atomically disable inference while retaining immutable release artifacts."""
+        current = self.state().get("active_release")
+        state = {
+            "schema_version": 1,
+            "active_release": None,
+            "previous_release": None,
+            "quarantined_release": current,
+            "quarantine_reason": reason,
+            "updated_at": datetime.now(UTC).isoformat(),
+        }
+        atomic_json(self.state_path, state)
+        return state

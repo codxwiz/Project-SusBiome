@@ -30,7 +30,7 @@ from scripts.ml.models import (
 from scripts.ml.flood import FloodModel
 from scripts.ml.drought import DroughtModel
 from scripts.ml.cyclone import CycloneModel
-from scripts.ml.evaluation import evaluate_classifier, select_threshold
+from scripts.ml.evaluation import evaluate_classifier, release_quality, select_threshold
 from scripts.ml.registry import ModelRegistry
 from scripts.ml.models import MODEL_DIRECTORY
 
@@ -112,6 +112,7 @@ class MLTrainer:
             "label_method": "verified_event_alignment",
             "trained_at": datetime.now(UTC).isoformat(),
             "metrics": metrics,
+            "production_eligible": False,
         }
 
         model.save(output_path)
@@ -191,13 +192,32 @@ class MLTrainer:
             "Training complete."
         )
 
+        quality = release_quality(results)
+        quality["passed"] = False
+        quality["findings"].append(
+            "Legacy same-window event labels are research-only; production requires "
+            "horizon-specific future targets and a matching serving contract."
+        )
         registry = ModelRegistry()
         registered = registry.register(
             artifacts,
-            {"training_dataset": str(dataset_path), "models": results},
+            {
+                "training_dataset": str(dataset_path),
+                "models": results,
+                "quality_gate": quality,
+            },
             release_id=release_id,
         )
-        registry.promote(registered)
+        promoted = False
+        if quality["passed"]:
+            registry.promote(registered)
+            promoted = True
         shutil.rmtree(candidate_directory)
+
+        results["_release"] = {
+            "release_id": registered,
+            "promoted": promoted,
+            "quality_gate": quality,
+        }
 
         return results

@@ -16,6 +16,7 @@ from scripts.fusion.align import DataAligner
 from scripts.features.engineering import FeatureEngineering
 from scripts.ml.dataset import MLDataset
 from scripts.ml.models import FEATURE_COLUMNS
+from scripts.ml.evaluation import release_quality
 from scripts.prediction.inference import PredictionInference
 from scripts.prediction.loader import PredictionLoader
 from scripts.risk.combined import CombinedRisk
@@ -69,6 +70,21 @@ class OptionalDroughtLoader:
 
 
 class ProductionGuardTests(unittest.TestCase):
+    def test_release_quality_rejects_high_accuracy_low_recall_models(self):
+        metrics = {
+            "flood": {
+                "accuracy": 0.99, "balanced_accuracy": 0.64, "precision": 0.03,
+                "recall": 0.29, "pr_auc": 0.01, "true_positive": 6,
+            },
+            "cyclone": {
+                "accuracy": 0.99, "balanced_accuracy": 0.80, "precision": 0.40,
+                "recall": 0.70, "pr_auc": 0.30, "true_positive": 20,
+            },
+        }
+        quality = release_quality(metrics)
+        self.assertFalse(quality["passed"])
+        self.assertTrue(any("flood.recall" in item for item in quality["findings"]))
+
     def test_optional_drought_does_not_block_production_risk(self):
         row = {
             "valid_time": pd.Timestamp("2026-01-01", tz="UTC"),
@@ -111,6 +127,16 @@ class ProductionGuardTests(unittest.TestCase):
             self.assertEqual(registry.active_model_path("flood").read_bytes(), b"flood-v2")
             registry.rollback()
             self.assertEqual(registry.active_model_path("flood").read_bytes(), b"flood-v1")
+
+    def test_quarantined_registry_never_uses_legacy_fallback(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            fallback = root / "legacy.joblib"
+            fallback.write_bytes(b"legacy")
+            registry = ModelRegistry(root / "models")
+            registry.deactivate("quality gate failed")
+            with self.assertRaisesRegex(FileNotFoundError, "quality gate failed"):
+                registry.active_model_path("flood", fallback)
 
     def test_api_middleware_adds_request_id_and_limits_bodies(self):
         with patch.dict(
@@ -263,6 +289,19 @@ class ProductionGuardTests(unittest.TestCase):
             PredictionLoader.validate_estimator(
                 ContractModel(), path=Path("model.joblib")
             )
+
+    def test_model_contract_rejects_research_only_artifact(self):
+        model = ContractModel()
+        model.susbiome_metadata_ = {
+            "schema_version": 1,
+            "feature_columns": FEATURE_COLUMNS,
+            "label_method": "verified_event_alignment",
+            "production_eligible": False,
+            "target": "flood_risk",
+            "metrics": {},
+        }
+        with self.assertRaisesRegex(ValueError, "ineligible for production"):
+            PredictionLoader.validate_estimator(model, path=Path("model.joblib"))
 
     def test_risk_rejects_invalid_probability(self):
         dataframe = pd.DataFrame(

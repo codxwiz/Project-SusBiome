@@ -123,9 +123,11 @@ python -m scripts.production_pipeline finalize
 
 `finalize` exits without modifying models while ERA5 or GPM collection is
 incomplete. Once inputs are complete, it builds ground truth, fuses yearly
-weather, aligns event groups, creates features, trains isolated candidates,
-audits them, and atomically promotes a checksummed release. Restore the previous
-release with `python -m scripts.production_pipeline rollback`.
+weather, aligns event groups, creates features, and generates leakage-safe
+future targets. It deliberately stops before promotion until a horizon-aware
+model passes independent-event validation and has a matching serving contract.
+Restore a previously validated release with
+`python -m scripts.production_pipeline rollback`.
 
 IBTrACS supplies NOAA cyclone tracks. GDACS supplies India-filtered flood
 points and drought affected-area polygons. GDACS responses are cached under
@@ -135,6 +137,17 @@ The review queue is written to
 `data/quality/ground_truth_review_queue.csv`. Correct and verify records using
 `templates/ground_truth_review.csv`, then save the reviewed file as
 `data/labels/reviewed_ground_truth.csv` before rebuilding ground truth.
+
+The 3, 7, and 14 day research workflow is:
+
+```bash
+python -m scripts.labels.forecast_targets build
+python -m scripts.ml.horizon_experiment --target flood_risk_7d
+python -m scripts.ml.horizon_experiment --backtest-only --target flood_risk_7d
+```
+
+Horizon experiments and the former same-window trainer are explicitly
+research-only. Neither can be promoted by the production model registry.
 
 Live API inference reads `data/serving/current_features.parquet`; historical
 training data is never used as the default serving input.
@@ -164,8 +177,9 @@ reconciliation manifest currently has unique usable polygons for 113 of 133
 current districts. The remaining newer or split districts are marked
 `legacy_parent` and are not represented using copied parent polygons.
 
-Terrain and historical event frequency are currently available. River/drainage,
-ESA WorldCover, soil, and social-exposure factors remain explicit nulls. Until
+Terrain, historical event frequency, and 20-year ERA5/GPM hydroclimate normals
+are currently available. River/drainage, ESA WorldCover, soil maps, and
+social-exposure factors remain explicit nulls. Until
 those layers reach at least 80% mean factor coverage, confidence is capped at C.
 The current assessment scope is land hazard only, not population, building, or
 financial vulnerability.

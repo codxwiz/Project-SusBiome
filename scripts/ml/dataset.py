@@ -172,8 +172,13 @@ class MLDataset:
             raise ValueError(
                 "Training data is missing label_method provenance."
             )
+        expected_method = (
+            "verified_future_event_alignment"
+            if target.endswith(("_3d", "_7d", "_14d"))
+            else "verified_event_alignment"
+        )
         invalid_methods = set(dataframe["label_method"].dropna().unique()) - {
-            "verified_event_alignment"
+            expected_method
         }
         if invalid_methods:
             raise ValueError(
@@ -323,6 +328,7 @@ class MLDataset:
         *,
         path: Path,
         target: str,
+        return_metadata: bool = False,
     ):
 
         dataframe = cls.load(path, target=target)
@@ -363,7 +369,7 @@ class MLDataset:
 
         group_column = target.replace("_risk", "_event_group")
         groups = dataframe[group_column] if group_column in dataframe else None
-        return cls.split(
+        split = cls.split(
 
             X,
 
@@ -374,3 +380,8 @@ class MLDataset:
             groups,
 
         )
+        if not return_metadata:
+            return split
+        metadata = dataframe[["valid_time", "latitude", "longitude"]].copy()
+        metadata["event_group"] = groups if groups is not None else ""
+        return (*split, metadata.loc[split[0].index], metadata.loc[split[1].index], metadata.loc[split[2].index])

@@ -1,0 +1,18 @@
+{
+  "years": 20,
+  "rows": 14763405,
+  "events": 138,
+  "independent_events": {
+    "flood": 48,
+    "cyclone": 11
+  },
+  "positive_rows": {
+    "flood_risk_3d": 144,
+    "flood_risk_7d": 336,
+    "flood_risk_14d": 672,
+    "cyclone_risk_3d": 237,
+    "cyclone_risk_7d": 553,
+    "cyclone_risk_14d": 1106
+  },
+  "output": "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/forecast_targets"
+}

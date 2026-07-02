@@ -13,6 +13,7 @@ from scripts.features.hazards import build_year
 from scripts.fusion.historical import fuse_year
 from scripts.ingestion.historical_weather import GPM_EXPECTED_DAYS, status as ingestion_status
 from scripts.labels.verified import run as align_verified_events
+from scripts.labels.forecast_targets import build as build_forecast_targets
 from scripts.ml.registry import ModelRegistry
 from scripts.ml.trainer import MLTrainer
 from scripts.operations.refresh import refresh as refresh_operational
@@ -44,10 +45,12 @@ def prepare(events: Path, start_year: int, end_year: int, *, force: bool = False
     for year in range(start_year, end_year + 1):
         path = PROJECT_ROOT / f"data/gold/features_historical/year={year:04d}/features.parquet"
         features.append(str(build_year(year) if force or not path.exists() else path))
+    forecast_targets = asdict(build_forecast_targets())
     result = {
         "fused": fused,
         "alignment": asdict(alignment),
         "features": features,
+        "forecast_targets": forecast_targets,
     }
     save_state("prepared", result)
     return result
@@ -101,15 +104,16 @@ def finalize(start_year: int, end_year: int, *, force: bool = False) -> dict:
         save_state("blocked_preflight", result)
         return result
 
-    metrics = train()
-    final_audit = audit_artifacts()
     result = {
-        "status": "complete" if final_audit["ready"] else "blocked",
+        "status": "blocked",
+        "reason": (
+            "Leakage-safe horizon targets are prepared, but no horizon model has yet "
+            "passed independent-event validation and the serving contract. The legacy "
+            "same-window trainer is research-only."
+        ),
         "prepared": prepared,
-        "metrics": metrics,
-        "audit": final_audit,
     }
-    save_state("complete" if final_audit["ready"] else "blocked_audit", result)
+    save_state("blocked_horizon_model", result)
     return result
 
 

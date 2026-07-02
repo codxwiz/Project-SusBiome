@@ -25,7 +25,9 @@ from scripts.sources.common.config import PROJECT_ROOT
 GROUND_TRUTH_PATH = PROJECT_ROOT / "data/gold/ground_truth.parquet"
 TERRAIN_PATH = PROJECT_ROOT / "data/silver/susceptibility/terrain.parquet"
 STATIC_PATH = PROJECT_ROOT / "data/silver/susceptibility/district_static.parquet"
+HYDROCLIMATE_PATH = PROJECT_ROOT / "data/silver/susceptibility/hydroclimate.parquet"
 SUMMARY_PATH = PROJECT_ROOT / "data/silver/susceptibility/summary.json"
+HISTORICAL_FEATURE_ROOT = PROJECT_ROOT / "data/gold/features_historical"
 ELEVATION_ENDPOINT = "https://api.open-meteo.com/v1/elevation"
 
 
@@ -152,6 +154,50 @@ class TerrainCollector:
 
 class StaticSusceptibilityBuilder:
     @staticmethod
+    def historical_hydroclimate(output_path: str | Path = HYDROCLIMATE_PATH) -> pd.DataFrame:
+        """Summarize stable climate normals without loading the full archive at once."""
+        annual = []
+        columns = [
+            "latitude", "longitude", "precipitation_7d_sum", "runoff_7d_sum",
+            "soil_moisture_30d_mean", "wind_speed_7d_max", "consecutive_dry_days",
+            "water_balance_30d",
+        ]
+        for path in sorted(HISTORICAL_FEATURE_ROOT.glob("year=*/features.parquet")):
+            frame = pd.read_parquet(path, columns=columns)
+            grouped = frame.groupby(["latitude", "longitude"], as_index=False)
+            means = grouped[
+                [
+                    "runoff_7d_sum", "soil_moisture_30d_mean", "wind_speed_7d_max",
+                    "consecutive_dry_days", "water_balance_30d",
+                ]
+            ].mean()
+            precipitation = grouped["precipitation_7d_sum"].quantile(0.95).rename(
+                columns={"precipitation_7d_sum": "precipitation_7d_p95"}
+            )
+            annual.append(means.merge(precipitation, on=["latitude", "longitude"]))
+        if not annual:
+            raise FileNotFoundError(f"No historical feature partitions under {HISTORICAL_FEATURE_ROOT}")
+        hydroclimate = (
+            pd.concat(annual, ignore_index=True)
+            .groupby(["latitude", "longitude"], as_index=False)
+            .mean(numeric_only=True)
+        )
+        hydroclimate = hydroclimate.rename(
+            columns={
+                "runoff_7d_sum": "runoff_7d_climatology",
+                "soil_moisture_30d_mean": "soil_moisture_climatology",
+                "wind_speed_7d_max": "wind_speed_7d_climatology",
+                "consecutive_dry_days": "dry_spell_climatology",
+                "water_balance_30d": "water_balance_climatology",
+            }
+        )
+        hydroclimate["hydroclimate_years"] = len(annual)
+        hydroclimate["hydroclimate_source"] = "ERA5 and NASA GPM historical archive"
+        hydroclimate["hydroclimate_generated_at"] = datetime.now(UTC).isoformat()
+        _atomic_parquet(hydroclimate, Path(output_path))
+        return hydroclimate
+
+    @staticmethod
     def historical_frequency() -> pd.DataFrame:
         events = pd.read_parquet(GROUND_TRUTH_PATH)
         events = events.loc[events["verified"].fillna(False)].copy()
@@ -181,34 +227,61 @@ class StaticSusceptibilityBuilder:
         terrain = pd.read_parquet(TERRAIN_PATH)
         dataframe = manifest.merge(terrain, on=["state", "district"], how="left")
         dataframe = dataframe.merge(self.historical_frequency(), on=["state", "district"], how="left")
+        hydroclimate = self.historical_hydroclimate()
+        dataframe["grid_latitude"] = (dataframe["latitude"] * 4).round() / 4
+        dataframe["grid_longitude"] = (dataframe["longitude"] * 4).round() / 4
+        dataframe = dataframe.merge(
+            hydroclimate,
+            left_on=["grid_latitude", "grid_longitude"],
+            right_on=["latitude", "longitude"],
+            how="left",
+            suffixes=("", "_grid"),
+            validate="many_to_one",
+        )
         event_columns = [
             "flood_independent_events", "drought_independent_events", "cyclone_independent_events"
         ]
         dataframe[event_columns] = dataframe[event_columns].fillna(0).astype(int)
         dataframe["low_elevation_score"] = _normalize(dataframe["elevation_mean_m"], invert=True)
         dataframe["terrain_relief_score"] = _normalize(dataframe["terrain_relief_m"])
+        dataframe["extreme_rainfall_score"] = _normalize(dataframe["precipitation_7d_p95"])
+        dataframe["runoff_climatology_score"] = _normalize(dataframe["runoff_7d_climatology"])
+        dataframe["soil_wetness_score"] = _normalize(dataframe["soil_moisture_climatology"])
+        dataframe["wind_climatology_score"] = _normalize(dataframe["wind_speed_7d_climatology"])
+        dataframe["dry_spell_score"] = _normalize(dataframe["dry_spell_climatology"])
+        dataframe["water_deficit_score"] = _normalize(
+            dataframe["water_balance_climatology"], invert=True
+        )
         for hazard in ("flood", "drought", "cyclone"):
             dataframe[f"{hazard}_history_score"] = _normalize(
                 dataframe[f"{hazard}_independent_events"]
             )
         dataframe["flood_susceptibility"] = (
-            0.35 * dataframe["low_elevation_score"]
-            + 0.25 * dataframe["terrain_relief_score"]
-            + 0.40 * dataframe["flood_history_score"]
+            0.20 * dataframe["low_elevation_score"]
+            + 0.10 * dataframe["terrain_relief_score"]
+            + 0.20 * dataframe["flood_history_score"]
+            + 0.20 * dataframe["extreme_rainfall_score"]
+            + 0.20 * dataframe["runoff_climatology_score"]
+            + 0.10 * dataframe["soil_wetness_score"]
         ).clip(0, 1)
         dataframe["cyclone_susceptibility"] = (
-            0.35 * dataframe["low_elevation_score"]
-            + 0.65 * dataframe["cyclone_history_score"]
+            0.20 * dataframe["low_elevation_score"]
+            + 0.50 * dataframe["cyclone_history_score"]
+            + 0.30 * dataframe["wind_climatology_score"]
         ).clip(0, 1)
-        dataframe["drought_susceptibility"] = dataframe["drought_history_score"]
+        dataframe["drought_susceptibility"] = (
+            0.40 * dataframe["drought_history_score"]
+            + 0.35 * dataframe["dry_spell_score"]
+            + 0.25 * dataframe["water_deficit_score"]
+        ).clip(0, 1)
         dataframe["river_factor"] = np.nan
         dataframe["land_cover_factor"] = np.nan
         dataframe["soil_factor"] = np.nan
         dataframe["social_vulnerability"] = np.nan
         dataframe["static_factor_coverage"] = np.where(
             dataframe["geographic_validation_grade"].isin(["A", "B"]),
-            0.40,
-            np.where(dataframe["district_wide_usable"].astype(bool), 0.30, 0.20),
+            0.60,
+            np.where(dataframe["district_wide_usable"].astype(bool), 0.50, 0.40),
         )
         dataframe["static_confidence_grade"] = np.where(
             dataframe["district_wide_usable"].astype(bool), "C", "D"
@@ -221,7 +294,9 @@ class StaticSusceptibilityBuilder:
             "districts": len(dataframe),
             "polygon_supported": int(dataframe["district_wide_usable"].sum()),
             "confidence_grades": dataframe["static_confidence_grade"].value_counts().to_dict(),
-            "available_factors": ["terrain", "verified_historical_hazard_frequency"],
+            "available_factors": [
+                "terrain", "verified_historical_hazard_frequency", "hydroclimate_normals"
+            ],
             "missing_factors": ["rivers", "land_cover", "soil", "social_vulnerability"],
             "scope": "land_hazard_only; not a population or asset vulnerability estimate",
             "output": str(Path(output_path)),

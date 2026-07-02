@@ -27,6 +27,7 @@ bronze/
 models/*.pkl
 models/*.joblib
 models/candidates/
+models/experiments/
 models/releases/
 models/registry.json
 

@@ -28,6 +28,7 @@ from pathlib import Path
 from typing import Any
 
 import joblib
+from scripts.ml.evaluation import model_quality_findings
 from scripts.ml.registry import ModelRegistry
 
 from scripts.prediction.models import (
@@ -162,6 +163,15 @@ class PredictionLoader:
             raise ValueError(f"Model {path.name} metadata has the wrong feature schema.")
         if metadata.get("label_method") != "verified_event_alignment":
             raise ValueError(f"Model {path.name} was not trained on verified event labels.")
+        if metadata.get("production_eligible") is not True:
+            raise ValueError(f"Model {path.name} is explicitly ineligible for production.")
+        target = str(metadata.get("target", ""))
+        hazard = target.removesuffix("_risk")
+        findings = model_quality_findings(hazard, metadata.get("metrics", {}))
+        if findings:
+            raise ValueError(
+                f"Model {path.name} failed the production quality gate: " + "; ".join(findings)
+            )
 
     # ======================================================
     # LOAD FLOOD MODEL

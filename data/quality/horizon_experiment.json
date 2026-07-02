@@ -1,0 +1,107 @@
+{
+  "created_at": "2026-07-02T21:58:27.558423+00:00",
+  "production_eligible": false,
+  "targets": {
+    "cyclone_risk_3d": {
+      "target": "cyclone_risk_3d",
+      "selected_model": "extra_trees",
+      "threshold": 0.2,
+      "sampled_rows": {
+        "train": 70192,
+        "validation": 15015,
+        "test": 15030
+      },
+      "full_validation_rows": 2212995,
+      "full_test_rows": 2217037,
+      "full_validation_period": {
+        "start": "2020-01-01",
+        "end": "2022-12-30"
+      },
+      "full_test_period": {
+        "start": "2022-12-31",
+        "end": "2025-12-31"
+      },
+      "class_counts": {
+        "train_positive": 192,
+        "validation_positive": 24,
+        "full_test_positive": 21
+      },
+      "candidates": {
+        "random_forest": {
+          "threshold": 0.01,
+          "validation": {
+            "threshold": 0.01,
+            "accuracy": 0.9822652107212172,
+            "balanced_accuracy": 0.7411352204796177,
+            "precision": 0.00030575585395062045,
+            "recall": 0.5,
+            "f1": 0.000611137989865295,
+            "true_negative": 2173736,
+            "false_positive": 39235,
+            "false_negative": 12,
+            "true_positive": 12,
+            "roc_auc": 0.7272420293050985,
+            "pr_auc": 0.00014642915589384466
+          }
+        },
+        "extra_trees": {
+          "threshold": 0.2,
+          "validation": {
+            "threshold": 0.2,
+            "accuracy": 0.9949895955481146,
+            "balanced_accuracy": 0.6641650523210652,
+            "precision": 0.0007220216606498195,
+            "recall": 0.3333333333333333,
+            "f1": 0.001440922190201729,
+            "true_negative": 2201899,
+            "false_positive": 11072,
+            "false_negative": 16,
+            "true_positive": 8,
+            "roc_auc": 0.8393509223573197,
+            "pr_auc": 0.000318398204966495
+          }
+        },
+        "hist_gradient_boosting": {
+          "threshold": 0.00044730154464843735,
+          "validation": {
+            "threshold": 0.00044730154464843735,
+            "accuracy": 0.9899886804986003,
+            "balanced_accuracy": 0.6199983528930113,
+            "precision": 0.00027096599376778217,
+            "recall": 0.25,
+            "f1": 0.0005413452429286778,
+            "true_negative": 2190834,
+            "false_positive": 22137,
+            "false_negative": 18,
+            "true_positive": 6,
+            "roc_auc": 0.8962909477801562,
+            "pr_auc": 0.00012705503688972678
+          }
+        }
+      },
+      "row_metrics": {
+        "threshold": 0.2,
+        "accuracy": 0.9966784496605153,
+        "balanced_accuracy": 0.4983439451948024,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "true_negative": 2209673,
+        "false_positive": 7343,
+        "false_negative": 21,
+        "true_positive": 0,
+        "roc_auc": 0.9427436419472109,
+        "pr_auc": 0.00013680981659656467
+      },
+      "event_metrics": {
+        "independent_events": 2,
+        "detected_events": 0,
+        "event_recall": 0.0,
+        "false_alarm_days": 71,
+        "negative_days": 1097,
+        "false_alarm_day_rate": 0.06472196900638104
+      },
+      "artifact": "/Users/ThotKash/Desktop/Project-SusBiome/models/experiments/horizons/cyclone_risk_3d.joblib"
+    }
+  }
+}
