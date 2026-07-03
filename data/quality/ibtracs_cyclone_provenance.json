@@ -1,0 +1,19 @@
+{
+  "created_at": "2026-07-03T09:22:21.503496+00:00",
+  "records": 90,
+  "storms": 11,
+  "states": {
+    "Tripura": 39,
+    "Mizoram": 28,
+    "Assam": 10,
+    "Meghalaya": 7,
+    "Manipur": 6
+  },
+  "wind_agencies": {
+    "USA": 63,
+    "WMO": 27
+  },
+  "imd_observation_records": 73,
+  "source": "NOAA IBTrACS v04r01 including IMD New Delhi agency observations",
+  "output": "/Users/ThotKash/Desktop/Project-SusBiome/data/bronze/ground_truth/ibtracs_ground_truth.parquet"
+}

@@ -1,8 +1,8 @@
 # Project SusBiome
 
-SusBiome is a climate and disaster-risk data platform for Northeast India. It
-combines weather observations, satellite precipitation, and reviewed disaster
-events to produce flood, drought, and cyclone risk datasets.
+SusBiome is a district weather-risk outlook for Northeast India. It combines
+weather observations, satellite precipitation, and 20-year district patterns
+to publish explainable flood, drought, and cyclone risk indices.
 
 ## Pipeline
 
@@ -122,12 +122,9 @@ python -m scripts.production_pipeline finalize
 ```
 
 `finalize` exits without modifying models while ERA5 or GPM collection is
-incomplete. Once inputs are complete, it builds ground truth, fuses yearly
-weather, aligns event groups, creates features, and generates leakage-safe
-future targets. It deliberately stops before promotion until a horizon-aware
-model passes independent-event validation and has a matching serving contract.
-Restore a previously validated release with
-`python -m scripts.production_pipeline rollback`.
+incomplete. The production release is a district weather-pattern outlook and
+does not require an ML model. Historical model experiments remain available as
+research commands, but they cannot block the operational weather assessment.
 
 IBTrACS supplies NOAA cyclone tracks. GDACS supplies India-filtered flood
 points and drought affected-area polygons. GDACS responses are cached under
@@ -162,32 +159,37 @@ static land susceptibility factors, confidence grades, and mitigation actions.
 # Fetch and validate the pinned 2021 ADM2 source, then reconcile current districts
 python -m scripts.geospatial.districts all
 
+# Optional: extract current OSM district overrides from a Northeast GeoPackage
+python -m scripts.geospatial.osm_gpkg /path/to/north-eastern-zone.gpkg
+python -m scripts.geospatial.districts build
+
 # Collect all 133 district-point forecasts and 3/7/14 day contracts
 python -m scripts.forecast.open_meteo collect
 
-# Sample terrain, then combine it with verified historical hazard frequency
+# Cache NASA SRTM terrain and ESA WorldCover, then build susceptibility factors
 python -m scripts.susceptibility.static all
 
 # Publish the district serving artifact
 python -m scripts.serving.district_assessment build
 ```
 
-The pinned geoBoundaries layer is sourced from LGD-derived 2021 data. The
-reconciliation manifest currently has unique usable polygons for 113 of 133
-current districts. The remaining newer or split districts are marked
-`legacy_parent` and are not represented using copied parent polygons.
+The pinned geoBoundaries layer plus current OSM overrides provide unique usable
+polygons for 132 of 133 districts. Itanagar Capital Complex remains point-based
+because no unambiguous current district polygon is available.
 
-Terrain, historical event frequency, and 20-year ERA5/GPM hydroclimate normals
-are currently available. River/drainage, ESA WorldCover, soil maps, and
-social-exposure factors remain explicit nulls. Until
-those layers reach at least 80% mean factor coverage, confidence is capped at C.
-The current assessment scope is land hazard only, not population, building, or
-financial vulnerability.
+NASA SRTM elevation and slope, ESA WorldCover land context, historical event
+frequency, 20-year ERA5/GPM hydroclimate normals, and weather-derived drought
+history are available. Raw terrain and land-cover tiles are cached once and
+their checksums are recorded. The assessment covers weather hazard and physical
+land susceptibility, not population, building, or financial vulnerability.
 
-Open-Meteo outlook thresholds are published as `forecast_signal`, never as ML
-probability. `assessment_available` remains false until validated horizon-aware
-flood and cyclone models publish `data/serving/district_hazard_probabilities.parquet`.
-This prevents monitoring thresholds from being presented as trained risk.
+Open-Meteo forecasts are combined with 20-year district weather patterns,
+30 m terrain, and 10 m sampled land cover to produce explainable 0-100 flood,
+cyclone, and drought scores. These are weather-land risk indices, never disaster
+probabilities, forecast guarantees, or official warnings.
+
+The public risk scale is fixed: Low `0–24.9`, Moderate `25–49.9`, High
+`50–74.9`, and Very High `75–100`.
 
 Run the complete daily refresh manually with:
 
@@ -196,10 +198,32 @@ python -m scripts.production_pipeline operational
 ```
 
 This lock-protected command catches NASA GPM Late up through yesterday, refreshes
-the forecast, and atomically rebuilds district serving data. A macOS `launchd`
-template is provided at `deploy/com.susbiome.refresh.plist.example`; install it
-only after environment variables and Earthdata credentials are available to the
-background process.
+the forecast and IMD cyclone confirmation, rebuilds district serving data,
+creates a verified operational backup, and records any failure alert.
+
+Install and inspect the daily 06:15 macOS scheduler with:
+
+```bash
+python -m scripts.operations.scheduler install
+python -m scripts.operations.scheduler status
+python -m scripts.operations.monitor status
+```
+
+The scheduler runs through the login shell so existing Earthdata credentials
+are available without writing secrets into the plist. Backups retain the latest
+14 operational archives under `data/backups/operations`. Alerts are always
+written locally, the installed macOS schedule enables desktop failure
+notifications, and `SUSBIOME_ALERT_WEBHOOK_URL` can optionally deliver the same
+incident to an external monitor.
+
+Rainfall validation, official cyclone confirmation, and drought history can be
+refreshed independently with:
+
+```bash
+python -m scripts.quality.chirps_crosscheck crosscheck --start-year 2021 --end-year 2024
+python -m scripts.alerts.imd_cyclone collect
+python -m scripts.events.drought_history build
+```
 
 Open-Meteo forecast data is CC BY 4.0 and requires attribution. The free public
 endpoint is intended for non-commercial use; production commercial deployment
@@ -221,8 +245,8 @@ uvicorn scripts.api.app:app --host 0.0.0.0 --port 8000
 ```
 
 Open `/docs` for the OpenAPI interface and `/api/health/ready` for readiness.
-The API starts in degraded mode when model artifacts fail validation and does
-not serve prediction requests until valid models are installed.
+The weather-outlook API is ready without ML artifacts. Legacy model endpoints
+remain disabled unless `SUSBIOME_ENABLE_LEGACY_ML=true` is explicitly set.
 
 API input and output paths are restricted to the project `data` directory.
 
@@ -233,11 +257,27 @@ GET /api/districts?state=Assam
 GET /api/districts/{state}/{district}/forecast?horizon_days=7
 GET /api/districts/{state}/{district}/assessment?horizon_days=7
 GET /api/districts/{state}/{district}/report
+GET /api/locations/assessment?latitude=27.48&longitude=94.91&horizon_days=7
 ```
 
 Forecast responses identify representative-point spatial support and include an
 official-warning disclaimer. Assessment responses keep hazard probability,
 susceptibility, exposure mode, confidence, and forecast signal as separate fields.
+Coordinate responses resolve the district polygon and report point SRTM elevation,
+slope, and WorldCover class separately from district weather history.
+
+Before public release, review the compact flood/cyclone evidence package:
+
+```bash
+python -m scripts.quality.production_review
+# Complete data/quality/production_event_review.csv, then rebuild canonical labels
+python -m ground_truth.build
+python -m scripts.quality.audit --json
+```
+
+For every row, set `review_status` to `APPROVED` or `REJECTED` and set
+`event_occurred_in_district` and `date_correct` to `YES` or `NO`. Rejected or
+incorrect cases are excluded when canonical ground truth is rebuilt.
 
 ## Dashboard
 
@@ -254,9 +294,8 @@ docker build -t susbiome .
 docker run --rm -p 8000:8000 -v "$PWD/data:/app/data" susbiome
 ```
 
-Production deployments should mount immutable validated models and a persistent
-data volume, terminate TLS at the ingress, and restrict API access at the
-network or identity layer.
+Production deployments should mount a persistent data volume, terminate TLS at
+the ingress, and restrict API access at the network or identity layer.
 
 Use `docker compose up --build` for the production-shaped local deployment.
 Set `SUSBIOME_API_KEY`, `SUSBIOME_ALLOWED_HOSTS`, and

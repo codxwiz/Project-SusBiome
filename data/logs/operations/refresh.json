@@ -1,0 +1,86 @@
+{
+  "status": "complete",
+  "started_at": "2026-07-03T08:49:22.082094+00:00",
+  "finished_at": "2026-07-03T08:49:32.755172+00:00",
+  "gpm_target_date": "2026-07-02",
+  "steps": [
+    {
+      "name": "gpm_late",
+      "status": "complete",
+      "returncode": 0,
+      "started_at": "2026-07-03T08:49:22.082572+00:00",
+      "finished_at": "2026-07-03T08:49:24.110170+00:00",
+      "stdout": "{\n  \"gpm-late\": {\n    \"requested\": 1,\n    \"completed\": 0,\n    \"skipped\": 0,\n    \"failed\": 0,\n    \"downloaded_bytes\": 0\n  }\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "forecast",
+      "status": "complete",
+      "returncode": 0,
+      "started_at": "2026-07-03T08:49:24.110223+00:00",
+      "finished_at": "2026-07-03T08:49:26.599014+00:00",
+      "stdout": "{\n  \"collected_at\": \"2026-07-03T08:49:24.491387+00:00\",\n  \"provider\": \"Open-Meteo\",\n  \"endpoint\": \"https://api.open-meteo.com/v1/forecast\",\n  \"model\": \"best_match\",\n  \"districts\": 133,\n  \"daily_rows\": 1862,\n  \"horizon_rows\": 399,\n  \"batches\": 4,\n  \"horizons_days\": [\n    3,\n    7,\n    14\n  ],\n  \"spatial_support\": \"representative_point\",\n  \"output\": \"/Users/ThotKash/Desktop/Project-SusBiome/data/silver/forecast/district_daily.parquet\",\n  \"horizons_output\": \"/Users/ThotKash/Desktop/Project-SusBiome/data/silver/forecast/district_horizons.parquet\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "imd_cyclone",
+      "status": "complete",
+      "returncode": 0,
+      "started_at": "2026-07-03T08:49:26.599077+00:00",
+      "finished_at": "2026-07-03T08:49:28.600135+00:00",
+      "stdout": "{\n  \"collected_at\": \"2026-07-03T08:49:28.572209+00:00\",\n  \"source\": \"India Meteorological Department RSMC New Delhi\",\n  \"source_url\": \"https://rsmcnewdelhi.imd.gov.in/\",\n  \"official_confirmation\": true,\n  \"status\": \"NO_ACTIVE_CYCLONE_BULLETIN\",\n  \"bulletins\": [\n    {\n      \"title\": \"Tropical Weather Outlook based on 03:00:00 UTC of 02-07-2026\",\n      \"url\": \"https://rsmcnewdelhi.imd.gov.in/uploads/archive/47/47_8997e8_Tropical_Weather_Outlook_based_on_0300_UTC_of_03.07.2026.pdf\"\n    },\n    {\n      \"title\": \"Graphical Tropical Weather Outlook\",\n      \"url\": \"https://rsmcnewdelhi.imd.gov.in/uploads/archive/64/64_27b51a_No_Cyclone.pdf\"\n    },\n    {\n      \"title\": \"RSMC Bulletin\",\n      \"url\": \"https://rsmcnewdelhi.imd.gov.in/uploads/archive/2/2_590145_Tropical_Weather_Outlook_based_on_0300_UTC_of_03.07.2026.pdf\"\n    },\n    {\n      \"title\": \"National Bulletin\",\n      \"url\": \"https://rsmcnewdelhi.imd.gov.in/uploads/archive/1/1_4fd229_No_Cyclone.pdf\"\n    }\n  ],\n  \"disclaimer\": \"IMD bulletins remain authoritative; SusBiome does not reproduce warning instructions.\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "boundaries",
+      "status": "complete",
+      "returncode": 0,
+      "started_at": "2026-07-03T08:49:28.600207+00:00",
+      "finished_at": "2026-07-03T08:49:29.849213+00:00",
+      "stdout": "{\n  \"generated_at\": \"2026-07-03T08:49:29.761156+00:00\",\n  \"districts\": 133,\n  \"usable_districts\": 132,\n  \"coverage_percent\": 99.25,\n  \"status_counts\": {\n    \"exact\": 109,\n    \"exact_override\": 19,\n    \"fuzzy\": 4,\n    \"legacy_parent\": 1\n  },\n  \"geographic_validation_grades\": {\n    \"A\": 103,\n    \"B\": 29,\n    \"D\": 1\n  },\n  \"representative_points_inside\": 107,\n  \"duplicate_source_ids\": 0,\n  \"source\": {\n    \"provider\": \"geoBoundaries gbOpen\",\n    \"boundary_id\": \"IND-ADM2-76128533\",\n    \"boundary_year\": 2021,\n    \"source\": \"Pathways Data Pvt. Ltd., lgdirectory.gov.in\",\n    \"license\": \"ODbL 1.0\",\n    \"download_url\": \"https://github.com/wmgeolab/geoBoundaries/raw/9469f09/releaseData/gbOpen/IND/ADM2/geoBoundaries-IND-ADM2_simplified.geojson\",\n    \"artifact_url\": \"https://media.githubusercontent.com/media/wmgeolab/geoBoundaries/9469f09/releaseData/gbOpen/IND/ADM2/geoBoundaries-IND-ADM2_simplified.geojson\",\n    \"sha256\": \"d68db39cd3e2d0892af268e2b0454166368ce3b5b8a78fcda63069ec92a641db\"\n  },\n  \"override_source\": {\n    \"provider\": \"Geofabrik OpenStreetMap extract\",\n    \"license\": \"ODbL 1.0\",\n    \"source_file\": \"north-eastern-zone.gpkg\",\n    \"source_sha256\": \"3b036a721b98c702fe807eac8d1e9ff51b44cb74c751f90e5ae4e3e0d6ba904c\",\n    \"admin_level\": 5,\n    \"generated_at\": \"2026-07-03T02:52:13.934166+00:00\"\n  },\n  \"source_sha256\": \"d68db39cd3e2d0892af268e2b0454166368ce3b5b8a78fcda63069ec92a641db\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "susceptibility",
+      "status": "complete",
+      "returncode": 0,
+      "started_at": "2026-07-03T08:49:29.849242+00:00",
+      "finished_at": "2026-07-03T08:49:32.007981+00:00",
+      "stdout": "{\n  \"static\": {\n    \"generated_at\": \"2026-07-03T08:49:31.937148+00:00\",\n    \"districts\": 133,\n    \"polygon_supported\": 132,\n    \"confidence_grades\": {\n      \"C\": 132,\n      \"D\": 1\n    },\n    \"available_factors\": [\n      \"terrain\",\n      \"verified_historical_hazard_frequency\",\n      \"hydroclimate_normals\",\n      \"weather_derived_drought_history\"\n    ],\n    \"missing_factors\": [\n      \"rivers\",\n      \"land_cover\",\n      \"soil\",\n      \"social_vulnerability\"\n    ],\n    \"scope\": \"weather_hazard_outlook; not a population or asset vulnerability estimate\",\n    \"output\": \"/Users/ThotKash/Desktop/Project-SusBiome/data/silver/susceptibility/district_static.parquet\"\n  }\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "assessment",
+      "status": "complete",
+      "returncode": 0,
+      "started_at": "2026-07-03T08:49:32.008057+00:00",
+      "finished_at": "2026-07-03T08:49:32.513501+00:00",
+      "stdout": "{\n  \"generated_at\": \"2026-07-03T08:49:32.470149+00:00\",\n  \"districts\": 133,\n  \"rows\": 399,\n  \"horizons\": [\n    3,\n    7,\n    14\n  ],\n  \"model_probabilities_available\": false,\n  \"assessment_rows_available\": 399,\n  \"forecast_signal_rows\": 399,\n  \"assessment_method\": \"weather_pattern_index_v1\",\n  \"scope\": \"district_weather_hazard_outlook\",\n  \"output\": \"/Users/ThotKash/Desktop/Project-SusBiome/data/serving/district_assessments.parquet\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "backup",
+      "status": "complete",
+      "path": "/Users/ThotKash/Desktop/Project-SusBiome/data/backups/operations/susbiome-operational-20260703T084932Z.tar.gz",
+      "bytes": 1137085,
+      "files": 31,
+      "sha256": "db1585696db542cba04699aacaa3e24fa9e9f97c7252869eab0dadb05b6627df",
+      "verified": true,
+      "created_at": "2026-07-03T08:49:32.754693+00:00",
+      "included": [
+        "data/serving",
+        "data/silver/forecast",
+        "data/silver/alerts",
+        "data/silver/validation/chirps",
+        "data/silver/events/weather_drought_episodes.parquet",
+        "data/silver/geospatial",
+        "data/silver/susceptibility",
+        "data/quality",
+        "data/logs/operations",
+        "models/registry.json"
+      ],
+      "retention": 14,
+      "removed": []
+    }
+  ]
+}

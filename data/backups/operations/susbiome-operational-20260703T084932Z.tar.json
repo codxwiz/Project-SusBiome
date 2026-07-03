@@ -1,0 +1,20 @@
+{
+  "path": "/Users/ThotKash/Desktop/Project-SusBiome/data/backups/operations/susbiome-operational-20260703T084932Z.tar.gz",
+  "bytes": 1137085,
+  "files": 31,
+  "sha256": "db1585696db542cba04699aacaa3e24fa9e9f97c7252869eab0dadb05b6627df",
+  "verified": true,
+  "created_at": "2026-07-03T08:49:32.754693+00:00",
+  "included": [
+    "data/serving",
+    "data/silver/forecast",
+    "data/silver/alerts",
+    "data/silver/validation/chirps",
+    "data/silver/events/weather_drought_episodes.parquet",
+    "data/silver/geospatial",
+    "data/silver/susceptibility",
+    "data/quality",
+    "data/logs/operations",
+    "models/registry.json"
+  ]
+}

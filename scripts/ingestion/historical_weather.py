@@ -149,15 +149,24 @@ def date_periods(start: date, end: date):
         current += timedelta(days=1)
 
 
-def era5_request(year: int, month: int) -> dict:
+def era5_request(
+    year: int,
+    month: int,
+    *,
+    start_day: int = 1,
+    end_day: int | None = None,
+) -> dict:
     final_day = calendar.monthrange(year, month)[1]
+    end_day = final_day if end_day is None else end_day
+    if not 1 <= start_day <= end_day <= final_day:
+        raise ValueError(f"Invalid ERA5 day range for {year:04d}-{month:02d}.")
     bounds = NORTHEAST_INDIA_BOUNDS
     return {
         "product_type": ["reanalysis"],
         "variable": ERA5_VARIABLES,
         "year": [f"{year:04d}"],
         "month": [f"{month:02d}"],
-        "day": [f"{day:02d}" for day in range(1, final_day + 1)],
+        "day": [f"{day:02d}" for day in range(start_day, end_day + 1)],
         "time": [f"{hour:02d}:00" for hour in range(24)],
         "area": [
             bounds["max_latitude"],
@@ -177,7 +186,12 @@ def _coordinate_name(dataset: xr.Dataset, *candidates: str) -> str:
     raise ValueError(f"Missing coordinate; expected one of {candidates}.")
 
 
-def parse_era5_month(source: Path, destination: Path) -> Path:
+def parse_era5_month(
+    source: Path,
+    destination: Path,
+    *,
+    expected_days: int | None = None,
+) -> Path:
     """Convert hourly ERA5 into daily analysis-grid observations."""
     if zipfile.is_zipfile(source):
         with tempfile.TemporaryDirectory(prefix="susbiome-era5-") as directory:
@@ -254,7 +268,8 @@ def parse_era5_month(source: Path, destination: Path) -> Path:
     ]
     frame = frame.sort_values(["valid_time", "latitude", "longitude"])
 
-    if frame.empty or frame["valid_time"].nunique() < 28:
+    minimum_days = 28 if expected_days is None else expected_days
+    if frame.empty or frame["valid_time"].nunique() < minimum_days:
         raise ValueError("ERA5 monthly parse produced insufficient daily coverage.")
     if frame.isna().any().any():
         raise ValueError("ERA5 monthly parse contains missing values.")
@@ -273,7 +288,17 @@ class ERA5HistoricalCollector:
         self.stats = CollectionStats()
         self.checkpoint = LOG_DIR / "era5_checkpoint.json"
 
-    def collect_month(self, year: int, month: int) -> Path:
+    def collect_month(
+        self,
+        year: int,
+        month: int,
+        *,
+        start_day: int = 1,
+        end_day: int | None = None,
+    ) -> Path:
+        final_day = calendar.monthrange(year, month)[1]
+        end_day = final_day if end_day is None else end_day
+        expected_days = end_day - start_day + 1
         output = SILVER_ERA5 / f"year={year:04d}" / f"month={month:02d}.parquet"
         if output.exists() and output.stat().st_size > 0:
             import pyarrow.parquet as pq
@@ -284,17 +309,21 @@ class ERA5HistoricalCollector:
                 "potential_evaporation",
             }
             rows = pq.ParquetFile(output).metadata.num_rows
-            if required.issubset(schema) and rows >= 28 * 2_021:
+            if required.issubset(schema) and rows >= expected_days * 2_021:
                 self.stats.skipped += 1
                 return output
 
-        raw = BRONZE_ERA5 / f"year={year:04d}" / f"era5_{year:04d}_{month:02d}.nc"
+        suffix = "" if start_day == 1 and end_day == final_day else f"_{start_day:02d}-{end_day:02d}"
+        raw = BRONZE_ERA5 / f"year={year:04d}" / f"era5_{year:04d}_{month:02d}{suffix}.nc"
         raw.parent.mkdir(parents=True, exist_ok=True)
         if not raw.exists():
-            self.client.retrieve(ERA5_DATASET, era5_request(year, month), str(raw))
+            request = era5_request(
+                year, month, start_day=start_day, end_day=end_day
+            )
+            self.client.retrieve(ERA5_DATASET, request, str(raw))
             self.stats.downloaded_bytes += raw.stat().st_size
 
-        parse_era5_month(raw, output)
+        parse_era5_month(raw, output, expected_days=expected_days)
         if self.delete_raw:
             raw.unlink(missing_ok=True)
         self.stats.completed += 1
@@ -312,7 +341,15 @@ class ERA5HistoricalCollector:
         for year, month in periods:
             try:
                 logger.info("ERA5 %04d-%02d", year, month)
-                self.collect_month(year, month)
+                first_day = start.day if (year, month) == (start.year, start.month) else 1
+                last_day = (
+                    end.day
+                    if (year, month) == (end.year, end.month)
+                    else calendar.monthrange(year, month)[1]
+                )
+                self.collect_month(
+                    year, month, start_day=first_day, end_day=last_day
+                )
             except Exception:
                 self.stats.failed += 1
                 logger.exception("ERA5 failed for %04d-%02d", year, month)

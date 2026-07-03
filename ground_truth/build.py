@@ -22,6 +22,7 @@ DEFAULT_INPUTS = [
 ]
 DEFAULT_OUTPUT = PROJECT_ROOT / "data/gold/ground_truth.parquet"
 DEFAULT_REVIEW = PROJECT_ROOT / "data/quality/ground_truth_review_queue.csv"
+PRODUCTION_REVIEW = PROJECT_ROOT / "data/quality/production_event_review.csv"
 SUPPORTED_HAZARDS = {"FLOOD", "DROUGHT", "CYCLONE"}
 
 
@@ -91,6 +92,31 @@ def normalize(events: pd.DataFrame) -> pd.DataFrame:
 
 def build(events: pd.DataFrame, *, minimum_confidence: float = 70.0) -> tuple[pd.DataFrame, pd.DataFrame]:
     result = normalize(events)
+    if PRODUCTION_REVIEW.exists():
+        decisions = pd.read_csv(PRODUCTION_REVIEW, keep_default_na=False)
+        required = {
+            "event_date", "hazard_type", "state", "district", "source_event_id",
+            "review_status", "event_occurred_in_district", "date_correct",
+        }
+        if required.issubset(decisions.columns):
+            status = decisions["review_status"].astype(str).str.upper().str.strip()
+            occurred = (
+                decisions["event_occurred_in_district"].astype(str).str.upper().str.strip()
+            )
+            date_correct = decisions["date_correct"].astype(str).str.upper().str.strip()
+            rejected = decisions.loc[
+                status.eq("REJECTED") | occurred.eq("NO") | date_correct.eq("NO")
+            ]
+            result_dates = pd.to_datetime(result["event_date"], utc=True).dt.date.astype(str)
+            for decision in rejected.itertuples(index=False):
+                mask = (
+                    result_dates.eq(str(decision.event_date))
+                    & result["hazard_type"].eq(str(decision.hazard_type).upper())
+                    & result["state"].eq(str(decision.state))
+                    & result["district"].eq(str(decision.district))
+                    & result["source_event_id"].eq(str(decision.source_event_id))
+                )
+                result.loc[mask, "verified"] = False
     bounds = NORTHEAST_INDIA_BOUNDS
     today = pd.Timestamp.now(tz="UTC").normalize()
     valid = (

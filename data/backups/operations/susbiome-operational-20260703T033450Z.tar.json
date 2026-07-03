@@ -1,0 +1,16 @@
+{
+  "path": "/Users/ThotKash/Desktop/Project-SusBiome/data/backups/operations/susbiome-operational-20260703T033450Z.tar.gz",
+  "bytes": 669106,
+  "files": 21,
+  "sha256": "52477268950710f52df8e3f4dc0bc51e44cd8a0bd10966e85c6dcbb456677b39",
+  "verified": true,
+  "created_at": "2026-07-03T03:34:50.777322+00:00",
+  "included": [
+    "data/serving",
+    "data/silver/forecast",
+    "data/silver/geospatial",
+    "data/silver/susceptibility",
+    "data/quality",
+    "models/registry.json"
+  ]
+}

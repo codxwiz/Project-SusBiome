@@ -11,7 +11,13 @@ from contextlib import contextmanager
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+from scripts.operations.backup import create as create_backup
+from scripts.operations.monitor import emit_alert
 from scripts.sources.common.config import PROJECT_ROOT
+
+load_dotenv(PROJECT_ROOT / ".env")
 
 LOG_DIR = PROJECT_ROOT / "data/logs/operations"
 MANIFEST_PATH = LOG_DIR / "refresh.json"
@@ -36,14 +42,25 @@ def refresh_lock():
 
 def _run(name: str, arguments: list[str]) -> dict:
     started_at = datetime.now(UTC)
-    process = subprocess.run(
-        [sys.executable, "-m", *arguments],
-        cwd=PROJECT_ROOT,
-        text=True,
-        capture_output=True,
-        timeout=60 * 30,
-        check=False,
-    )
+    try:
+        process = subprocess.run(
+            [sys.executable, "-m", *arguments],
+            cwd=PROJECT_ROOT,
+            text=True,
+            capture_output=True,
+            timeout=60 * 30,
+            check=False,
+        )
+    except subprocess.TimeoutExpired as error:
+        return {
+            "name": name,
+            "status": "failed",
+            "returncode": None,
+            "started_at": started_at.isoformat(),
+            "finished_at": datetime.now(UTC).isoformat(),
+            "stdout": (error.stdout or "")[-4000:],
+            "stderr": f"Step exceeded 30 minute timeout. {(error.stderr or '')[-3500:]}",
+        }
     return {
         "name": name,
         "status": "complete" if process.returncode == 0 else "failed",
@@ -86,10 +103,18 @@ def refresh(*, skip_gpm: bool = False) -> dict:
             }
         )
     steps.append(_run("forecast", ["scripts.forecast.open_meteo", "collect"]))
+    steps.append(_run("imd_cyclone", ["scripts.alerts.imd_cyclone", "collect"]))
     steps.append(_run("boundaries", ["scripts.geospatial.districts", "build"]))
     steps.append(_run("susceptibility", ["scripts.susceptibility.static", "build"]))
     steps.append(_run("assessment", ["scripts.serving.district_assessment", "build"]))
     successful = not any(step["status"] == "failed" for step in steps)
+    if successful:
+        try:
+            backup = create_backup()
+            steps.append({"name": "backup", "status": "complete", **backup})
+        except Exception as error:
+            successful = False
+            steps.append({"name": "backup", "status": "failed", "error": str(error)})
     manifest = {
         "status": "complete" if successful else "failed",
         "started_at": started_at.isoformat(),
@@ -100,6 +125,16 @@ def refresh(*, skip_gpm: bool = False) -> dict:
     temporary = MANIFEST_PATH.with_suffix(".json.tmp")
     temporary.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     os.replace(temporary, MANIFEST_PATH)
+    if not successful:
+        emit_alert(
+            "SusBiome daily refresh failed",
+            {
+                "manifest": str(MANIFEST_PATH),
+                "failed_steps": [
+                    step for step in steps if step["status"] == "failed"
+                ],
+            },
+        )
     return manifest
 
 

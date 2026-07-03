@@ -21,11 +21,18 @@ from scripts.geospatial.districts import (
     point_in_geometry,
 )
 from scripts.sources.common.config import PROJECT_ROOT
+from scripts.susceptibility.land_context import (
+    CONTEXT_MANIFEST_PATH,
+    LAND_COVER_PATH,
+    SRTMTerrainCollector,
+    WorldCoverCollector,
+)
 
 GROUND_TRUTH_PATH = PROJECT_ROOT / "data/gold/ground_truth.parquet"
 TERRAIN_PATH = PROJECT_ROOT / "data/silver/susceptibility/terrain.parquet"
 STATIC_PATH = PROJECT_ROOT / "data/silver/susceptibility/district_static.parquet"
 HYDROCLIMATE_PATH = PROJECT_ROOT / "data/silver/susceptibility/hydroclimate.parquet"
+DROUGHT_HISTORY_PATH = PROJECT_ROOT / "data/silver/events/weather_drought_episodes.parquet"
 SUMMARY_PATH = PROJECT_ROOT / "data/silver/susceptibility/summary.json"
 HISTORICAL_FEATURE_ROOT = PROJECT_ROOT / "data/gold/features_historical"
 ELEVATION_ENDPOINT = "https://api.open-meteo.com/v1/elevation"
@@ -226,7 +233,25 @@ class StaticSusceptibilityBuilder:
         manifest = pd.read_csv(MANIFEST_PATH)
         terrain = pd.read_parquet(TERRAIN_PATH)
         dataframe = manifest.merge(terrain, on=["state", "district"], how="left")
+        if LAND_COVER_PATH.exists():
+            land_cover = pd.read_parquet(LAND_COVER_PATH)
+            dataframe = dataframe.merge(
+                land_cover, on=["state", "district"], how="left", validate="one_to_one"
+            )
+        else:
+            dataframe["land_cover_sample_count"] = 0
+            for hazard in ("flood", "cyclone", "drought"):
+                dataframe[f"{hazard}_land_cover_score"] = np.nan
         dataframe = dataframe.merge(self.historical_frequency(), on=["state", "district"], how="left")
+        if DROUGHT_HISTORY_PATH.exists():
+            drought_episodes = pd.read_parquet(DROUGHT_HISTORY_PATH)
+            drought_counts = (
+                drought_episodes.groupby(["state", "district"]).size().rename("drought_weather_episodes").reset_index()
+            )
+            dataframe = dataframe.merge(drought_counts, on=["state", "district"], how="left")
+        else:
+            dataframe["drought_weather_episodes"] = 0
+        dataframe["drought_weather_episodes"] = dataframe["drought_weather_episodes"].fillna(0).astype(int)
         hydroclimate = self.historical_hydroclimate()
         dataframe["grid_latitude"] = (dataframe["latitude"] * 4).round() / 4
         dataframe["grid_longitude"] = (dataframe["longitude"] * 4).round() / 4
@@ -244,6 +269,10 @@ class StaticSusceptibilityBuilder:
         dataframe[event_columns] = dataframe[event_columns].fillna(0).astype(int)
         dataframe["low_elevation_score"] = _normalize(dataframe["elevation_mean_m"], invert=True)
         dataframe["terrain_relief_score"] = _normalize(dataframe["terrain_relief_m"])
+        dataframe["low_slope_score"] = _normalize(
+            dataframe.get("slope_mean_degrees", pd.Series(np.nan, index=dataframe.index)),
+            invert=True,
+        )
         dataframe["extreme_rainfall_score"] = _normalize(dataframe["precipitation_7d_p95"])
         dataframe["runoff_climatology_score"] = _normalize(dataframe["runoff_7d_climatology"])
         dataframe["soil_wetness_score"] = _normalize(dataframe["soil_moisture_climatology"])
@@ -252,39 +281,52 @@ class StaticSusceptibilityBuilder:
         dataframe["water_deficit_score"] = _normalize(
             dataframe["water_balance_climatology"], invert=True
         )
+        dataframe["drought_episode_score"] = _normalize(dataframe["drought_weather_episodes"])
         for hazard in ("flood", "drought", "cyclone"):
             dataframe[f"{hazard}_history_score"] = _normalize(
                 dataframe[f"{hazard}_independent_events"]
             )
         dataframe["flood_susceptibility"] = (
-            0.20 * dataframe["low_elevation_score"]
-            + 0.10 * dataframe["terrain_relief_score"]
-            + 0.20 * dataframe["flood_history_score"]
-            + 0.20 * dataframe["extreme_rainfall_score"]
-            + 0.20 * dataframe["runoff_climatology_score"]
+            0.15 * dataframe["low_elevation_score"]
+            + 0.05 * dataframe["terrain_relief_score"]
+            + 0.10 * dataframe["low_slope_score"].fillna(0.5)
+            + 0.15 * dataframe["flood_land_cover_score"].fillna(0.5)
+            + 0.15 * dataframe["flood_history_score"]
+            + 0.15 * dataframe["extreme_rainfall_score"]
+            + 0.15 * dataframe["runoff_climatology_score"]
             + 0.10 * dataframe["soil_wetness_score"]
         ).clip(0, 1)
         dataframe["cyclone_susceptibility"] = (
-            0.20 * dataframe["low_elevation_score"]
-            + 0.50 * dataframe["cyclone_history_score"]
+            0.10 * dataframe["low_elevation_score"]
+            + 0.15 * dataframe["cyclone_land_cover_score"].fillna(0.5)
+            + 0.45 * dataframe["cyclone_history_score"]
             + 0.30 * dataframe["wind_climatology_score"]
         ).clip(0, 1)
         dataframe["drought_susceptibility"] = (
-            0.40 * dataframe["drought_history_score"]
-            + 0.35 * dataframe["dry_spell_score"]
-            + 0.25 * dataframe["water_deficit_score"]
+            0.15 * dataframe["drought_land_cover_score"].fillna(0.5)
+            + 0.2125 * dataframe["drought_history_score"]
+            + 0.2125 * dataframe["dry_spell_score"]
+            + 0.2125 * dataframe["water_deficit_score"]
+            + 0.2125 * dataframe["drought_episode_score"]
         ).clip(0, 1)
         dataframe["river_factor"] = np.nan
-        dataframe["land_cover_factor"] = np.nan
+        dataframe["land_cover_factor"] = dataframe[
+            ["flood_land_cover_score", "cyclone_land_cover_score", "drought_land_cover_score"]
+        ].mean(axis=1)
         dataframe["soil_factor"] = np.nan
         dataframe["social_vulnerability"] = np.nan
-        dataframe["static_factor_coverage"] = np.where(
-            dataframe["geographic_validation_grade"].isin(["A", "B"]),
-            0.60,
-            np.where(dataframe["district_wide_usable"].astype(bool), 0.50, 0.40),
-        )
+        coverage = (
+            dataframe["elevation_mean_m"].notna().astype(float)
+            + dataframe["precipitation_7d_p95"].notna().astype(float)
+            + dataframe[event_columns].notna().all(axis=1).astype(float)
+            + dataframe["drought_weather_episodes"].notna().astype(float)
+            + dataframe["land_cover_sample_count"].fillna(0).gt(0).astype(float)
+        ) / 5.0
+        dataframe["static_factor_coverage"] = coverage
         dataframe["static_confidence_grade"] = np.where(
-            dataframe["district_wide_usable"].astype(bool), "C", "D"
+            dataframe["district_wide_usable"].astype(bool) & coverage.ge(0.8),
+            "B",
+            np.where(dataframe["district_wide_usable"].astype(bool), "C", "D"),
         )
         dataframe["assessment_scope"] = "land_hazard_only"
         dataframe["generated_at"] = datetime.now(UTC).isoformat()
@@ -295,10 +337,15 @@ class StaticSusceptibilityBuilder:
             "polygon_supported": int(dataframe["district_wide_usable"].sum()),
             "confidence_grades": dataframe["static_confidence_grade"].value_counts().to_dict(),
             "available_factors": [
-                "terrain", "verified_historical_hazard_frequency", "hydroclimate_normals"
+                "terrain",
+                "slope",
+                "land_cover",
+                "verified_historical_hazard_frequency",
+                "hydroclimate_normals",
+                "weather_derived_drought_history",
             ],
-            "missing_factors": ["rivers", "land_cover", "soil", "social_vulnerability"],
-            "scope": "land_hazard_only; not a population or asset vulnerability estimate",
+            "missing_factors": ["rivers", "soil", "social_vulnerability"],
+            "scope": "weather_hazard_outlook; not a population or asset vulnerability estimate",
             "output": str(Path(output_path)),
         }
         SUMMARY_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -308,17 +355,28 @@ class StaticSusceptibilityBuilder:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("terrain", "build", "all", "status"), default="all", nargs="?")
+    parser.add_argument(
+        "command",
+        choices=("terrain", "land-cover", "build", "all", "status"),
+        default="all",
+        nargs="?",
+    )
     arguments = parser.parse_args()
     result: dict = {}
     if arguments.command in {"terrain", "all"}:
-        result["terrain"] = TerrainCollector().collect()
+        result["terrain"] = SRTMTerrainCollector().collect()
+    if arguments.command in {"land-cover", "all"}:
+        result["land_cover"] = WorldCoverCollector().collect()
     if arguments.command in {"build", "all"}:
         result["static"] = StaticSusceptibilityBuilder().build()
     if arguments.command == "status":
         if not SUMMARY_PATH.exists():
             raise SystemExit("Susceptibility summary does not exist.")
         result = json.loads(SUMMARY_PATH.read_text(encoding="utf-8"))
+    context = {key: value for key, value in result.items() if key in {"terrain", "land_cover"}}
+    if context:
+        CONTEXT_MANIFEST_PATH.parent.mkdir(parents=True, exist_ok=True)
+        CONTEXT_MANIFEST_PATH.write_text(json.dumps(context, indent=2), encoding="utf-8")
     print(json.dumps(result, indent=2))
 
 

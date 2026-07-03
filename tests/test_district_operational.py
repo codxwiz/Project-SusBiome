@@ -3,13 +3,20 @@ from __future__ import annotations
 import json
 import tempfile
 import unittest
+from datetime import UTC, datetime, timedelta
+from unittest.mock import patch
 from pathlib import Path
 
 import pandas as pd
 
 from scripts.forecast.open_meteo import OpenMeteoForecastCollector
 from scripts.geospatial.districts import DistrictBoundaryRegistry, point_in_geometry
-from scripts.serving.district_assessment import district_report
+from scripts.serving.district_assessment import (
+    AssessmentUnavailableError,
+    district_report,
+    load_current_assessment,
+)
+from scripts.serving.location_assessment import location_report
 
 
 class DistrictGeometryTests(unittest.TestCase):
@@ -81,7 +88,16 @@ class ForecastContractTests(unittest.TestCase):
 
 
 class AssessmentReportTests(unittest.TestCase):
-    def test_report_keeps_signal_separate_from_unavailable_probability(self):
+    def test_stale_serving_data_is_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "assessment.parquet"
+            pd.DataFrame(
+                {"collected_at": [datetime.now(UTC) - timedelta(hours=40)], "value": [1]}
+            ).to_parquet(path, index=False)
+            with self.assertRaisesRegex(AssessmentUnavailableError, "stale"):
+                load_current_assessment(path, max_age_hours=36)
+
+    def test_report_keeps_weather_score_separate_from_probability(self):
         row = pd.Series(
             {
                 "state": "Assam",
@@ -89,11 +105,12 @@ class AssessmentReportTests(unittest.TestCase):
                 "horizon_days": 7,
                 "valid_from": pd.Timestamp("2026-01-01"),
                 "valid_to": pd.Timestamp("2026-01-07"),
-                "assessment_available": False,
+                "assessment_available": True,
                 "vulnerability_available": False,
-                "assessment_scope": "land_hazard_only",
-                "confidence_grade": "D",
-                "confidence_reason": "Model unavailable.",
+                "assessment_scope": "district_weather_hazard_outlook",
+                "assessment_method": "weather_pattern_index_v1",
+                "confidence_grade": "A",
+                "confidence_reason": "Weather assessment available.",
                 "static_factor_coverage": 0.4,
                 "boundary_status": "exact",
                 "precipitation_sum_mm": 120.0,
@@ -109,10 +126,12 @@ class AssessmentReportTests(unittest.TestCase):
                     for hazard in ("flood", "cyclone", "drought")
                     for name, value in (
                         ("forecast_signal", 0.7),
+                        ("weather_risk_score", 62.5),
                         ("probability", float("nan")),
                         ("susceptibility", 0.5),
-                        ("land_risk_index", float("nan")),
-                        ("risk_level", "UNAVAILABLE"),
+                        ("land_risk_index", 0.625),
+                        ("risk_level", "HIGH"),
+                        ("risk_drivers", json.dumps(["Test driver"])),
                     )
                 },
             }
@@ -120,7 +139,33 @@ class AssessmentReportTests(unittest.TestCase):
         report = district_report(row)
         self.assertEqual(report["hazards"]["flood"]["forecast_signal"], 0.7)
         self.assertIsNone(report["hazards"]["flood"]["probability"])
-        self.assertEqual(report["hazards"]["flood"]["risk_level"], "UNAVAILABLE")
+        self.assertEqual(report["hazards"]["flood"]["weather_risk_score"], 62.5)
+        self.assertEqual(report["hazards"]["flood"]["risk_level"], "HIGH")
+
+    def test_location_report_keeps_probability_separate(self):
+        with (
+            patch(
+                "scripts.serving.location_assessment.locate_district",
+                return_value={
+                    "state": "Assam",
+                    "district": "Dibrugarh",
+                    "match_method": "district_polygon",
+                    "distance_km": 0.0,
+                },
+            ),
+            patch(
+                "scripts.serving.location_assessment._srtm_context",
+                return_value={"elevation_m": 100.0, "slope_degrees": 2.0},
+            ),
+            patch(
+                "scripts.serving.location_assessment._worldcover_context",
+                return_value={"class_code": 40, "class_name": "cropland"},
+            ),
+        ):
+            report = location_report(27.48, 94.91, 7)
+        self.assertTrue(report["context_available"])
+        self.assertIsNone(report["hazards"]["flood"]["probability"])
+        self.assertEqual(report["assessment_method"], "location_weather_land_index_v1")
 
 
 if __name__ == "__main__":

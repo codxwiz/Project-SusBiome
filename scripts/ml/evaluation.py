@@ -8,6 +8,7 @@ from sklearn.metrics import (
     accuracy_score,
     average_precision_score,
     balanced_accuracy_score,
+    brier_score_loss,
     confusion_matrix,
     f1_score,
     precision_score,
@@ -198,6 +199,40 @@ def alert_burden_metrics(
         "mean_alerts_per_day": float(daily_alerts.mean()) if len(daily_alerts) else 0.0,
         "maximum_alerts_per_day": int(daily_alerts.max()) if len(daily_alerts) else 0,
         **event_metrics,
+    }
+
+
+def probability_diagnostics(
+    probabilities: np.ndarray,
+    target: pd.Series,
+    *,
+    bins: int = 10,
+) -> dict:
+    """Measure probability calibration without implying release eligibility."""
+    values = np.asarray(probabilities, dtype=float)
+    truth = np.asarray(target, dtype=int)
+    if len(values) != len(truth) or not len(values):
+        raise ValueError("Probability diagnostics require aligned non-empty inputs.")
+    edges = np.linspace(0.0, 1.0, bins + 1)
+    assignments = np.clip(np.digitize(values, edges[1:-1], right=False), 0, bins - 1)
+    calibration_error = 0.0
+    populated_bins = 0
+    for index in range(bins):
+        selected = assignments == index
+        if not selected.any():
+            continue
+        populated_bins += 1
+        calibration_error += float(selected.mean()) * abs(
+            float(values[selected].mean()) - float(truth[selected].mean())
+        )
+    return {
+        "rows": len(values),
+        "positive_prevalence": float(truth.mean()),
+        "mean_score": float(values.mean()),
+        "brier_score": float(brier_score_loss(truth, values)),
+        "expected_calibration_error": float(calibration_error),
+        "populated_bins": populated_bins,
+        "calibrated_probability": False,
     }
 
 

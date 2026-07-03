@@ -27,6 +27,7 @@ from scripts.fusion.historical import fuse_frames
 from scripts.ingestion.historical_weather import era5_request
 from scripts.labels.verified import align_events, prepare_events
 from scripts.api.dependencies import require_api_key
+from scripts.api.dependencies import dependency_errors, dependency_status
 from scripts.monitoring.drift import drift_report
 from ground_truth.build import normalize
 from ground_truth.collectors.collect_gdacs import _geometry_contains
@@ -170,6 +171,23 @@ class ProductionGuardTests(unittest.TestCase):
             payload = readiness(response)
         self.assertFalse(payload["ready"])
         self.assertEqual(response.status_code, 503)
+
+    def test_dependency_status_includes_operational_monitoring(self):
+        with patch(
+            "scripts.api.dependencies.operational_status",
+            return_value={"healthy": True},
+        ):
+            status = dependency_status()
+        self.assertTrue(status["operations"])
+
+    def test_dependency_status_explains_unhealthy_operations(self):
+        with patch(
+            "scripts.api.dependencies.operational_status",
+            return_value={"healthy": False, "findings": ["No refresh record exists."]},
+        ):
+            status = dependency_status()
+        self.assertFalse(status["operations"])
+        self.assertEqual(dependency_errors()["operations"], "No refresh record exists.")
 
     def test_district_registry_covers_all_northeast_states(self):
         locations = DashboardLoader.locations()
@@ -334,6 +352,13 @@ class ProductionGuardTests(unittest.TestCase):
         self.assertEqual(request["area"], [30.5, 87.0, 20.0, 98.5])
         self.assertEqual(len(request["day"]), 29)
         self.assertEqual(len(request["time"]), 24)
+
+    def test_era5_request_supports_partial_current_month(self):
+        request = era5_request(2026, 6, start_day=1, end_day=28)
+
+        self.assertEqual(request["day"][0], "01")
+        self.assertEqual(request["day"][-1], "28")
+        self.assertEqual(len(request["day"]), 28)
 
     def test_historical_fusion_prefers_gpm_precipitation(self):
         keys = {

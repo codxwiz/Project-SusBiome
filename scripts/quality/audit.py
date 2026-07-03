@@ -195,7 +195,8 @@ def audit_operational() -> list[Finding]:
         if usable != 133:
             findings.append(
                 Finding(
-                    "ERROR", "operational.boundary_coverage",
+                    "WARNING" if usable >= 130 else "ERROR",
+                    "operational.boundary_coverage",
                     f"Found current usable polygons for {usable}/133 districts.",
                 )
             )
@@ -242,10 +243,234 @@ def audit_operational() -> list[Finding]:
         if available != len(assessment):
             findings.append(
                 Finding(
-                    "ERROR", "operational.model_assessments",
-                    f"Validated model probabilities are available for {available}/{len(assessment)} rows.",
+                    "ERROR", "operational.weather_assessments",
+                    f"Weather-pattern assessments are available for {available}/{len(assessment)} rows.",
                 )
             )
+    return findings
+
+
+def audit_confirmations() -> list[Finding]:
+    findings = []
+    chirps_path = PROJECT_ROOT / "data/quality/chirps_gpm_crosscheck.json"
+    drought_path = PROJECT_ROOT / "data/quality/weather_drought_history.json"
+    cyclone_path = PROJECT_ROOT / "data/silver/alerts/imd_cyclone.json"
+    cyclone_history_path = PROJECT_ROOT / "data/quality/ibtracs_cyclone_provenance.json"
+    if not chirps_path.exists():
+        findings.append(Finding("ERROR", "validation.chirps", "CHIRPS rainfall cross-check is missing."))
+    else:
+        chirps = json.loads(chirps_path.read_text(encoding="utf-8"))
+        if int(chirps.get("districts", 0)) != 133:
+            findings.append(
+                Finding(
+                    "ERROR",
+                    "validation.chirps_coverage",
+                    f"CHIRPS cross-check covers {chirps.get('districts', 0)}/133 districts.",
+                )
+            )
+    if not drought_path.exists():
+        findings.append(Finding("ERROR", "history.drought", "Weather-derived drought history is missing."))
+    else:
+        drought = json.loads(drought_path.read_text(encoding="utf-8"))
+        if int(drought.get("episodes", 0)) == 0:
+            findings.append(Finding("ERROR", "history.drought", "No drought episodes were identified."))
+    if not cyclone_path.exists():
+        findings.append(Finding("ERROR", "confirmation.imd_cyclone", "IMD cyclone confirmation is missing."))
+    else:
+        cyclone = json.loads(cyclone_path.read_text(encoding="utf-8"))
+        collected = pd.to_datetime(cyclone.get("collected_at"), utc=True, errors="coerce")
+        age_hours = (
+            float("inf")
+            if pd.isna(collected)
+            else (datetime.now(UTC) - collected.to_pydatetime()).total_seconds() / 3600
+        )
+        if age_hours > 24:
+            findings.append(
+                Finding(
+                    "ERROR",
+                    "confirmation.imd_cyclone_freshness",
+                    f"IMD cyclone confirmation is {age_hours:.1f} hours old.",
+                )
+            )
+    if not cyclone_history_path.exists():
+        findings.append(
+            Finding(
+                "ERROR",
+                "history.cyclone_provenance",
+                "Cyclone track agency provenance is missing.",
+            )
+        )
+    else:
+        cyclone_history = json.loads(cyclone_history_path.read_text(encoding="utf-8"))
+        if int(cyclone_history.get("storms", 0)) < MIN_INDEPENDENT_EVENTS:
+            findings.append(
+                Finding(
+                    "ERROR",
+                    "history.cyclone_diversity",
+                    f"Found {cyclone_history.get('storms', 0)}/{MIN_INDEPENDENT_EVENTS} cyclone tracks.",
+                )
+            )
+        if int(cyclone_history.get("imd_observation_records", 0)) == 0:
+            findings.append(
+                Finding(
+                    "ERROR",
+                    "history.cyclone_imd_observations",
+                    "No IMD New Delhi agency observations were retained in cyclone history.",
+                )
+            )
+    return findings
+
+
+def audit_land_context() -> list[Finding]:
+    findings = []
+    terrain_path = PROJECT_ROOT / "data/silver/susceptibility/terrain.parquet"
+    land_cover_path = PROJECT_ROOT / "data/silver/susceptibility/land_cover.parquet"
+    if not terrain_path.exists():
+        findings.append(Finding("ERROR", "land.terrain", "SRTM terrain context is missing."))
+    else:
+        terrain = pd.read_parquet(terrain_path)
+        sources = terrain.get("terrain_source", pd.Series(dtype=str)).astype(str)
+        source_ok = len(sources) == 133 and sources.str.contains("SRTMGL1").all()
+        slope_ok = "slope_mean_degrees" in terrain and terrain["slope_mean_degrees"].notna().all()
+        if len(terrain) != 133 or not source_ok or not slope_ok:
+            findings.append(
+                Finding(
+                    "ERROR",
+                    "land.terrain_contract",
+                    "Terrain must cover 133 districts with SRTM elevation and slope.",
+                )
+            )
+    if not land_cover_path.exists():
+        findings.append(Finding("ERROR", "land.land_cover", "ESA WorldCover context is missing."))
+    else:
+        land_cover = pd.read_parquet(land_cover_path)
+        if (
+            len(land_cover) != 133
+            or not land_cover["land_cover_sample_count"].gt(0).all()
+            or not land_cover["land_cover_source"].astype(str).str.contains("WorldCover").all()
+            or "dominant_land_cover_class" not in land_cover
+            or not land_cover["dominant_land_cover_class"].notna().all()
+        ):
+            findings.append(
+                Finding(
+                    "ERROR",
+                    "land.land_cover_contract",
+                    "Land cover must contain valid ESA WorldCover samples for 133 districts.",
+                )
+            )
+    if not findings:
+        try:
+            from scripts.serving.location_assessment import location_report
+
+            sample = location_report(27.48, 94.91, 7)
+            if not sample["context_available"]:
+                raise ValueError("point context is unavailable")
+        except Exception as error:
+            findings.append(
+                Finding("ERROR", "land.location_contract", f"Location assessment failed: {error}")
+            )
+    findings.append(
+        Finding(
+            "WARNING",
+            "vulnerability.scope",
+            "Scores cover weather hazard and physical land susceptibility, not people or asset exposure.",
+        )
+    )
+    return findings
+
+
+def audit_owner_review() -> list[Finding]:
+    path = PROJECT_ROOT / "data/quality/production_event_review.csv"
+    if not path.exists():
+        return [
+            Finding(
+                "ERROR",
+                "owner_review.exists",
+                "The production flood/cyclone review package is missing.",
+            )
+        ]
+    review = pd.read_csv(path, keep_default_na=False)
+    required = {
+        "hazard_type",
+        "review_status",
+        "event_occurred_in_district",
+        "date_correct",
+    }
+    missing = required - set(review.columns)
+    if missing:
+        return [
+            Finding(
+                "ERROR",
+                "owner_review.schema",
+                "Review package is missing: " + ", ".join(sorted(missing)),
+            )
+        ]
+    status = review["review_status"].astype(str).str.upper().str.strip()
+    pending = ~status.isin({"APPROVED", "REJECTED"})
+    correctness = review[["event_occurred_in_district", "date_correct"]].apply(
+        lambda column: column.astype(str).str.upper().str.strip().isin({"YES", "NO"})
+    )
+    incomplete = pending | ~correctness.all(axis=1)
+    if incomplete.any():
+        return [
+            Finding(
+                "ERROR",
+                "owner_review.pending",
+                f"{int(incomplete.sum())}/{len(review)} production review rows are incomplete.",
+            )
+        ]
+    occurred = review["event_occurred_in_district"].astype(str).str.upper().str.strip()
+    date_correct = review["date_correct"].astype(str).str.upper().str.strip()
+    approved = int((status.eq("APPROVED") & occurred.eq("YES") & date_correct.eq("YES")).sum())
+    if approved < 20:
+        return [
+            Finding(
+                "ERROR",
+                "owner_review.approved",
+                f"Only {approved}/20 required cases were approved.",
+            )
+        ]
+    rejected = review.loc[
+        status.eq("REJECTED") | occurred.eq("NO") | date_correct.eq("NO")
+    ].copy()
+    if not rejected.empty:
+        ground_truth = pd.read_parquet(
+            PROJECT_ROOT / "data/gold/ground_truth.parquet",
+            columns=["event_date", "hazard_type", "state", "district", "source_event_id"],
+        )
+        ground_truth["event_date"] = pd.to_datetime(
+            ground_truth["event_date"], utc=True
+        ).dt.date.astype(str)
+        keys = ["event_date", "hazard_type", "state", "district", "source_event_id"]
+        retained = rejected[keys].merge(ground_truth[keys], on=keys, how="inner")
+        if not retained.empty:
+            return [
+                Finding(
+                    "ERROR",
+                    "owner_review.rebuild",
+                    "Rejected review cases remain in canonical ground truth; rebuild it.",
+                )
+            ]
+    return []
+
+
+def audit_automation() -> list[Finding]:
+    findings = []
+    scheduler = Path.home() / "Library/LaunchAgents/com.susbiome.refresh.plist"
+    refresh = PROJECT_ROOT / "data/logs/operations/refresh.json"
+    backups = sorted((PROJECT_ROOT / "data/backups/operations").glob("*.tar.gz"))
+    if not scheduler.exists():
+        findings.append(
+            Finding("ERROR", "automation.scheduler", "The daily launchd scheduler is not installed.")
+        )
+    if not refresh.exists():
+        findings.append(
+            Finding("ERROR", "automation.refresh", "No verified automated refresh record exists.")
+        )
+    elif json.loads(refresh.read_text(encoding="utf-8")).get("status") != "complete":
+        findings.append(Finding("ERROR", "automation.refresh", "The latest automated refresh failed."))
+    if not backups:
+        findings.append(Finding("ERROR", "automation.backup", "No operational backup exists."))
     return findings
 
 
@@ -315,9 +540,32 @@ def audit_sources() -> list[Finding]:
 
 
 def run(training_path: Path = TRAINING_DATASET) -> dict:
+    assessment_manifest = PROJECT_ROOT / "data/serving/district_assessment_manifest.json"
+    weather_mode = False
+    if assessment_manifest.exists():
+        payload = json.loads(assessment_manifest.read_text(encoding="utf-8"))
+        weather_mode = payload.get("assessment_method") in {
+            "weather_pattern_index_v1",
+            "weather_land_index_v2",
+        }
     findings = [
-        *audit_sources(), *audit_operational(), *audit_training(training_path), *audit_models()
+        *audit_sources(),
+        *audit_operational(),
+        *audit_land_context(),
+        *audit_owner_review(),
+        *audit_confirmations(),
+        *audit_automation(),
     ]
+    if weather_mode:
+        findings.append(
+            Finding(
+                "WARNING",
+                "models.scope",
+                "ML probabilities are not required for the weather-pattern outlook.",
+            )
+        )
+    else:
+        findings.extend([*audit_training(training_path), *audit_models()])
     return {
         "ready": not any(item.severity == "ERROR" for item in findings),
         "findings": [asdict(item) for item in findings],

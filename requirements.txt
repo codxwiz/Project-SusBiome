@@ -22,6 +22,7 @@ pyarrow>=18,<22
 pydantic==2.13.4
 pydantic_core==2.46.4
 python-dateutil==2.9.0.post0
+rasterio>=1.4,<2
 requests==2.34.2
 scikit-learn==1.9.0
 scipy==1.18.0

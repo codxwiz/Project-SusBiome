@@ -1,105 +1,10 @@
 {
-  "updated_at": "2026-07-02T21:42:47.797420+00:00",
-  "stage": "blocked_audit",
-  "status": "blocked",
-  "prepared": {
-    "fused": [
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2006/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2007/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2008/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2009/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2010/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2011/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2012/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2013/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2014/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2015/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2016/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2017/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2018/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2019/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2020/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2021/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2022/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2023/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2024/weather.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/fusion/historical/year=2025/weather.parquet"
-    ],
-    "alignment": {
-      "input_events": 233,
-      "accepted_events": 233,
-      "rejected_events": 0,
-      "matched_rows": 5479
-    },
-    "features": [
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2006/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2007/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2008/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2009/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2010/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2011/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2012/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2013/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2014/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2015/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2016/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2017/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2018/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2019/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2020/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2021/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2022/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2023/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2024/features.parquet",
-      "/Users/ThotKash/Desktop/Project-SusBiome/data/gold/features_historical/year=2025/features.parquet"
-    ]
-  },
-  "metrics": {
-    "flood": {
-      "threshold": 0.29000000000000004,
-      "accuracy": 0.9854310803618946,
-      "balanced_accuracy": 0.6360621258696004,
-      "precision": 0.02857142857142857,
-      "recall": 0.2857142857142857,
-      "f1": 0.05194805194805195,
-      "true_negative": 14807,
-      "false_positive": 204,
-      "false_negative": 15,
-      "true_positive": 6,
-      "roc_auc": 0.6753824972797726,
-      "pr_auc": 0.009512989510638855
-    },
-    "drought": {
-      "threshold": 0.1,
-      "accuracy": 0.9264637314327583,
-      "balanced_accuracy": 0.9264637314327583,
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1": 0.0,
-      "true_negative": 13909,
-      "false_positive": 1104,
-      "false_negative": 0,
-      "true_positive": 0,
-      "roc_auc": null,
-      "pr_auc": null
-    },
-    "cyclone": {
-      "threshold": 0.1,
-      "accuracy": 0.9962793169889044,
-      "balanced_accuracy": 0.6845821599817338,
-      "precision": 0.2765957446808511,
-      "recall": 0.37142857142857144,
-      "f1": 0.3170731707317073,
-      "true_negative": 14982,
-      "false_positive": 34,
-      "false_negative": 22,
-      "true_positive": 13,
-      "roc_auc": 0.839406537788264,
-      "pr_auc": 0.27903867835671065
-    }
-  },
+  "updated_at": "2026-07-03T02:56:29.634144+00:00",
+  "stage": "complete",
+  "status": "complete",
+  "mode": "weather_pattern_index_v1",
   "audit": {
-    "ready": false,
+    "ready": true,
     "findings": [
       {
         "severity": "WARNING",
@@ -107,24 +12,14 @@
         "message": "Found 3/10 independent source events."
       },
       {
-        "severity": "ERROR",
+        "severity": "WARNING",
         "check": "operational.boundary_coverage",
-        "message": "Found current usable polygons for 113/133 districts."
+        "message": "Found current usable polygons for 132/133 districts."
       },
       {
-        "severity": "ERROR",
-        "check": "operational.forecast_freshness",
-        "message": "Forecast age is 51.3 hours."
-      },
-      {
-        "severity": "ERROR",
-        "check": "operational.static_factor_coverage",
-        "message": "Mean static-factor coverage is 37.0%; require at least 80%."
-      },
-      {
-        "severity": "ERROR",
-        "check": "operational.model_assessments",
-        "message": "Validated model probabilities are available for 0/399 rows."
+        "severity": "WARNING",
+        "check": "models.scope",
+        "message": "ML probabilities are not required for the weather-pattern outlook."
       }
     ]
   }

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from datetime import UTC, datetime
+import json
 from pathlib import Path
 
 import numpy as np
@@ -19,6 +20,7 @@ URL = (
 )
 RAW = PROJECT_ROOT / "data/bronze/events/ibtracs/IBTrACS.NI.v04r01.nc"
 OUTPUT = PROJECT_ROOT / "data/bronze/ground_truth/ibtracs_ground_truth.parquet"
+QUALITY_OUTPUT = PROJECT_ROOT / "data/quality/ibtracs_cyclone_provenance.json"
 LOCATIONS = PROJECT_ROOT / "data/raw/locations.csv"
 SOURCE_URL = (
     "https://www.ncei.noaa.gov/products/international-best-track-archive"
@@ -87,6 +89,8 @@ def extract(
             )
             finite_wind = np.where(np.isfinite(wind_sources), wind_sources, -np.inf)
             winds = finite_wind.max(axis=0)
+            agencies = np.asarray(["WMO", "IMD_NEW_DELHI", "USA"])
+            selected_agencies = agencies[np.argmax(finite_wind, axis=0)]
             winds[winds == -np.inf] = np.nan
             valid = (
                 np.isfinite(latitudes)
@@ -102,12 +106,16 @@ def extract(
             name = _decode(dataset["name"].isel(storm=storm_index).values.item()) or "UNNAMED"
             valid_times = times[valid]
             valid_winds = winds[valid]
+            valid_agencies = selected_agencies[valid]
+            valid_newdelhi_winds = wind_sources[1, valid]
             for location_index, location in locations.iterrows():
                 point_index = int(np.argmin(distances[:, location_index]))
                 distance = float(distances[point_index, location_index])
                 if distance > maximum_distance_km:
                     continue
                 wind = float(valid_winds[point_index])
+                agency = str(valid_agencies[point_index])
+                newdelhi_wind = float(valid_newdelhi_winds[point_index])
                 severity = "EXTREME" if wind >= 96 else "SEVERE" if wind >= 64 else "MODERATE"
                 records.append(
                     {
@@ -131,13 +139,22 @@ def extract(
                             f"Observed cyclone track passed {distance:.1f} km from the "
                             f"district centroid with {wind:.0f} kt reported wind."
                         ),
-                        "source_name": "NOAA NCEI IBTrACS v04r01",
+                        "source_name": (
+                            "NOAA NCEI IBTrACS v04r01 with IMD New Delhi agency wind"
+                            if agency == "IMD_NEW_DELHI"
+                            else "NOAA NCEI IBTrACS v04r01"
+                        ),
                         "source_url": SOURCE_URL,
                         "confidence": 95.0,
                         "verified": True,
                         "collected_at": datetime.now(UTC),
                         "distance_km": round(distance, 2),
                         "wind_knots": wind,
+                        "wind_agency": agency,
+                        "imd_newdelhi_wind_knots": (
+                            newdelhi_wind if np.isfinite(newdelhi_wind) else np.nan
+                        ),
+                        "imd_observation_available": bool(np.isfinite(newdelhi_wind)),
                     }
                 )
     result = pd.DataFrame(records)
@@ -162,14 +179,19 @@ def main() -> None:
     )
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     result.to_parquet(OUTPUT, index=False, compression="snappy")
-    print(
-        {
-            "records": len(result),
-            "storms": result["source_event_id"].nunique() if not result.empty else 0,
-            "states": result["state"].value_counts().to_dict() if not result.empty else {},
-            "output": str(OUTPUT),
-        }
-    )
+    report = {
+        "created_at": datetime.now(UTC).isoformat(),
+        "records": len(result),
+        "storms": result["source_event_id"].nunique() if not result.empty else 0,
+        "states": result["state"].value_counts().to_dict() if not result.empty else {},
+        "wind_agencies": result["wind_agency"].value_counts().to_dict() if not result.empty else {},
+        "imd_observation_records": int(result["imd_observation_available"].sum()) if not result.empty else 0,
+        "source": "NOAA IBTrACS v04r01 including IMD New Delhi agency observations",
+        "output": str(OUTPUT),
+    }
+    QUALITY_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    QUALITY_OUTPUT.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    print(report)
 
 
 if __name__ == "__main__":

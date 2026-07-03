@@ -33,13 +33,11 @@ from scripts.sources.common.config import PROJECT_ROOT
 
 API_NAME = "Project SusBiome API"
 
-API_VERSION = "1.1.0"
+API_VERSION = "1.2.0"
 
 API_DESCRIPTION = (
 
-    "Flood, Drought and Cyclone "
-
-    "Prediction & Risk Assessment API."
+    "Flood, drought, and cyclone weather and physical land susceptibility API."
 
 )
 

@@ -20,6 +20,7 @@ from scripts.sources.common.config import PROJECT_ROOT
 
 LOCATIONS_PATH = PROJECT_ROOT / "data/raw/locations.csv"
 SOURCE_PATH = PROJECT_ROOT / "data/raw/geospatial/geoBoundaries-IND-ADM2.geojson"
+OVERRIDE_PATH = PROJECT_ROOT / "data/raw/geospatial/osm-ne-adm5-overrides.geojson"
 BOUNDARIES_PATH = PROJECT_ROOT / "data/silver/geospatial/ne_district_boundaries.geojson"
 MANIFEST_PATH = PROJECT_ROOT / "data/silver/geospatial/district_boundary_manifest.csv"
 SUMMARY_PATH = PROJECT_ROOT / "data/silver/geospatial/district_boundary_summary.json"
@@ -39,6 +40,10 @@ SOURCE = {
         "releaseData/gbOpen/IND/ADM2/geoBoundaries-IND-ADM2_simplified.geojson"
     ),
     "sha256": "d68db39cd3e2d0892af268e2b0454166368ce3b5b8a78fcda63069ec92a641db",
+}
+
+OVERRIDE_ALIASES = {
+    "kamrupmetro": "kamrupmetropolitan",
 }
 
 
@@ -128,9 +133,11 @@ class DistrictBoundaryRegistry:
         self,
         source_path: str | Path = SOURCE_PATH,
         locations_path: str | Path = LOCATIONS_PATH,
+        override_path: str | Path = OVERRIDE_PATH,
     ) -> None:
         self.source_path = Path(source_path)
         self.locations_path = Path(locations_path)
+        self.override_path = Path(override_path)
 
     def load_source(self) -> list[dict]:
         if not self.source_path.exists():
@@ -240,6 +247,27 @@ class DistrictBoundaryRegistry:
                 if match is not keeper:
                     match.status = "legacy_parent"
                     match.geometry = None
+        if self.override_path.exists():
+            overrides = json.loads(self.override_path.read_text(encoding="utf-8"))
+            by_name = {
+                normalize_name(feature["properties"]["shapeName"]): feature
+                for feature in overrides.get("features", [])
+            }
+            for match in matches:
+                if match.geometry is not None:
+                    continue
+                lookup = OVERRIDE_ALIASES.get(
+                    normalize_name(match.district), normalize_name(match.district)
+                )
+                feature = by_name.get(lookup)
+                if feature is None:
+                    continue
+                source_name = str(feature["properties"]["shapeName"])
+                match.source_name = source_name
+                match.source_id = str(feature["properties"]["shapeID"])
+                match.status = "exact_override"
+                match.similarity = round(_similarity(match.district, source_name), 4)
+                match.geometry = feature["geometry"]
         return matches
 
     def build(
@@ -252,6 +280,11 @@ class DistrictBoundaryRegistry:
         manifest_path = Path(manifest_path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         source_sha256 = hashlib.sha256(self.source_path.read_bytes()).hexdigest()
+        override_metadata = (
+            json.loads(self.override_path.read_text(encoding="utf-8")).get("metadata", {})
+            if self.override_path.exists()
+            else None
+        )
         generated_at = datetime.now(UTC).isoformat()
         features = []
         manifest_rows = []
@@ -261,9 +294,11 @@ class DistrictBoundaryRegistry:
                 usable
                 and point_in_geometry(match.longitude, match.latitude, match.geometry)
             )
-            if match.status == "exact" and point_inside:
+            if match.status in {"exact", "exact_override"} and point_inside:
                 validation_grade = "A"
-            elif match.status == "exact" or (match.status == "fuzzy" and point_inside):
+            elif match.status in {"exact", "exact_override"} or (
+                match.status == "fuzzy" and point_inside
+            ):
                 validation_grade = "B"
             elif usable:
                 validation_grade = "C"
@@ -282,7 +317,11 @@ class DistrictBoundaryRegistry:
                     "district_wide_usable": usable,
                     "representative_point_inside": point_inside,
                     "geographic_validation_grade": validation_grade,
-                    "boundary_year": SOURCE["boundary_year"],
+                    "boundary_year": (
+                        datetime.now(UTC).year
+                        if match.status == "exact_override"
+                        else SOURCE["boundary_year"]
+                    ),
                 }
             )
             if usable:
@@ -295,14 +334,23 @@ class DistrictBoundaryRegistry:
                             "source_name": match.source_name,
                             "source_id": match.source_id,
                             "boundary_status": match.status,
-                            "boundary_year": SOURCE["boundary_year"],
+                            "boundary_year": (
+                                datetime.now(UTC).year
+                                if match.status == "exact_override"
+                                else SOURCE["boundary_year"]
+                            ),
                         },
                         "geometry": match.geometry,
                     }
                 )
         payload = {
             "type": "FeatureCollection",
-            "metadata": {**SOURCE, "source_sha256": source_sha256, "generated_at": generated_at},
+            "metadata": {
+                **SOURCE,
+                "source_sha256": source_sha256,
+                "override_source": override_metadata,
+                "generated_at": generated_at,
+            },
             "features": features,
         }
         output_path.write_text(json.dumps(payload, separators=(",", ":")), encoding="utf-8")
@@ -325,6 +373,7 @@ class DistrictBoundaryRegistry:
             "representative_points_inside": int(manifest["representative_point_inside"].sum()),
             "duplicate_source_ids": duplicate_source_ids,
             "source": SOURCE,
+            "override_source": override_metadata,
             "source_sha256": source_sha256,
         }
         SUMMARY_PATH.write_text(json.dumps(summary, indent=2), encoding="utf-8")

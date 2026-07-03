@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-06-30 18:10:01.569095+00:00",
-  "last_date": "2026-06-29",
-  "requested": 1,
-  "completed": 1,
+  "updated_at": "2026-07-03 03:38:31.681029+00:00",
+  "last_date": "2026-07-01",
+  "requested": 3,
+  "completed": 2,
   "skipped": 0,
   "failed": 0,
-  "downloaded_bytes": 65047
+  "downloaded_bytes": 124742
 }

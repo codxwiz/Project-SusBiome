@@ -24,16 +24,19 @@ from __future__ import annotations
 import logging
 import hmac
 import os
+from pathlib import Path
 
 from fastapi import Header, HTTPException
 
 from scripts.prediction.orchestrator import (
     PredictionOrchestrator,
 )
+from scripts.operations.monitor import status as operational_status
 
 from scripts.risk.orchestrator import (
     RiskOrchestrator,
 )
+from scripts.serving.district_assessment import ASSESSMENT_PATH
 
 logger = logging.getLogger(__name__)
 
@@ -185,7 +188,24 @@ def dependency_status(
     Dependency status.
     """
 
+    try:
+        operations = operational_status()
+        operations_healthy = bool(operations["healthy"])
+    except Exception as error:
+        operations_healthy = False
+        _errors["operations"] = str(error)
+    else:
+        if operations_healthy:
+            _errors.pop("operations", None)
+        else:
+            findings = operations.get("findings") or ["Operational refresh is not healthy."]
+            _errors["operations"] = " ".join(str(finding) for finding in findings)
+
     return {
+
+        "weather_assessment": Path(ASSESSMENT_PATH).exists(),
+
+        "operations": operations_healthy,
 
         "prediction":
 
@@ -211,11 +231,8 @@ def ready() -> bool:
     Check API readiness.
     """
 
-    return all(
-
-        dependency_status().values()
-
-    )
+    status = dependency_status()
+    return status["weather_assessment"] and status["operations"]
 
 
 # ==========================================================
@@ -229,11 +246,14 @@ def initialize() -> None:
 
     configure_logging()
 
-    for initializer in (get_prediction_orchestrator, get_risk_orchestrator):
-        try:
-            initializer()
-        except HTTPException:
-            pass
+    if os.getenv("SUSBIOME_ENABLE_LEGACY_ML", "false").lower() == "true":
+        for initializer in (get_prediction_orchestrator, get_risk_orchestrator):
+            try:
+                initializer()
+            except HTTPException:
+                pass
+    else:
+        logger.info("Weather-pattern assessment mode initialized.")
 
     logger.info(
         "API initialized."

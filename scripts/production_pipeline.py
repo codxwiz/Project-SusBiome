@@ -8,7 +8,6 @@ from dataclasses import asdict
 from datetime import UTC, datetime
 from pathlib import Path
 
-from ground_truth.build import DEFAULT_INPUTS, run as build_ground_truth
 from scripts.features.hazards import build_year
 from scripts.fusion.historical import fuse_year
 from scripts.ingestion.historical_weather import GPM_EXPECTED_DAYS, status as ingestion_status
@@ -17,7 +16,7 @@ from scripts.labels.forecast_targets import build as build_forecast_targets
 from scripts.ml.registry import ModelRegistry
 from scripts.ml.trainer import MLTrainer
 from scripts.operations.refresh import refresh as refresh_operational
-from scripts.quality.audit import audit_sources, audit_training, run as audit_artifacts
+from scripts.quality.audit import run as audit_artifacts
 from scripts.sources.common.config import PROJECT_ROOT
 
 STATE_FILE = PROJECT_ROOT / "data/logs/production_pipeline.json"
@@ -82,38 +81,13 @@ def finalize(start_year: int, end_year: int, *, force: bool = False) -> dict:
         save_state("blocked_collection", result)
         return result
 
-    ground_truth = build_ground_truth(DEFAULT_INPUTS)
-    save_state("ground_truth_built", ground_truth)
-    prepared = prepare(
-        PROJECT_ROOT / "data/gold/ground_truth.parquet",
-        start_year,
-        end_year,
-        force=force,
-    )
-    preflight_findings = [
-        *audit_sources(),
-        *audit_training(PROJECT_ROOT / "data/gold/features_historical"),
-    ]
-    blocking = [finding for finding in preflight_findings if finding.severity == "ERROR"]
-    if blocking:
-        result = {
-            "status": "blocked",
-            "reason": "Pre-training audit failed.",
-            "findings": [asdict(finding) for finding in preflight_findings],
-        }
-        save_state("blocked_preflight", result)
-        return result
-
+    final_audit = audit_artifacts()
     result = {
-        "status": "blocked",
-        "reason": (
-            "Leakage-safe horizon targets are prepared, but no horizon model has yet "
-            "passed independent-event validation and the serving contract. The legacy "
-            "same-window trainer is research-only."
-        ),
-        "prepared": prepared,
+        "status": "complete" if final_audit["ready"] else "blocked",
+        "mode": "weather_land_index_v2",
+        "audit": final_audit,
     }
-    save_state("blocked_horizon_model", result)
+    save_state("complete" if final_audit["ready"] else "blocked_audit", result)
     return result
 
 

@@ -1,10 +1,10 @@
 {
   "provider": "era5",
-  "pid": 87744,
+  "pid": 13567,
   "running": true,
-  "started_at": "2026-06-30T06:54:51.944209+00:00",
-  "start_date": "2006-01-01",
-  "end_date": "2025-12-31",
+  "started_at": "2026-07-03T02:28:13.386964+00:00",
+  "start_date": "2026-01-01",
+  "end_date": "2026-06-28",
   "log": "/Users/ThotKash/Desktop/Project-SusBiome/data/logs/ingestion/workers/era5.log",
   "command": [
     "/Users/ThotKash/Desktop/Project-SusBiome/venv312/bin/python",
@@ -12,8 +12,8 @@
     "scripts.ingestion.historical_weather",
     "era5",
     "--start",
-    "2006-01-01",
+    "2026-01-01",
     "--end",
-    "2025-12-31"
+    "2026-06-28"
   ]
 }

@@ -1,0 +1,18 @@
+{
+  "created_at": "2026-07-03T03:37:52.820577+00:00",
+  "source": "CHIRPS v2.0 daily 0.25 degree",
+  "years": [
+    2021,
+    2022,
+    2023,
+    2024
+  ],
+  "district_years": 532,
+  "districts": 133,
+  "median_daily_correlation": 0.6198959882312536,
+  "median_daily_mae_mm": 5.294052600860596,
+  "median_daily_bias_mm": 0.37668217718601227,
+  "detail": "/Users/ThotKash/Desktop/Project-SusBiome/data/quality/chirps_gpm_district_year.parquet",
+  "district_summary": "/Users/ThotKash/Desktop/Project-SusBiome/data/quality/chirps_gpm_district_summary.parquet",
+  "interpretation": "Independent rainfall cross-check only; CHIRPS does not replace GPM in live scoring."
+}

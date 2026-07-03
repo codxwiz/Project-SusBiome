@@ -36,9 +36,9 @@ from scripts.sources.common.config import PROJECT_ROOT
 
 DASHBOARD_NAME = "Project SusBiome Dashboard"
 
-DASHBOARD_VERSION = "1.1.0"
+DASHBOARD_VERSION = "1.2.0"
 
-PAGE_TITLE = "SusBiome District Outlook"
+PAGE_TITLE = "SusBiome Weather & Land Risk Outlook"
 
 PAGE_ICON = "🌍"
 
@@ -106,6 +106,8 @@ RISK_COLORS = {
     "HIGH": "#FF9800",
 
     "EXTREME": "#F44336",
+
+    "VERY HIGH": "#F44336",
 
 }
 

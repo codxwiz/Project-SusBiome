@@ -8,15 +8,21 @@ import pandas as pd
 from fastapi import APIRouter, HTTPException, Query
 
 from scripts.geospatial.districts import MANIFEST_PATH
-from scripts.serving.district_assessment import ASSESSMENT_PATH, district_report
+from scripts.serving.district_assessment import (
+    ASSESSMENT_PATH,
+    AssessmentUnavailableError,
+    district_report,
+    load_current_assessment,
+)
 
 router = APIRouter(prefix="/districts", tags=["Districts"])
 
 
 def _assessment() -> pd.DataFrame:
-    if not ASSESSMENT_PATH.exists():
-        raise HTTPException(status_code=503, detail="District serving dataset is not available.")
-    return pd.read_parquet(ASSESSMENT_PATH)
+    try:
+        return load_current_assessment(ASSESSMENT_PATH)
+    except (FileNotFoundError, AssessmentUnavailableError) as error:
+        raise HTTPException(status_code=503, detail=str(error)) from error
 
 
 def _select(dataframe: pd.DataFrame, state: str, district: str) -> pd.DataFrame:
@@ -66,6 +72,10 @@ def district_forecast(
         "forecast": report["forecast"],
         "signals": {
             hazard: details["forecast_signal"] for hazard, details in report["hazards"].items()
+        },
+        "weather_risk_scores": {
+            hazard: details["weather_risk_score"]
+            for hazard, details in report["hazards"].items()
         },
         "disclaimer": report["disclaimer"],
     }

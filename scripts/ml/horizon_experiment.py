@@ -19,6 +19,7 @@ from scripts.ml.evaluation import (
     evaluate_classifier,
     event_level_metrics,
     event_ranking_metrics,
+    probability_diagnostics,
     positive_probability,
     select_operating_threshold,
 )
@@ -143,6 +144,7 @@ def operational_backtest(
             full_test[group_column],
             full_test["valid_time"],
         ),
+        "probability_diagnostics": probability_diagnostics(probabilities, full_test[target]),
         "alert_budget_metrics": alert_budgets,
     }
 
@@ -212,6 +214,7 @@ def run_target(target: str) -> dict:
         "event_metrics": event_metrics,
         **operational,
         "production_eligible": False,
+        "probability_status": "research_uncalibrated",
     }
     joblib.dump(model, OUTPUT_ROOT / f"{target}.joblib")
     return {

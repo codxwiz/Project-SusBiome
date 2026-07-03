@@ -1,0 +1,20 @@
+{
+  "created_at": "2026-07-03T09:24:51.078919+00:00",
+  "rows": 30,
+  "hazards": {
+    "FLOOD": 15,
+    "CYCLONE": 15
+  },
+  "states": [
+    "Arunachal Pradesh",
+    "Assam",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Sikkim",
+    "Tripura"
+  ],
+  "instructions": "Set review_status to APPROVED or REJECTED and complete the two correctness columns.",
+  "output": "/Users/ThotKash/Desktop/Project-SusBiome/data/quality/production_event_review.csv"
+}
