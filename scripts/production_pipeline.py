@@ -14,7 +14,8 @@ from scripts.ingestion.historical_weather import GPM_EXPECTED_DAYS, status as in
 from scripts.labels.verified import run as align_verified_events
 from scripts.labels.forecast_targets import build as build_forecast_targets
 from scripts.ml.registry import ModelRegistry
-from scripts.ml.trainer import MLTrainer
+from scripts.ml.vulnerability import REPORT_PATH as CALIBRATION_REPORT
+from scripts.ml.vulnerability import train as train_calibrated_vulnerability
 from scripts.operations.refresh import refresh as refresh_operational
 from scripts.quality.audit import run as audit_artifacts
 from scripts.sources.common.config import PROJECT_ROOT
@@ -56,7 +57,7 @@ def prepare(events: Path, start_year: int, end_year: int, *, force: bool = False
 
 
 def train() -> dict:
-    results = MLTrainer().train()
+    results = train_calibrated_vulnerability(rebuild_dataset=True)
     save_state("trained", {"metrics": results})
     return results
 
@@ -97,10 +98,16 @@ def pipeline_status() -> dict:
         if STATE_FILE.exists()
         else None
     )
+    calibration = (
+        json.loads(CALIBRATION_REPORT.read_text(encoding="utf-8"))
+        if CALIBRATION_REPORT.exists()
+        else None
+    )
     return {
         "collection": ingestion_status(),
         "pipeline": state,
         "models": ModelRegistry().state(),
+        "calibrated_models": calibration,
         "audit": audit_artifacts(),
     }
 

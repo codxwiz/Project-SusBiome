@@ -454,6 +454,70 @@ def audit_owner_review() -> list[Finding]:
     return []
 
 
+def audit_calibrated_probabilities() -> list[Finding]:
+    report_path = PROJECT_ROOT / "data/quality/vulnerability_calibration.json"
+    probabilities_path = PROJECT_ROOT / "data/serving/district_hazard_probabilities.parquet"
+    if not report_path.exists() or not probabilities_path.exists():
+        return [
+            Finding(
+                "ERROR",
+                "models.calibrated_artifacts",
+                "Calibrated vulnerability report or serving probabilities are missing.",
+            )
+        ]
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    probabilities = pd.read_parquet(probabilities_path)
+    required = {
+        "state", "district", "horizon_days", "flood_probability", "cyclone_probability",
+    }
+    missing = required - set(probabilities.columns)
+    if missing:
+        return [
+            Finding(
+                "ERROR",
+                "models.calibrated_schema",
+                "Serving probabilities are missing: " + ", ".join(sorted(missing)),
+            )
+        ]
+    findings = []
+    if probabilities[["state", "district"]].drop_duplicates().shape[0] != 133:
+        findings.append(
+            Finding("ERROR", "models.calibrated_coverage", "Probabilities do not cover 133 districts.")
+        )
+    if set(probabilities["horizon_days"].astype(int)) != {3, 7, 14}:
+        findings.append(
+            Finding("ERROR", "models.calibrated_horizons", "Expected 3, 7, and 14 day probabilities.")
+        )
+    for hazard in ("flood", "cyclone"):
+        values = pd.to_numeric(probabilities[f"{hazard}_probability"], errors="coerce")
+        if values.isna().any() or not values.between(0, 1).all():
+            findings.append(
+                Finding(
+                    "ERROR", f"models.{hazard}_probability",
+                    f"{hazard.title()} probabilities must be complete values from 0 to 1.",
+                )
+            )
+    cyclone_status = report.get("hazards", {}).get("cyclone", {}).get("status")
+    if cyclone_status != "production_eligible":
+        findings.append(
+            Finding(
+                "WARNING",
+                "models.cyclone_validation",
+                "Cyclone probabilities are calibrated but have limited independent-event validation.",
+            )
+        )
+    drought_status = report.get("hazards", {}).get("drought", {}).get("status")
+    if drought_status != "production_eligible":
+        findings.append(
+            Finding(
+                "WARNING",
+                "models.drought_calibration",
+                "Drought probability remains unavailable because events do not span temporal partitions.",
+            )
+        )
+    return findings
+
+
 def audit_automation() -> list[Finding]:
     findings = []
     scheduler = Path.home() / "Library/LaunchAgents/com.susbiome.refresh.plist"
@@ -542,12 +606,15 @@ def audit_sources() -> list[Finding]:
 def run(training_path: Path = TRAINING_DATASET) -> dict:
     assessment_manifest = PROJECT_ROOT / "data/serving/district_assessment_manifest.json"
     weather_mode = False
+    calibrated_mode = False
     if assessment_manifest.exists():
         payload = json.loads(assessment_manifest.read_text(encoding="utf-8"))
-        weather_mode = payload.get("assessment_method") in {
+        method = payload.get("assessment_method")
+        weather_mode = method in {
             "weather_pattern_index_v1",
             "weather_land_index_v2",
         }
+        calibrated_mode = method == "calibrated_weather_land_probability_v3"
     findings = [
         *audit_sources(),
         *audit_operational(),
@@ -556,7 +623,9 @@ def run(training_path: Path = TRAINING_DATASET) -> dict:
         *audit_confirmations(),
         *audit_automation(),
     ]
-    if weather_mode:
+    if calibrated_mode:
+        findings.extend(audit_calibrated_probabilities())
+    elif weather_mode:
         findings.append(
             Finding(
                 "WARNING",

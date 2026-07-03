@@ -16,5 +16,9 @@
     "Tripura"
   ],
   "instructions": "Set review_status to APPROVED or REJECTED and complete the two correctness columns.",
-  "output": "/Users/ThotKash/Desktop/Project-SusBiome/data/quality/production_event_review.csv"
+  "output": "/Users/ThotKash/Desktop/Project-SusBiome/data/quality/production_event_review.csv",
+  "owner_review_imported": true,
+  "owner_review_source": "/Users/ThotKash/Downloads/production_event_review.csv",
+  "approved": 28,
+  "rejected": 2
 }

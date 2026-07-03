@@ -1,15 +1,15 @@
 {
   "years": 20,
   "rows": 14763405,
-  "events": 138,
+  "events": 136,
   "independent_events": {
-    "flood": 48,
+    "flood": 46,
     "cyclone": 11
   },
   "positive_rows": {
-    "flood_risk_3d": 144,
-    "flood_risk_7d": 336,
-    "flood_risk_14d": 672,
+    "flood_risk_3d": 138,
+    "flood_risk_7d": 322,
+    "flood_risk_14d": 644,
     "cyclone_risk_3d": 237,
     "cyclone_risk_7d": 553,
     "cyclone_risk_14d": 1106

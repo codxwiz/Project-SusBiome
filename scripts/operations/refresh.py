@@ -106,6 +106,7 @@ def refresh(*, skip_gpm: bool = False) -> dict:
     steps.append(_run("imd_cyclone", ["scripts.alerts.imd_cyclone", "collect"]))
     steps.append(_run("boundaries", ["scripts.geospatial.districts", "build"]))
     steps.append(_run("susceptibility", ["scripts.susceptibility.static", "build"]))
+    steps.append(_run("calibrated_probabilities", ["scripts.ml.vulnerability", "serve"]))
     steps.append(_run("assessment", ["scripts.serving.district_assessment", "build"]))
     successful = not any(step["status"] == "failed" for step in steps)
     if successful:

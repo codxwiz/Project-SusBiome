@@ -207,17 +207,24 @@ def probability_diagnostics(
     target: pd.Series,
     *,
     bins: int = 10,
+    calibrated: bool = False,
 ) -> dict:
     """Measure probability calibration without implying release eligibility."""
     values = np.asarray(probabilities, dtype=float)
     truth = np.asarray(target, dtype=int)
     if len(values) != len(truth) or not len(values):
         raise ValueError("Probability diagnostics require aligned non-empty inputs.")
-    edges = np.linspace(0.0, 1.0, bins + 1)
-    assignments = np.clip(np.digitize(values, edges[1:-1], right=False), 0, bins - 1)
+    # Equal-width bins collapse rare-event probabilities into a single bucket.
+    # Quantile bins retain useful reliability information at sub-1% prevalence.
+    edges = np.unique(np.quantile(values, np.linspace(0.0, 1.0, bins + 1)))
+    assignments = (
+        np.zeros(len(values), dtype=int)
+        if len(edges) < 3
+        else np.clip(np.digitize(values, edges[1:-1], right=False), 0, len(edges) - 2)
+    )
     calibration_error = 0.0
     populated_bins = 0
-    for index in range(bins):
+    for index in np.unique(assignments):
         selected = assignments == index
         if not selected.any():
             continue
@@ -225,14 +232,20 @@ def probability_diagnostics(
         calibration_error += float(selected.mean()) * abs(
             float(values[selected].mean()) - float(truth[selected].mean())
         )
+    brier = float(brier_score_loss(truth, values))
+    climatology_brier = float(np.mean((truth - truth.mean()) ** 2))
     return {
         "rows": len(values),
         "positive_prevalence": float(truth.mean()),
         "mean_score": float(values.mean()),
-        "brier_score": float(brier_score_loss(truth, values)),
+        "brier_score": brier,
+        "climatology_brier_score": climatology_brier,
+        "brier_skill_score": (
+            0.0 if climatology_brier == 0 else float(1.0 - brier / climatology_brier)
+        ),
         "expected_calibration_error": float(calibration_error),
         "populated_bins": populated_bins,
-        "calibrated_probability": False,
+        "calibrated_probability": calibrated,
     }
 
 

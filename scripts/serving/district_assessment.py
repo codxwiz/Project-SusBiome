@@ -32,6 +32,7 @@ def _atomic_parquet(dataframe: pd.DataFrame, path: Path) -> None:
 
 
 ASSESSMENT_METHOD = "weather_land_index_v2"
+CALIBRATED_ASSESSMENT_METHOD = "calibrated_weather_land_probability_v3"
 MAX_FORECAST_AGE_HOURS = 36
 
 
@@ -158,9 +159,15 @@ class DistrictAssessmentBuilder:
         missing = required - set(probabilities.columns)
         if missing:
             raise ValueError("Probability dataset is missing: " + ", ".join(sorted(missing)))
-        for column in ("flood_probability", "cyclone_probability"):
+        probability_columns = ["flood_probability", "cyclone_probability"]
+        if "drought_probability" in probabilities:
+            probability_columns.append("drought_probability")
+        for column in probability_columns:
             values = pd.to_numeric(probabilities[column], errors="coerce")
-            if values.isna().any() or not values.between(0, 1).all():
+            if column != "drought_probability" and values.isna().any():
+                raise ValueError(f"{column} cannot contain missing values.")
+            populated = values.dropna()
+            if not populated.between(0, 1).all():
                 raise ValueError(f"{column} must contain values from 0 to 1.")
         return probabilities
 
@@ -241,7 +248,11 @@ class DistrictAssessmentBuilder:
             ]
         ].notna().all(axis=1)
         dataframe["vulnerability_available"] = dataframe["social_vulnerability"].notna()
-        dataframe["assessment_method"] = ASSESSMENT_METHOD
+        dataframe["assessment_method"] = np.where(
+            dataframe[["flood_probability", "cyclone_probability"]].notna().all(axis=1),
+            CALIBRATED_ASSESSMENT_METHOD,
+            ASSESSMENT_METHOD,
+        )
         dataframe["assessment_scope"] = "district_weather_land_susceptibility_outlook"
         dataframe["confidence_grade"] = np.where(
             dataframe["assessment_available"]
@@ -252,10 +263,15 @@ class DistrictAssessmentBuilder:
             "B",
             np.where(dataframe["assessment_available"], "C", "D"),
         )
+        has_probabilities = dataframe[["flood_probability", "cyclone_probability"]].notna().all(axis=1)
         dataframe["confidence_reason"] = np.where(
-            dataframe["district_wide_usable"].astype(bool),
-            "Complete weather and land inputs; index is not a calibrated disaster probability.",
-            "Current forecast and district point history; district-wide polygon unavailable.",
+            has_probabilities,
+            "Weather-conditioned probability calibrated on a temporal holdout; physical land scope only.",
+            np.where(
+                dataframe["district_wide_usable"].astype(bool),
+                "Complete weather and land inputs; index is not a calibrated disaster probability.",
+                "Current forecast and district point history; district-wide polygon unavailable.",
+            ),
         )
         dataframe["mitigation_actions"] = dataframe.apply(
             lambda row: json.dumps(_mitigation(row)), axis=1
@@ -270,7 +286,9 @@ class DistrictAssessmentBuilder:
             "model_probabilities_available": probabilities is not None,
             "assessment_rows_available": int(dataframe["assessment_available"].sum()),
             "forecast_signal_rows": len(dataframe),
-            "assessment_method": ASSESSMENT_METHOD,
+            "assessment_method": (
+                CALIBRATED_ASSESSMENT_METHOD if probabilities is not None else ASSESSMENT_METHOD
+            ),
             "scope": "district_weather_land_susceptibility_outlook",
             "output": str(Path(output_path)),
         }
