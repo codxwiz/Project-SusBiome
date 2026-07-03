@@ -36,7 +36,7 @@ from scripts.sources.common.config import PROJECT_ROOT
 
 DASHBOARD_NAME = "Project SusBiome Dashboard"
 
-DASHBOARD_VERSION = "1.2.0"
+DASHBOARD_VERSION = "1.3.0"
 
 PAGE_TITLE = "SusBiome Weather & Land Risk Outlook"
 

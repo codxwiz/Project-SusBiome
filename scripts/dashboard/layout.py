@@ -43,7 +43,14 @@ from scripts.dashboard.models import (
     SIDEBAR_STATE,
 )
 from scripts.serving.attribution import DISCLAIMER, RISK_SCALE, SOURCES
-from scripts.serving.location_assessment import location_report
+from scripts.serving.planning_outlook import HAZARDS, OUTLOOK_HORIZONS, build_planning_outlook
+from scripts.dashboard.operational_visuals import (
+    HAZARD_COLORS,
+    HAZARD_LABELS,
+    hazard_bar_chart,
+    horizon_line_chart,
+    risk_map,
+)
 
 class DashboardLayout:
     """
@@ -88,6 +95,61 @@ class DashboardLayout:
             initial_sidebar_state=SIDEBAR_STATE,
 
         )
+        st.markdown(
+            """
+<style>
+    :root { color-scheme: light; }
+    .stApp { background: #F5F7FA; color: #0B1530; }
+    .block-container { max-width: 1500px; padding-top: 1.8rem; padding-bottom: 2rem; }
+    h1, h2, h3, p { letter-spacing: 0; }
+    [data-testid="stSidebar"] { background: #101B33; border-right: 1px solid #24324D; }
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] label { color: #F8FAFC !important; }
+    [data-testid="stSidebar"] [data-baseweb="select"] > div {
+        background: #FFFFFF; border-color: #CBD5E1; color: #0B1530;
+    }
+    [data-testid="stSidebar"] [role="radiogroup"] { background: #17233D; padding: 3px; }
+    [data-testid="stSidebar"] button[data-testid="stBaseButton-segmented_control"] p {
+        color: #475569 !important;
+    }
+    [data-testid="stSidebar"] button[data-testid="stBaseButton-segmented_controlActive"] p {
+        color: #FFFFFF !important;
+    }
+    [data-testid="stMetric"] {
+        background: #FFFFFF; border: 1px solid #D9E1EC; border-radius: 4px; padding: 1rem 1.1rem;
+    }
+    [data-testid="stMetricLabel"] { color: #64748B; text-transform: uppercase; }
+    [data-testid="stMetricValue"] { color: #0B1530; }
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        background: #FFFFFF; border-color: #D9E1EC; border-radius: 4px;
+    }
+    .susbiome-brand { color: #91A4C3; font-size: 0.72rem; letter-spacing: 0.22em; }
+    .susbiome-sidebar-title { color: #FFFFFF; font-size: 1.35rem; font-weight: 700; margin-top: 0.2rem; }
+    .location-eyebrow { color: #6B7C99; font-size: 0.76rem; letter-spacing: 0.22em; text-transform: uppercase; }
+    .location-title { color: #0B1530; font-size: 2.65rem; line-height: 1.05; font-weight: 750; margin: 0.25rem 0 0.45rem; }
+    .location-meta { color: #64748B; font-size: 0.98rem; }
+    .section-eyebrow { color: #6B7C99; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; }
+    .section-title { color: #0B1530; font-size: 1.45rem; font-weight: 700; margin: 0.15rem 0 0.8rem; }
+    .risk-tile { background: #FFFFFF; border: 1px solid #D9E1EC; border-radius: 4px; padding: 0.95rem 1rem; min-height: 96px; }
+    .risk-tile-label { color: #64748B; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; }
+    .risk-tile-value { color: #0B1530; font-size: 1.75rem; font-weight: 750; margin-top: 0.3rem; }
+    .risk-tile-level { color: #64748B; font-size: 0.75rem; margin-left: 0.45rem; }
+    .composite-card { background: #FFFFFF; border: 1px solid #D9E1EC; border-radius: 4px; padding: 1rem 1.15rem; min-height: 96px; }
+    .composite-label { color: #64748B; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; }
+    .composite-value { color: #0B1530; font-size: 2rem; font-weight: 750; margin-top: 0.35rem; }
+    .composite-level { color: #64748B; font-size: 0.76rem; margin-left: 0.5rem; text-transform: uppercase; }
+    @media (max-width: 760px) {
+        .block-container { padding: 1rem 0.8rem 1.5rem; }
+        .location-title { font-size: 2rem; }
+        .section-title { font-size: 1.2rem; }
+    }
+</style>
+""",
+            unsafe_allow_html=True,
+        )
 
     # ======================================================
     # HEADER
@@ -123,9 +185,12 @@ class DashboardLayout:
         Sidebar.
         """
 
-        st.sidebar.title(
-            "Navigation"
+        st.sidebar.markdown(
+            '<div class="susbiome-brand">NORTHEAST INDIA</div>'
+            '<div class="susbiome-sidebar-title">SusBiome</div>',
+            unsafe_allow_html=True,
         )
+        st.sidebar.divider()
 
     def district_selection(self, dataframe: pd.DataFrame) -> tuple[pd.DataFrame, str, str]:
         locations = self.loader.locations()
@@ -366,7 +431,7 @@ class DashboardLayout:
 
             "Project SusBiome "
 
-            "Flood • Cyclone • Drought "
+            "Flood • Drought • Cyclone "
 
             "Weather & Land Risk Outlook"
 
@@ -418,152 +483,127 @@ class DashboardLayout:
         self.footer()
 
     def operational_build(self) -> None:
-        """Render the district-first operational assessment."""
+        """Render the map-first operational planning outlook."""
         assessment = self.loader.assessment()
-        horizons = sorted(assessment["horizon_days"].astype(int).unique().tolist())
-        area_mode = st.sidebar.segmented_control(
-            "Assessment area", ["District", "Land coordinates"], default="District"
-        )
-        horizon = st.sidebar.segmented_control(
-            "Forecast horizon", horizons, default=7 if 7 in horizons else horizons[0]
-        )
-        point_report = None
-        if area_mode == "Land coordinates":
-            latitude = st.sidebar.number_input(
-                "Latitude", min_value=20.0, max_value=31.0, value=27.48, step=0.01
-            )
-            longitude = st.sidebar.number_input(
-                "Longitude", min_value=87.0, max_value=99.5, value=94.91, step=0.01
-            )
-            try:
-                point_report = location_report(float(latitude), float(longitude), int(horizon))
-            except ValueError as error:
-                st.error(str(error))
-                st.stop()
-            state = point_report["district_match"]["state"]
-            district = point_report["district_match"]["district"]
-            row = assessment.loc[
-                assessment["state"].eq(state)
-                & assessment["district"].eq(district)
-                & assessment["horizon_days"].eq(int(horizon))
-            ].iloc[0]
-        else:
-            assessment, state, district = self.district_selection(assessment)
-            row = assessment.loc[assessment["horizon_days"].eq(int(horizon))].iloc[0]
+        outlook = build_planning_outlook(assessment)
+        locations = self.loader.locations()
 
-        self.header()
-        title = f"{district}, {state}"
-        if point_report:
-            title = f"Selected land · {title}"
-        st.subheader(title)
-        st.caption(f"{int(horizon)}-day outlook through {pd.Timestamp(row['valid_to']).date()}")
-
-        col1, col2, col3, col4 = st.columns(4)
-        col1.metric("Rainfall", f"{row['precipitation_sum_mm']:.1f} mm")
-        col2.metric("Maximum gust", f"{row['wind_gust_max_kmh']:.1f} km/h")
-        confidence_grade = (
-            point_report["confidence"]["grade"] if point_report else row["confidence_grade"]
-        )
-        col3.metric("Confidence", confidence_grade)
-        col4.metric(
-            "Weather assessment", "Available" if row["assessment_available"] else "Pending"
-        )
-
-        overview, factors, guidance = st.tabs(["Outlook", "Factors", "Actions"])
-        with overview:
-            point_hazards = point_report["hazards"] if point_report else None
-            signal = pd.DataFrame(
-                {
-                    "Hazard": ["Flood", "Cyclone", "Drought"],
-                    "Risk score": [
-                        point_hazards["flood"]["weather_land_risk_score"]
-                        if point_hazards else row["flood_weather_risk_score"],
-                        point_hazards["cyclone"]["weather_land_risk_score"]
-                        if point_hazards else row["cyclone_weather_risk_score"],
-                        point_hazards["drought"]["weather_land_risk_score"]
-                        if point_hazards else row["drought_weather_risk_score"],
-                    ],
-                    "Risk level": [
-                        point_hazards["flood"]["risk_level"]
-                        if point_hazards else row["flood_risk_level"],
-                        point_hazards["cyclone"]["risk_level"]
-                        if point_hazards else row["cyclone_risk_level"],
-                        point_hazards["drought"]["risk_level"]
-                        if point_hazards else row["drought_risk_level"],
-                    ],
-                }
+        states = locations["state"].drop_duplicates().tolist()
+        state = st.sidebar.selectbox("State", states)
+        districts = locations.loc[locations["state"].eq(state), "district"].tolist()
+        district = st.sidebar.selectbox("District", districts)
+        horizon = int(
+            st.sidebar.segmented_control(
+                "Outlook horizon", list(OUTLOOK_HORIZONS), default=30,
+                format_func=lambda value: f"{value}d",
             )
-            st.dataframe(signal, hide_index=True, width="stretch")
-            st.caption(
-                "Risk scale: "
-                + " · ".join(
-                    f"{item['level'].title()} {item['minimum']:g}–{item['maximum']:g}"
-                    for item in RISK_SCALE
+        )
+        st.sidebar.caption("Planning outlook · not a disaster probability")
+
+        location = locations.loc[
+            locations["state"].eq(state) & locations["district"].eq(district)
+        ].iloc[0]
+        district_outlook = outlook.loc[
+            outlook["state"].eq(state) & outlook["district"].eq(district)
+        ].sort_values("outlook_horizon_days")
+        selected = district_outlook.loc[
+            district_outlook["outlook_horizon_days"].eq(horizon)
+        ].iloc[0]
+        state_outlook = outlook.loc[
+            outlook["state"].eq(state) & outlook["outlook_horizon_days"].eq(horizon)
+        ]
+
+        heading, composite = st.columns([4, 1.25], vertical_alignment="bottom")
+        with heading:
+            st.markdown(
+                f'<div class="location-eyebrow">{state}</div>'
+                f'<h1 class="location-title">{district}</h1>'
+                f'<div class="location-meta">{float(location["latitude"]):.3f}°N, '
+                f'{float(location["longitude"]):.3f}°E · {horizon}-day planning outlook</div>',
+                unsafe_allow_html=True,
+            )
+        with composite:
+            st.markdown(
+                '<div class="composite-card">'
+                '<div class="composite-label">Composite risk</div>'
+                f'<div class="composite-value">{float(selected["composite_risk_score"]):.0f}'
+                f'<span class="composite-level">{selected["composite_risk_level"]}</span>'
+                '</div></div>',
+                unsafe_allow_html=True,
+            )
+
+        st.write("")
+        with st.container(border=True):
+            st.markdown(
+                f'<div class="section-eyebrow">{state.upper()} RISK MAP</div>'
+                f'<div class="section-title">District outlook · {horizon} days</div>',
+                unsafe_allow_html=True,
+            )
+            st.pydeck_chart(
+                risk_map(state, district, state_outlook, location),
+                width="stretch",
+                height=470,
+            )
+
+        risk_columns = st.columns(3)
+        for column, hazard in zip(risk_columns, HAZARDS, strict=True):
+            label = HAZARD_LABELS[hazard]
+            score = float(selected[f"{hazard}_outlook_score"])
+            level = str(selected[f"{hazard}_outlook_level"]).title()
+            color = HAZARD_COLORS[label]
+            with column:
+                st.markdown(
+                    f'<div class="risk-tile" style="border-top: 4px solid {color}">'
+                    f'<div class="risk-tile-label">{label}</div>'
+                    f'<div class="risk-tile-value">{score:.0f}'
+                    f'<span class="risk-tile-level">{level}</span></div></div>',
+                    unsafe_allow_html=True,
                 )
-            )
-            st.caption(
-                point_report["confidence"]["reason"] if point_report else row["confidence_reason"]
-            )
-        with factors:
-            factor_names = [
-                "Flood susceptibility", "Cyclone susceptibility",
-                "Drought susceptibility", "Static factor coverage",
-                "District mean elevation", "District mean slope",
-                "Dominant sampled land cover",
-                "Boundary support", "IMD cyclone bulletin",
-                "GPM/CHIRPS daily correlation",
-            ]
-            factor_values = [
-                f"{row['flood_susceptibility']:.2f}",
-                f"{row['cyclone_susceptibility']:.2f}",
-                f"{row['drought_susceptibility']:.2f}",
-                f"{100 * row['static_factor_coverage']:.0f}%",
-                f"{row['elevation_mean_m']:.0f} m",
-                (
-                    f"{row['slope_mean_degrees']:.1f}°"
-                    if pd.notna(row.get("slope_mean_degrees")) else "Unavailable"
-                ),
-                str(row.get("dominant_land_cover_class", "Unavailable")).replace(
-                    "_", " "
-                ).title(),
-                row["boundary_status"],
-                row["cyclone_confirmation_status"],
-                (
-                    f"{row['chirps_gpm_correlation']:.2f}"
-                    if pd.notna(row["chirps_gpm_correlation"])
-                    else "Unavailable"
-                ),
-            ]
-            if point_report:
-                terrain = point_report["land_context"]["terrain"]
-                land_cover = point_report["land_context"]["land_cover"]
-                factor_names.extend(["Point elevation", "Point slope", "Point land cover"])
-                factor_values.extend(
-                    [
-                        f"{terrain['elevation_m']:.0f} m" if terrain else "Unavailable",
-                        f"{terrain['slope_degrees']:.1f}°" if terrain else "Unavailable",
-                        land_cover["class_name"].replace("_", " ").title()
-                        if land_cover else "Unavailable",
-                    ]
+
+        st.write("")
+        bar_column, line_column = st.columns(2)
+        with bar_column:
+            with st.container(border=True):
+                st.markdown(
+                    '<div class="section-eyebrow">THREE-HAZARD OUTLOOK</div>'
+                    f'<div class="section-title">{horizon}-day risk scores</div>',
+                    unsafe_allow_html=True,
                 )
-            factor_data = pd.DataFrame(
-                {
-                    "Factor": factor_names,
-                    "Value": factor_values,
-                }
-            )
-            st.dataframe(factor_data, hide_index=True, width="stretch")
-        with guidance:
-            for action in json.loads(row["mitigation_actions"]):
+                st.altair_chart(
+                    hazard_bar_chart(district_outlook, horizon), width="stretch"
+                )
+        with line_column:
+            with st.container(border=True):
+                st.markdown(
+                    '<div class="section-eyebrow">RISK ACROSS HORIZONS</div>'
+                    '<div class="section-title">15 → 30 → 60 → 90 days</div>',
+                    unsafe_allow_html=True,
+                )
+                st.altair_chart(horizon_line_chart(district_outlook), width="stretch")
+
+        with st.expander("Assessment details, actions, and sources"):
+            details = st.columns(3)
+            details[0].metric("Confidence", selected["outlook_confidence"])
+            details[1].metric("Dominant hazard", str(selected["dominant_hazard"]).title())
+            details[2].metric("Static coverage", f"{100 * selected['static_factor_coverage']:.0f}%")
+            for action in json.loads(selected["mitigation_actions"]):
                 st.markdown(f"- {action}")
-            st.warning(
-                DISCLAIMER
+            st.warning(DISCLAIMER)
+            st.caption(
+                "15 days uses the current near-term assessment. Longer horizons gradually "
+                "transition toward the district historical susceptibility baseline."
             )
-            with st.expander("Data sources and attribution"):
-                for source in SOURCES:
-                    st.markdown(
-                        f"**{source['name']}** — {source['role']}  \n"
-                        f"[{source['license']}]({source['url']})"
-                    )
+            for source in SOURCES:
+                st.markdown(
+                    f"**{source['name']}** · {source['role']}  \n"
+                    f"[{source['license']}]({source['url']})"
+                )
 
+        st.caption(
+            "Risk scale · "
+            + " · ".join(
+                f"{item['level'].title()} {item['minimum']:g}–{item['maximum']:g}"
+                for item in RISK_SCALE
+            )
+        )
         self.footer()
