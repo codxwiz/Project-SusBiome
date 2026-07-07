@@ -17,6 +17,7 @@ from scripts.geospatial.districts import BOUNDARIES_PATH, MANIFEST_PATH, point_i
 from scripts.serving.district_assessment import (
     ASSESSMENT_PATH,
     _level,
+    _weather_land_score,
     district_report,
     load_current_assessment,
 )
@@ -169,17 +170,15 @@ def location_report(latitude: float, longitude: float, horizon_days: int = 7) ->
             if point_factor is None
             else 0.70 * district_susceptibility + 0.30 * point_factor
         )
-        score = round(
-            100 * (0.85 * float(row[f"{hazard}_forecast_signal"]) + 0.15 * location_susceptibility),
-            1,
-        )
+        score = round(_weather_land_score(row, hazard, location_susceptibility), 1)
+        probability = row.get(f"{hazard}_probability")
         hazards[hazard] = {
             "weather_land_risk_score": score,
             "risk_level": _level(score),
             "district_susceptibility": round(district_susceptibility, 4),
             "location_susceptibility": round(location_susceptibility, 4),
             "point_factor_available": point_factor is not None,
-            "probability": None,
+            "probability": None if pd.isna(probability) else float(probability),
         }
     context_available = terrain is not None and land_cover is not None
     return {

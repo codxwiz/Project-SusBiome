@@ -13,6 +13,8 @@ from scripts.forecast.open_meteo import OpenMeteoForecastCollector
 from scripts.geospatial.districts import DistrictBoundaryRegistry, point_in_geometry
 from scripts.serving.district_assessment import (
     AssessmentUnavailableError,
+    _flood_signal,
+    _weather_land_score,
     district_report,
     load_current_assessment,
 )
@@ -88,6 +90,32 @@ class ForecastContractTests(unittest.TestCase):
 
 
 class AssessmentReportTests(unittest.TestCase):
+    def test_flood_signal_does_not_saturate_at_district_p95_rainfall(self):
+        row = pd.Series(
+            {
+                "horizon_days": 7,
+                "precipitation_sum_mm": 100.0,
+                "precipitation_7d_p95": 100.0,
+                "precipitation_probability_max": 100.0,
+            }
+        )
+        signal = _flood_signal(row)
+        self.assertGreater(signal, 0.5)
+        self.assertLess(signal, 0.8)
+
+    def test_calibrated_probability_dampens_flood_score(self):
+        row = pd.Series(
+            {
+                "horizon_days": 7,
+                "flood_forecast_signal": 0.8,
+                "flood_susceptibility": 0.6,
+                "flood_probability": 0.0001,
+            }
+        )
+        calibrated = _weather_land_score(row, "flood")
+        uncalibrated = _weather_land_score(row.drop(labels=["flood_probability"]), "flood")
+        self.assertLess(calibrated, uncalibrated - 15)
+
     def test_stale_serving_data_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "assessment.parquet"
@@ -164,7 +192,7 @@ class AssessmentReportTests(unittest.TestCase):
         ):
             report = location_report(27.48, 94.91, 7)
         self.assertTrue(report["context_available"])
-        self.assertIsNone(report["hazards"]["flood"]["probability"])
+        self.assertIn("probability", report["hazards"]["flood"])
         self.assertEqual(report["assessment_method"], "location_weather_land_index_v1")
 
 

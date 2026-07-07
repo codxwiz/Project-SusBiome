@@ -1,6 +1,7 @@
 .DS_Store
 .env
 .pytest_cache/
+.streamlit_home/
 __pycache__/
 *.py[cod]
 *.log
@@ -23,6 +24,9 @@ data/training/
 data/labels/
 data/manifest.csv
 data/manifest.parquet
+data/backups/
+data/logs/operations/alerts.jsonl
+data/logs/operations/latest_alert.json
 bronze/
 models/*.pkl
 models/*.joblib
@@ -30,6 +34,9 @@ models/candidates/
 models/experiments/
 models/releases/
 models/registry.json
+frontend/data/
+frontend/.next/
+frontend/node_modules/
 
 !data/raw/
 data/raw/*

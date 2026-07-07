@@ -32,8 +32,16 @@ def _atomic_parquet(dataframe: pd.DataFrame, path: Path) -> None:
 
 
 ASSESSMENT_METHOD = "weather_land_index_v2"
-CALIBRATED_ASSESSMENT_METHOD = "calibrated_weather_land_probability_v3"
+CALIBRATED_ASSESSMENT_METHOD = "calibrated_weather_land_probability_v4"
 MAX_FORECAST_AGE_HOURS = 36
+FLOOD_RAINFALL_THRESHOLD_MULTIPLIER = 1.25
+FLOOD_RAINFALL_HORIZON_EXPONENT = 0.75
+FLOOD_EVENT_LIKELIHOOD_WEIGHT = 0.35
+FLOOD_EVENT_PROBABILITY_REFERENCES = {
+    3: 0.003,
+    7: 0.006,
+    14: 0.012,
+}
 
 
 class AssessmentUnavailableError(RuntimeError):
@@ -81,12 +89,65 @@ def _level(score: float) -> str:
     return "VERY HIGH"
 
 
+def _smooth_ratio(value: float, threshold: float) -> float:
+    denominator = max(float(threshold), 0.1)
+    ratio = max(float(value), 0.0) / denominator
+    return ratio / (1.0 + ratio)
+
+
+def _flood_rainfall_threshold(row: pd.Series) -> float:
+    precipitation_p95 = float(row["precipitation_7d_p95"])
+    if not math.isfinite(precipitation_p95) or precipitation_p95 <= 0:
+        precipitation_p95 = 100.0
+    horizon_scale = max(float(row["horizon_days"]), 1.0) / 7.0
+    return max(
+        precipitation_p95
+        * (horizon_scale ** FLOOD_RAINFALL_HORIZON_EXPONENT)
+        * FLOOD_RAINFALL_THRESHOLD_MULTIPLIER,
+        40.0,
+    )
+
+
 def _flood_signal(row: pd.Series) -> float:
-    horizon_scale = float(row["horizon_days"]) / 7.0
-    extreme_rainfall = max(float(row["precipitation_7d_p95"]) * horizon_scale, 20.0)
-    rain_score = min(float(row["precipitation_sum_mm"]) / extreme_rainfall, 1.0)
+    extreme_rainfall = _flood_rainfall_threshold(row)
+    rain_score = _smooth_ratio(float(row["precipitation_sum_mm"]), extreme_rainfall)
     probability = float(row["precipitation_probability_max"]) / 100.0
-    return round(0.80 * rain_score + 0.20 * probability, 4)
+    return round(0.75 * rain_score + 0.25 * probability, 4)
+
+
+def _flood_probability_signal(row: pd.Series) -> float:
+    probability = pd.to_numeric(row.get("flood_probability"), errors="coerce")
+    if pd.isna(probability):
+        return float("nan")
+    horizon = int(row.get("horizon_days", 7) or 7)
+    reference = FLOOD_EVENT_PROBABILITY_REFERENCES.get(
+        horizon, FLOOD_EVENT_PROBABILITY_REFERENCES[7]
+    )
+    return min(max(1.0 - math.exp(-float(probability) / reference), 0.0), 1.0)
+
+
+def _weather_land_score(
+    row: pd.Series,
+    hazard: str,
+    susceptibility: float | None = None,
+) -> float:
+    local_susceptibility = (
+        float(row[f"{hazard}_susceptibility"])
+        if susceptibility is None
+        else float(susceptibility)
+    )
+    weather_land_score = 100 * (
+        0.85 * float(row[f"{hazard}_forecast_signal"]) + 0.15 * local_susceptibility
+    )
+    if hazard != "flood":
+        return weather_land_score
+    probability_signal = _flood_probability_signal(row)
+    if pd.isna(probability_signal):
+        return weather_land_score
+    return (
+        (1.0 - FLOOD_EVENT_LIKELIHOOD_WEIGHT) * weather_land_score
+        + FLOOD_EVENT_LIKELIHOOD_WEIGHT * 100 * probability_signal
+    )
 
 
 def _cyclone_signal(row: pd.Series) -> float:
@@ -128,11 +189,16 @@ def _mitigation(row: pd.Series) -> list[str]:
 
 def _drivers(row: pd.Series, hazard: str) -> list[str]:
     if hazard == "flood":
-        return [
+        drivers = [
             f"Forecast rainfall: {float(row['precipitation_sum_mm']):.1f} mm",
             f"Maximum rain probability: {float(row['precipitation_probability_max']):.0f}%",
             "District rainfall, runoff, soil wetness, SRTM terrain, and WorldCover context",
         ]
+        if not pd.isna(row.get("flood_probability")):
+            drivers.append(
+                f"Calibrated district event probability: {100 * float(row['flood_probability']):.2f}%"
+            )
+        return drivers
     if hazard == "cyclone":
         return [
             f"Maximum wind gust: {float(row['wind_gust_max_kmh']):.1f} km/h",
@@ -225,12 +291,13 @@ class DistrictAssessmentBuilder:
         dataframe["exposure_mode"] = "land_only_neutral"
         for hazard in ("flood", "cyclone", "drought"):
             dataframe[f"{hazard}_weather_risk_score"] = (
-                100
-                * (
-                    0.85 * dataframe[f"{hazard}_forecast_signal"]
-                    + 0.15 * dataframe[f"{hazard}_susceptibility"]
+                dataframe.apply(
+                    lambda row, selected=hazard: _weather_land_score(row, selected),
+                    axis=1,
                 )
-            ).clip(0, 100).round(1)
+                .clip(0, 100)
+                .round(1)
+            )
             dataframe[f"{hazard}_land_risk_index"] = (
                 dataframe[f"{hazard}_weather_risk_score"] / 100.0
             )

@@ -614,7 +614,7 @@ def run(training_path: Path = TRAINING_DATASET) -> dict:
             "weather_pattern_index_v1",
             "weather_land_index_v2",
         }
-        calibrated_mode = method == "calibrated_weather_land_probability_v3"
+        calibrated_mode = method == "calibrated_weather_land_probability_v4"
     findings = [
         *audit_sources(),
         *audit_operational(),

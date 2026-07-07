@@ -33,7 +33,7 @@ from scripts.sources.common.config import PROJECT_ROOT
 
 API_NAME = "Project SusBiome API"
 
-API_VERSION = "1.2.0"
+API_VERSION = "1.3.0"
 
 API_DESCRIPTION = (
 

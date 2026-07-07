@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: susbiome-frontend
+    runtime: node
+    rootDir: frontend
+    plan: starter
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    autoDeployTrigger: commit
+    previews:
+      generation: automatic
+    envVars:
+      - key: NODE_VERSION
+        value: "20.11.1"
+      - key: NEXT_PUBLIC_SUSBIOME_API_BASE
+        value: https://susbiome-api.onrender.com
+  - type: web
+    name: susbiome-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: SUSBIOME_ENV
+        value: production
+      - key: SUSBIOME_ALLOWED_HOSTS
+        value: susbiome-api.onrender.com,api.susbiome.com,localhost,127.0.0.1
+      - key: SUSBIOME_CORS_ORIGINS
+        value: https://susbiome-frontend.onrender.com,https://susbiome.com,https://www.susbiome.com
+      - key: SUSBIOME_RATE_LIMIT_PER_MINUTE
+        value: "120"
+      - key: SUSBIOME_MAX_REQUEST_BYTES
+        value: "1048576"

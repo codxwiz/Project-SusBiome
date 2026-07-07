@@ -54,6 +54,7 @@ from scripts.api.routers.risk import (
     router as risk_router,
 )
 from scripts.api.routers.locations import router as locations_router
+from scripts.api.routers.outlook import router as outlook_router
 
 
 # ==========================================================
@@ -171,6 +172,8 @@ app.include_router(
 )
 
 app.include_router(locations_router, prefix=API_PREFIX)
+
+app.include_router(outlook_router, prefix=API_PREFIX)
 
 
 # ==========================================================
