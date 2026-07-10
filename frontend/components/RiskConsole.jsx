@@ -109,7 +109,7 @@ export default function RiskConsole() {
           <Link href="/" className="brand dark">
             <span className="brand-icon">S</span>
             <span>SusBiome</span>
-            <small>Toolkit Dashboard</small>
+            <small>Toolkit Console</small>
           </Link>
 
         <div className="control-stack">
@@ -172,7 +172,7 @@ export default function RiskConsole() {
           </div>
         </div>
 
-        <nav className="side-nav" aria-label="Toolkit Dashboard sections">
+        <nav className="side-nav" aria-label="Toolkit Console sections">
           <a href="#outlook">Outlook</a>
           <a href="#horizons">Horizons</a>
           <a href="#map">Map</a>

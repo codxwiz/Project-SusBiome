@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 const links = [
@@ -8,11 +9,14 @@ const links = [
   { label: "About us", href: "/about" },
   { label: "Services", href: "/services" },
   { label: "Research & collaboration", href: "/research-collaboration" },
+  { label: "Analytics", href: "/analytics" },
+  { label: "Toolkit Console", href: "/console" },
   { label: "Contact us", href: "/contact" },
 ];
 
 export default function AgriPageNav() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <header className={`agri-page-nav${isOpen ? " is-open" : ""}`}>
@@ -31,11 +35,19 @@ export default function AgriPageNav() {
         <span></span>
       </button>
       <nav aria-label="Page navigation">
-        {links.map((link) => (
-          <Link key={link.href} href={link.href} onClick={() => setIsOpen(false)}>
-            {link.label}
-          </Link>
-        ))}
+        {links.map((link) => {
+          const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+          return (
+            <Link
+              className={isActive ? "is-active" : undefined}
+              key={link.href}
+              href={link.href}
+              onClick={() => setIsOpen(false)}
+            >
+              {link.label}
+            </Link>
+          );
+        })}
       </nav>
     </header>
   );

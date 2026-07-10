@@ -1,7 +1,7 @@
 import RiskConsole from "../../components/RiskConsole";
 
 export const metadata = {
-  title: "Toolkit Dashboard | SusBiome",
+  title: "Toolkit Console | SusBiome",
 };
 
 export default function ConsolePage() {

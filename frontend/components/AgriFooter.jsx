@@ -1,14 +1,3 @@
-import Link from "next/link";
-
-const footerLinks = [
-  { label: "Home", href: "/" },
-  { label: "About us", href: "/about" },
-  { label: "Services", href: "/services" },
-  { label: "Research & collaboration", href: "/research-collaboration" },
-  { label: "Contact us", href: "/contact" },
-  { label: "Toolkit Dashboard", href: "/console" },
-];
-
 export default function AgriFooter() {
   return (
     <footer className="agri-footer">
@@ -20,13 +9,22 @@ export default function AgriFooter() {
         </strong>
       </div>
 
-      <nav aria-label="Footer navigation">
-        {footerLinks.map((link) => (
-          <Link key={link.href} href={link.href}>
-            {link.label}
-          </Link>
-        ))}
-      </nav>
+      <address className="agri-footer-contact" aria-label="Contact information">
+        <p>
+          <span>Address</span>
+          Kairang, Maning Leikai, Sawombung block
+          <br />
+          Imphal East Manipur - 795002
+        </p>
+        <p>
+          <span>Email</span>
+          <a href="mailto:susbiome098@gmail.com">susbiome098@gmail.com</a>
+        </p>
+        <p>
+          <span>Hours</span>
+          Monday - Saturday 10AM - 5PM
+        </p>
+      </address>
     </footer>
   );
 }
