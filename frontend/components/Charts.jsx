@@ -8,7 +8,7 @@ function axisLabel(x, y, value, anchor = "middle", className = "chart-label") {
   );
 }
 
-export function HazardBars({ record }) {
+export function HazardBars({ record, variant = "default" }) {
   const width = 680;
   const chartLeft = 64;
   const chartBottom = 302;
@@ -16,9 +16,30 @@ export function HazardBars({ record }) {
   const chartHeight = chartBottom - chartTop;
   const barWidth = 94;
   const gap = 70;
+  const isPremium = variant === "premium" || variant === "premium-solid";
+  const hasSheen = variant === "premium";
+  const gradientPrefix = variant === "premium-solid" ? "toolkit-bar" : "home-bar";
+  const depthX = 13;
+  const depthY = 12;
 
   return (
-    <svg className="chart-svg" viewBox="0 0 680 360" role="img" aria-label="Hazard risk scores">
+    <svg
+      className={`chart-svg${isPremium ? " chart-svg--premium" : ""}${variant === "premium-solid" ? " chart-svg--no-flash" : ""}`}
+      viewBox="0 0 680 360"
+      role="img"
+      aria-label="Hazard risk scores"
+    >
+      {isPremium && (
+        <defs>
+          {hazards.map((hazard) => (
+            <linearGradient key={hazard} id={`${gradientPrefix}-${hazard}`} x1="0" x2="1" y1="0" y2="1">
+              {hasSheen && <stop offset="0%" stopColor="#ffffff" stopOpacity="0.34" />}
+              <stop offset={hasSheen ? "18%" : "0%"} stopColor={hazardColors[hazard]} stopOpacity="1" />
+              <stop offset="100%" stopColor={hazardColors[hazard]} stopOpacity={hasSheen ? "0.86" : "0.78"} />
+            </linearGradient>
+          ))}
+        </defs>
+      )}
       {[0, 25, 50, 75, 100].map((tick) => {
         const y = chartBottom - (tick / 100) * chartHeight;
         return (
@@ -35,26 +56,42 @@ export function HazardBars({ record }) {
         const x = chartLeft + 54 + index * (barWidth + gap);
         const barHeight = (item.score / 100) * chartHeight;
         const y = chartBottom - barHeight;
+        const fill = isPremium ? `url(#${gradientPrefix}-${hazard})` : hazardColors[hazard];
         return (
-          <g key={hazard} className="chart-bar-group" tabIndex="0">
+          <g key={hazard} className="chart-bar-group" style={{ "--bar-color": hazardColors[hazard] }} tabIndex="0">
             <rect
               className="chart-bar-hit"
-              x={x - 16}
+              x={x - 20}
               y={chartTop}
-              width={barWidth + 32}
+              width={barWidth + 44}
               height={chartHeight}
               rx="8"
             />
-            <rect
-              className="chart-bar-rect"
-              x={x}
-              y={y}
-              width={barWidth}
-              height={barHeight}
-              rx="3"
-              fill={hazardColors[hazard]}
-            />
-            {axisLabel(x + barWidth / 2, y - 9, fmtScore(item.score), "middle", "bar-label")}
+            {isPremium && (
+              <>
+                <polygon
+                  className="chart-bar-side"
+                  points={`${x + barWidth},${y} ${x + barWidth + depthX},${y - depthY} ${x + barWidth + depthX},${chartBottom - depthY} ${x + barWidth},${chartBottom}`}
+                  fill={hazardColors[hazard]}
+                />
+                <polygon
+                  className="chart-bar-top"
+                  points={`${x},${y} ${x + depthX},${y - depthY} ${x + barWidth + depthX},${y - depthY} ${x + barWidth},${y}`}
+                  fill={hazardColors[hazard]}
+                />
+              </>
+            )}
+            <rect className="chart-bar-rect" x={x} y={y} width={barWidth} height={barHeight} rx={isPremium ? "6" : "3"} fill={fill} />
+            {hasSheen && (
+              <line
+                className="chart-bar-sheen"
+                x1={x + 16}
+                y1={y + 14}
+                x2={x + 16}
+                y2={chartBottom - 14}
+              />
+            )}
+            {axisLabel(x + barWidth / 2, y - 14, fmtScore(item.score), "middle", "bar-label")}
             {axisLabel(x + barWidth / 2, chartBottom + 28, hazardLabels[hazard])}
             {axisLabel(x + barWidth / 2, chartBottom + 50, titleCase(item.level))}
           </g>

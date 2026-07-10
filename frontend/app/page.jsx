@@ -1,4 +1,5 @@
 import AgriFooter from "../components/AgriFooter";
+import AgriPageNav from "../components/AgriPageNav";
 import ClimateRiskPreview from "../components/ClimateRiskPreview";
 
 const menuItems = [
@@ -11,11 +12,11 @@ const menuItems = [
 export default function LandingPage() {
   return (
     <main className="agri-site">
+      <AgriPageNav />
       <section className="agri-hero" aria-label="SusBiome agricultural consultancy">
         <div className="agri-hero__shade" />
 
         <div className="agri-hero__content">
-          <div className="agri-logo">LOGO</div>
           <h1>SusBiome</h1>
           <p className="agri-motto">
             Science for the soil. Solutions for the farmer. Resilience for the future.

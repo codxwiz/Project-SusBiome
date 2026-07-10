@@ -213,7 +213,7 @@ export default function RiskConsole() {
           <div className="panel chart-card">
             <p className="section-kicker">Three-hazard outlook</p>
             <h2>{horizon}-day risk scores</h2>
-            <HazardBars record={record} />
+            <HazardBars record={record} variant="premium-solid" />
           </div>
           <div className="panel chart-card">
             <p className="section-kicker">Risk across horizons</p>

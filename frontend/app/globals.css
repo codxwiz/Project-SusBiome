@@ -64,6 +64,11 @@ textarea {
   background-size: cover;
 }
 
+.agri-page-nav + .agri-hero {
+  min-height: calc(100vh - 74px);
+  min-height: calc(100svh - 74px);
+}
+
 .agri-hero__shade {
   position: absolute;
   inset: 0;
@@ -2327,6 +2332,66 @@ textarea {
   transition: filter 180ms ease, opacity 180ms ease, transform 180ms ease;
 }
 
+.chart-svg--premium {
+  min-height: 300px;
+}
+
+.chart-svg--premium .grid-line {
+  stroke: rgba(23, 34, 17, 0.11);
+  stroke-width: 1.2;
+}
+
+.chart-svg--premium .axis-line {
+  stroke: rgba(23, 34, 17, 0.42);
+  stroke-width: 2.2;
+}
+
+.chart-svg--premium .chart-label {
+  fill: #526447;
+  font-size: 17px;
+  font-weight: 850;
+}
+
+.chart-svg--premium .bar-label {
+  fill: #172211;
+  font-size: 17px;
+  font-weight: 950;
+  opacity: 1;
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.82);
+  stroke-linejoin: round;
+  stroke-width: 7px;
+  transform: translateY(0);
+}
+
+.chart-svg--premium .chart-bar-rect,
+.chart-svg--premium .chart-bar-side,
+.chart-svg--premium .chart-bar-top {
+  filter: drop-shadow(0 16px 14px rgba(23, 34, 17, 0.16));
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transition: filter 180ms ease, opacity 180ms ease, transform 180ms ease;
+}
+
+.chart-svg--premium .chart-bar-side {
+  filter: brightness(0.74) saturate(1.05);
+}
+
+.chart-svg--premium .chart-bar-top {
+  filter: brightness(1.18) saturate(1.04);
+}
+
+.chart-svg--no-flash .chart-bar-top {
+  filter: brightness(1.06) saturate(1.02);
+}
+
+.chart-svg--premium .chart-bar-sheen {
+  stroke: rgba(255, 255, 255, 0.46);
+  stroke-linecap: round;
+  stroke-width: 5;
+  pointer-events: none;
+}
+
 .chart-line-hit {
   pointer-events: stroke;
 }
@@ -2346,11 +2411,31 @@ textarea {
   opacity: 0.38;
 }
 
+.chart-svg--premium:has(.chart-bar-group:hover) .chart-bar-rect,
+.chart-svg--premium:has(.chart-bar-group:focus-visible) .chart-bar-rect,
+.chart-svg--premium:has(.chart-bar-group:hover) .chart-bar-side,
+.chart-svg--premium:has(.chart-bar-group:focus-visible) .chart-bar-side,
+.chart-svg--premium:has(.chart-bar-group:hover) .chart-bar-top,
+.chart-svg--premium:has(.chart-bar-group:focus-visible) .chart-bar-top {
+  opacity: 0.42;
+}
+
 .chart-bar-group:hover .chart-bar-rect,
 .chart-bar-group:focus-visible .chart-bar-rect {
   opacity: 1;
   filter: saturate(1.18) drop-shadow(0 12px 12px rgba(17, 34, 64, 0.22));
   transform: scaleY(1.035);
+}
+
+.chart-svg--premium .chart-bar-group:hover .chart-bar-rect,
+.chart-svg--premium .chart-bar-group:focus-visible .chart-bar-rect,
+.chart-svg--premium .chart-bar-group:hover .chart-bar-side,
+.chart-svg--premium .chart-bar-group:focus-visible .chart-bar-side,
+.chart-svg--premium .chart-bar-group:hover .chart-bar-top,
+.chart-svg--premium .chart-bar-group:focus-visible .chart-bar-top {
+  opacity: 1;
+  filter: saturate(1.22) drop-shadow(0 18px 18px color-mix(in srgb, var(--bar-color) 28%, transparent));
+  transform: translateY(-4px) scaleY(1.025);
 }
 
 .chart-bar-group:hover .bar-label,

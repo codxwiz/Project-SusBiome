@@ -133,7 +133,7 @@ export default function ClimateRiskPreview() {
         <div className="risk-chart-card">
           <p className="story-kicker">Hazard scores</p>
           <h3>{horizon}-day risk scores</h3>
-          <HazardBars record={record} />
+          <HazardBars record={record} variant="premium-solid" />
         </div>
       </div>
     </div>
