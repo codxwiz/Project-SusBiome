@@ -15,13 +15,13 @@ OUTPUT_PATH = PROJECT_ROOT / "frontend" / "lib" / "analyticsPayload.json"
 HAZARD_COLORS = {
     "Flood": "#2c63e4",
     "Drought": "#c77c10",
-    "Cyclone": "#f1c84b",
+    "Storm": "#f1c84b",
 }
 
 HAZARD_LABELS = {
     "FLOOD": "Flood",
     "DROUGHT": "Drought",
-    "CYCLONE": "Cyclone",
+    "CYCLONE": "Storm",
 }
 
 
@@ -96,7 +96,7 @@ def build_top_districts(events: pd.DataFrame) -> list[list[str | int]]:
     score_columns = {
         "Flood": "flood_weather_risk_score",
         "Drought": "drought_weather_risk_score",
-        "Cyclone": "cyclone_weather_risk_score",
+        "Storm": "cyclone_weather_risk_score",
     }
     for column in score_columns.values():
         current[column] = pd.to_numeric(current[column], errors="coerce").fillna(0)

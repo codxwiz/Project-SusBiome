@@ -6,7 +6,7 @@ import { HazardBars } from "./Charts";
 const HAZARDS = [
   { key: "flood", label: "Flood", color: "#1f6fff" },
   { key: "drought", label: "Drought", color: "#d97706" },
-  { key: "cyclone", label: "Cyclone", color: "#f4c430" },
+  { key: "cyclone", label: "Storm", color: "#f4c430" },
 ];
 
 const DATA_URL = "/data/susbiome-outlook.json";

@@ -10,6 +10,8 @@ import {
   hazardLabels,
   hazardColors,
   titleCase,
+  hazardLabel,
+  displayCopy,
   fmtScore,
   fmtNumber,
   fmtPercent,
@@ -195,7 +197,7 @@ export default function RiskConsole() {
             <span>Composite risk</span>
             <strong>{fmtScore(record.compositeScore)}</strong>
             <small>{titleCase(record.compositeLevel)}</small>
-            <p>{titleCase(record.dominantHazard)} is the dominant current signal</p>
+            <p>{hazardLabel(record.dominantHazard)} is the dominant current signal</p>
           </div>
         </header>
 
@@ -262,7 +264,7 @@ export default function RiskConsole() {
               <p className="section-kicker">Recommended attention</p>
               <ul>
                 {record.actions.map((action) => (
-                  <li key={action}>{action}</li>
+                  <li key={action}>{displayCopy(action)}</li>
                 ))}
               </ul>
             </div>
@@ -307,7 +309,7 @@ export default function RiskConsole() {
                     <strong>{source.name}</strong>
                     <span>{source.license}</span>
                   </summary>
-                  <p>{source.role}</p>
+                  <p>{displayCopy(source.role)}</p>
                   <a href={source.url} target="_blank" rel="noreferrer">
                     View source
                   </a>

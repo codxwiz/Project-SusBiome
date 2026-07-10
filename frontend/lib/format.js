@@ -3,7 +3,7 @@ export const hazards = ["flood", "drought", "cyclone"];
 export const hazardLabels = {
   flood: "Flood",
   drought: "Drought",
-  cyclone: "Cyclone",
+  cyclone: "Storm",
 };
 
 export const hazardColors = {
@@ -24,6 +24,18 @@ export function titleCase(value) {
   return String(value || "")
     .toLowerCase()
     .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+export function hazardLabel(value) {
+  const key = String(value || "").toLowerCase();
+  return hazardLabels[key] || titleCase(value);
+}
+
+export function displayCopy(value) {
+  return String(value || "")
+    .replace(/\bCYCLONE\b/g, "STORM")
+    .replace(/\bCyclone\b/g, "Storm")
+    .replace(/\bcyclone\b/g, "storm");
 }
 
 export function fmtScore(value) {

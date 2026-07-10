@@ -6,7 +6,7 @@ This site is intentionally scoped to the production-ready public surface:
 
 - Northeast India state and district selection
 - 15, 30, 60, and 90 day planning outlooks
-- Flood, drought, and cyclone only
+- Flood, drought, and storm only
 - District boundary map from local geospatial artifacts
 - Source attribution and public disclaimer
 
