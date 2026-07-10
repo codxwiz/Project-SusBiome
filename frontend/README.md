@@ -35,9 +35,10 @@ Render deployment:
 - Backend service: Docker / FastAPI
 - Blueprint: `render.yaml`
 
-Set `NEXT_PUBLIC_SUSBIOME_API_BASE` for production API-backed requests. When it
-is empty, the console uses the bundled `/data/*.json` files so local previews
-still work without the backend running.
+Set `NEXT_PUBLIC_SUSBIOME_API_BASE=https://dashboard.susbiome.com` for
+production API-backed Toolkit Console requests. When it is empty, the console
+uses the bundled `/data/*.json` files so local previews still work without the
+backend running.
 
 - `/api/outlook`
 - `/api/outlook/boundaries`

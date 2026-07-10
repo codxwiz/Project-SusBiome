@@ -19,6 +19,21 @@ import {
 
 const DATA_URL = "/data/susbiome-outlook.json";
 const BOUNDARIES_URL = "/data/ne-district-boundaries.geojson";
+const PRODUCTION_API_BASE = "https://dashboard.susbiome.com";
+
+function defaultApiBase() {
+  if (typeof window === "undefined") return "";
+
+  if (window.SUSBIOME_API_BASE) {
+    return window.SUSBIOME_API_BASE;
+  }
+
+  if (window.location.hostname === "susbiome.com" || window.location.hostname === "www.susbiome.com") {
+    return PRODUCTION_API_BASE;
+  }
+
+  return "";
+}
 
 function Metric({ label, value }) {
   return (
@@ -38,29 +53,36 @@ export default function RiskConsole() {
   const [horizon, setHorizon] = useState(30);
 
   useEffect(() => {
-    const browserApiBase =
-      typeof window !== "undefined" && window.SUSBIOME_API_BASE
-        ? window.SUSBIOME_API_BASE
-        : "";
-    const apiBase = String(
-      process.env.NEXT_PUBLIC_SUSBIOME_API_BASE || browserApiBase || ""
-    ).replace(/\/$/, "");
-    const dataUrl = apiBase ? `${apiBase}/api/outlook` : DATA_URL;
-    const boundariesUrl = apiBase ? `${apiBase}/api/outlook/boundaries` : BOUNDARIES_URL;
-    Promise.all([fetch(dataUrl), fetch(boundariesUrl)])
-      .then(async ([dataResponse, boundaryResponse]) => {
-        if (!dataResponse.ok || !boundaryResponse.ok) {
-          throw new Error("Unable to load SusBiome data.");
+    const apiBase = String(process.env.NEXT_PUBLIC_SUSBIOME_API_BASE || defaultApiBase()).replace(/\/$/, "");
+
+    const loadPayload = (dataUrl, boundariesUrl) =>
+      Promise.all([fetch(dataUrl), fetch(boundariesUrl)])
+        .then(async ([dataResponse, boundaryResponse]) => {
+          if (!dataResponse.ok || !boundaryResponse.ok) {
+            throw new Error(
+              `Unable to load SusBiome data (${dataResponse.status}/${boundaryResponse.status}).`
+            );
+          }
+          return Promise.all([dataResponse.json(), boundaryResponse.json()]);
+        });
+
+    const liveDataUrl = apiBase ? `${apiBase}/api/outlook` : DATA_URL;
+    const liveBoundariesUrl = apiBase ? `${apiBase}/api/outlook/boundaries` : BOUNDARIES_URL;
+
+    loadPayload(liveDataUrl, liveBoundariesUrl)
+      .catch((error) => {
+        if (!apiBase) {
+          throw error;
         }
-        const [nextPayload, nextBoundaries] = await Promise.all([
-          dataResponse.json(),
-          boundaryResponse.json(),
-        ]);
-        setPayload(nextPayload);
-        setBoundaries(nextBoundaries);
-        setState(nextPayload.states[0]);
-        setDistrict(nextPayload.districts.find((item) => item.state === nextPayload.states[0]).district);
-        setHorizon(nextPayload.meta.horizons.includes(30) ? 30 : nextPayload.meta.horizons[0]);
+        console.warn("Live SusBiome API unavailable, loading bundled data.", error);
+        return loadPayload(DATA_URL, BOUNDARIES_URL);
+      })
+      .then(async ([dataResponse, boundaryResponse]) => {
+        setPayload(dataResponse);
+        setBoundaries(boundaryResponse);
+        setState(dataResponse.states[0]);
+        setDistrict(dataResponse.districts.find((item) => item.state === dataResponse.states[0]).district);
+        setHorizon(dataResponse.meta.horizons.includes(30) ? 30 : dataResponse.meta.horizons[0]);
       })
       .catch((error) => {
         console.error(error);

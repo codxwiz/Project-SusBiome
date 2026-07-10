@@ -13,7 +13,7 @@ services:
       - key: NODE_VERSION
         value: "20.11.1"
       - key: NEXT_PUBLIC_SUSBIOME_API_BASE
-        value: https://susbiome-api.onrender.com
+        value: https://dashboard.susbiome.com
   - type: web
     name: susbiome-api
     runtime: docker
@@ -26,9 +26,9 @@ services:
       - key: SUSBIOME_ENV
         value: production
       - key: SUSBIOME_ALLOWED_HOSTS
-        value: susbiome-api.onrender.com,api.susbiome.com,localhost,127.0.0.1
+        value: susbiome-api.onrender.com,dashboard.susbiome.com,api.susbiome.com,localhost,127.0.0.1
       - key: SUSBIOME_CORS_ORIGINS
-        value: https://susbiome-frontend.onrender.com,https://susbiome.com,https://www.susbiome.com
+        value: https://susbiome-frontend.onrender.com,https://susbiome.com,https://www.susbiome.com,https://dashboard.susbiome.com
       - key: SUSBIOME_RATE_LIMIT_PER_MINUTE
         value: "120"
       - key: SUSBIOME_MAX_REQUEST_BYTES
