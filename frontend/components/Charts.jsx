@@ -36,8 +36,24 @@ export function HazardBars({ record }) {
         const barHeight = (item.score / 100) * chartHeight;
         const y = chartBottom - barHeight;
         return (
-          <g key={hazard}>
-            <rect x={x} y={y} width={barWidth} height={barHeight} rx="3" fill={hazardColors[hazard]} />
+          <g key={hazard} className="chart-bar-group" tabIndex="0">
+            <rect
+              className="chart-bar-hit"
+              x={x - 16}
+              y={chartTop}
+              width={barWidth + 32}
+              height={chartHeight}
+              rx="8"
+            />
+            <rect
+              className="chart-bar-rect"
+              x={x}
+              y={y}
+              width={barWidth}
+              height={barHeight}
+              rx="3"
+              fill={hazardColors[hazard]}
+            />
             {axisLabel(x + barWidth / 2, y - 9, fmtScore(item.score), "middle", "bar-label")}
             {axisLabel(x + barWidth / 2, chartBottom + 28, hazardLabels[hazard])}
             {axisLabel(x + barWidth / 2, chartBottom + 50, titleCase(item.level))}
@@ -87,8 +103,18 @@ export function HorizonLines({ records, horizons }) {
           .join(" ");
         const [labelX, labelY] = points[points.length - 1];
         return (
-          <g key={hazard}>
+          <g key={hazard} className="chart-line-group" tabIndex="0">
             <path
+              className="chart-line-hit"
+              d={path}
+              fill="none"
+              stroke="transparent"
+              strokeWidth="18"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              className="chart-line-path"
               d={path}
               fill="none"
               stroke={hazardColors[hazard]}
@@ -97,7 +123,16 @@ export function HorizonLines({ records, horizons }) {
               strokeLinejoin="round"
             />
             {points.map(([x, y, value]) => (
-              <circle key={`${hazard}-${x}-${y}`} cx={x} cy={y} r="5" fill={hazardColors[hazard]} stroke="#fff" strokeWidth="2">
+              <circle
+                className="chart-point"
+                key={`${hazard}-${x}-${y}`}
+                cx={x}
+                cy={y}
+                r="5"
+                fill={hazardColors[hazard]}
+                stroke="#fff"
+                strokeWidth="2"
+              >
                 <title>
                   {hazardLabels[hazard]} {fmtScore(value)}
                 </title>

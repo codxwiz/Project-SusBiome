@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import AgriPageNav from "./AgriPageNav";
 import DistrictMap from "./DistrictMap";
 import { HazardBars, HorizonLines } from "./Charts";
 import {
@@ -84,10 +85,13 @@ export default function RiskConsole() {
 
   if (!payload || !boundaries || !record || !location) {
     return (
-      <main className="console-loading">
-        <span className="brand-icon">S</span>
-        <p>{loadError || "Loading SusBiome console..."}</p>
-      </main>
+      <div className="console-page">
+        <AgriPageNav />
+        <main className="console-loading">
+          <span className="brand-icon">S</span>
+          <p>{loadError || "Loading SusBiome console..."}</p>
+        </main>
+      </div>
     );
   }
 
@@ -98,13 +102,15 @@ export default function RiskConsole() {
       : "--";
 
   return (
-    <main className="console-shell">
-      <aside className="console-sidebar">
-        <Link href="/" className="brand dark">
-          <span className="brand-icon">S</span>
-          <span>SusBiome</span>
-          <small>Risk Console</small>
-        </Link>
+    <div className="console-page">
+      <AgriPageNav />
+      <main className="console-shell">
+        <aside className="console-sidebar">
+          <Link href="/" className="brand dark">
+            <span className="brand-icon">S</span>
+            <span>SusBiome</span>
+            <small>Toolkit Dashboard</small>
+          </Link>
 
         <div className="control-stack">
           <label htmlFor="stateSelect">State</label>
@@ -166,16 +172,16 @@ export default function RiskConsole() {
           </div>
         </div>
 
-        <nav className="side-nav" aria-label="Console sections">
+        <nav className="side-nav" aria-label="Toolkit Dashboard sections">
           <a href="#outlook">Outlook</a>
-          <a href="#map">Map</a>
           <a href="#horizons">Horizons</a>
+          <a href="#map">Map</a>
           <a href="#quality">Quality</a>
           <a href="#sources">Sources</a>
         </nav>
-      </aside>
+        </aside>
 
-      <section className="console-main">
+        <section className="console-main">
         <header id="outlook" className="console-header">
           <div>
             <p className="section-kicker">{state}</p>
@@ -201,6 +207,19 @@ export default function RiskConsole() {
               <small>{titleCase(record.hazards[hazard].level)}</small>
             </article>
           ))}
+        </section>
+
+        <section id="horizons" className="chart-grid">
+          <div className="panel chart-card">
+            <p className="section-kicker">Three-hazard outlook</p>
+            <h2>{horizon}-day risk scores</h2>
+            <HazardBars record={record} />
+          </div>
+          <div className="panel chart-card">
+            <p className="section-kicker">Risk across horizons</p>
+            <h2>15 - 30 - 60 - 90 days</h2>
+            <HorizonLines records={districtRecords} horizons={payload.meta.horizons} />
+          </div>
         </section>
 
         <section className="console-grid">
@@ -250,19 +269,6 @@ export default function RiskConsole() {
           </aside>
         </section>
 
-        <section id="horizons" className="chart-grid">
-          <div className="panel chart-card">
-            <p className="section-kicker">Three-hazard outlook</p>
-            <h2>{horizon}-day risk scores</h2>
-            <HazardBars record={record} />
-          </div>
-          <div className="panel chart-card">
-            <p className="section-kicker">Risk across horizons</p>
-            <h2>15 - 30 - 60 - 90 days</h2>
-            <HorizonLines records={districtRecords} horizons={payload.meta.horizons} />
-          </div>
-        </section>
-
         <section id="quality" className="quality-grid">
           <div className="panel">
             <p className="section-kicker">Model and data quality</p>
@@ -292,19 +298,26 @@ export default function RiskConsole() {
             <h2>Sources and public wording</h2>
             <p>{payload.meta.disclaimer}</p>
           </div>
-          <div className="source-list">
-            {payload.meta.sources.map((source) => (
-              <article key={source.name}>
-                <strong>{source.name}</strong>
-                <span>{source.role}</span>
-                <a href={source.url} target="_blank" rel="noreferrer">
-                  {source.license}
-                </a>
-              </article>
-            ))}
-          </div>
+          <details className="source-collection-dropdown">
+            <summary>View all data sources</summary>
+            <div className="source-list source-list--accordion">
+              {payload.meta.sources.map((source) => (
+                <details className="source-disclosure" key={source.name}>
+                  <summary>
+                    <strong>{source.name}</strong>
+                    <span>{source.license}</span>
+                  </summary>
+                  <p>{source.role}</p>
+                  <a href={source.url} target="_blank" rel="noreferrer">
+                    View source
+                  </a>
+                </details>
+              ))}
+            </div>
+          </details>
         </section>
-      </section>
-    </main>
+        </section>
+      </main>
+    </div>
   );
 }

@@ -37,8 +37,996 @@ a {
 }
 
 button,
-select {
+select,
+input,
+textarea {
   font: inherit;
+}
+
+input,
+textarea {
+  border: 0;
+}
+
+.agri-site {
+  min-height: 100vh;
+  background: #15230d;
+}
+
+.agri-hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  color: #fff;
+  background-image: url("/images/susbiome-field-hero.jpg");
+  background-position: center center;
+  background-size: cover;
+}
+
+.agri-hero__shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(20, 26, 11, 0.46) 0%, rgba(20, 26, 11, 0.18) 36%, rgba(20, 26, 11, 0.08) 64%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.32) 100%);
+}
+
+.agri-hero__content {
+  position: relative;
+  z-index: 1;
+  top: clamp(22px, 6vh, 86px);
+  width: min(1180px, calc(100vw - 72px));
+  margin: 0 auto;
+}
+
+.agri-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: clamp(132px, 12vw, 220px);
+  min-height: clamp(54px, 5.2vw, 94px);
+  margin-bottom: clamp(36px, 7vh, 88px);
+  padding: 0 clamp(20px, 2.4vw, 36px);
+  border-radius: clamp(16px, 1.2vw, 24px);
+  background: #354914;
+  color: #fff;
+  font-size: clamp(2.1rem, 3.1vw, 3.8rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.agri-hero h1 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(3.8rem, 7.6vw, 8.4rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: 0;
+}
+
+.agri-motto {
+  max-width: 860px;
+  margin: clamp(12px, 2vh, 24px) 0 0;
+  color: #fff;
+  font-size: clamp(1.8rem, 3.4vw, 3.8rem);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: 0;
+  text-wrap: balance;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.28);
+}
+
+.agri-hero__footer {
+  z-index: 1;
+  position: absolute;
+  right: 0;
+  bottom: clamp(18px, 4vh, 52px);
+  left: 0;
+  width: min(1180px, calc(100vw - 72px));
+  margin: 0 auto;
+}
+
+.agri-descriptor {
+  margin: 0 0 clamp(12px, 2vh, 24px);
+  color: #fff;
+  font-size: clamp(1rem, 1.45vw, 1.55rem);
+  font-weight: 750;
+  line-height: 1.2;
+  text-align: center;
+  letter-spacing: 0.01em;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.32);
+}
+
+.agri-menu {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(12px, 1.2vw, 18px);
+  align-items: center;
+}
+
+.agri-menu a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(56px, 4.1vw, 76px);
+  padding: 10px clamp(12px, 1.5vw, 24px);
+  border-radius: clamp(14px, 1.2vw, 22px);
+  color: #282828;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
+  font-size: clamp(1rem, 1.28vw, 1.38rem);
+  font-weight: 430;
+  line-height: 0.94;
+  text-align: center;
+  letter-spacing: 0;
+  transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.agri-menu a:hover {
+  transform: translateY(-3px);
+  background: #fff;
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.24);
+}
+
+.subpage-site {
+  min-height: 100vh;
+  background: #f7f4ea;
+}
+
+.agri-page-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 74px;
+  padding: 0 clamp(18px, 5vw, 72px);
+  border-bottom: 1px solid rgba(68, 88, 48, 0.14);
+  background: rgba(247, 244, 234, 0.88);
+  backdrop-filter: blur(16px);
+}
+
+.agri-page-brand {
+  color: #172211;
+  font-size: 1.05rem;
+  font-weight: 950;
+}
+
+.agri-menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(68, 88, 48, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  cursor: pointer;
+}
+
+.agri-menu-toggle span {
+  position: absolute;
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: #172211;
+  transition: transform 180ms ease, opacity 180ms ease;
+}
+
+.agri-menu-toggle span:nth-child(1) {
+  transform: translateY(-6px);
+}
+
+.agri-menu-toggle span:nth-child(3) {
+  transform: translateY(6px);
+}
+
+.agri-page-nav.is-open .agri-menu-toggle span:nth-child(1) {
+  transform: rotate(45deg);
+}
+
+.agri-page-nav.is-open .agri-menu-toggle span:nth-child(2) {
+  opacity: 0;
+}
+
+.agri-page-nav.is-open .agri-menu-toggle span:nth-child(3) {
+  transform: rotate(-45deg);
+}
+
+.agri-page-nav nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+}
+
+.agri-page-nav nav a {
+  color: #536244;
+  font-size: 0.92rem;
+  font-weight: 780;
+  transition: color 180ms ease;
+}
+
+.agri-page-nav nav a:hover {
+  color: #172211;
+}
+
+.site-section {
+  padding: clamp(66px, 8vw, 128px) clamp(22px, 6vw, 92px);
+  background: #f7f4ea;
+  color: #172211;
+}
+
+.section-copy {
+  max-width: 930px;
+}
+
+.section-copy--wide {
+  max-width: 1160px;
+}
+
+.subpage-section {
+  min-height: calc(100vh - 74px);
+}
+
+.section-copy h1,
+.section-copy h2 {
+  max-width: 1080px;
+  margin: 0;
+  color: #172211;
+  font-size: clamp(2.35rem, 4.8vw, 5.7rem);
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.section-copy p {
+  max-width: 930px;
+  margin: 26px 0 0;
+  color: #4f5d3f;
+  font-size: clamp(1.05rem, 1.45vw, 1.38rem);
+  line-height: 1.72;
+}
+
+.about-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 0.74fr);
+  gap: clamp(28px, 5vw, 82px);
+  align-items: start;
+}
+
+.about-visual {
+  overflow: hidden;
+  border: 1px solid rgba(68, 88, 48, 0.16);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 24px 68px rgba(42, 56, 29, 0.12);
+}
+
+.about-visual__image {
+  min-height: clamp(260px, 29vw, 470px);
+  background:
+    linear-gradient(180deg, rgba(15, 28, 10, 0.05), rgba(15, 28, 10, 0.26)),
+    url("/images/susbiome-field-hero.jpg") center center / cover;
+}
+
+.about-visual__statement {
+  padding: clamp(20px, 3vw, 34px);
+}
+
+.about-visual__statement span,
+.service-icon,
+.contact-form span {
+  color: #6a7b41;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.about-visual__statement strong {
+  display: block;
+  margin-top: 10px;
+  color: #172211;
+  font-size: clamp(1.75rem, 3vw, 3.2rem);
+  line-height: 1;
+}
+
+.about-visual__statement p {
+  margin: 18px 0 0;
+  color: #536244;
+  font-size: 1rem;
+  line-height: 1.62;
+}
+
+.problem-band,
+.matter-band {
+  grid-column: 1 / -1;
+  padding: clamp(24px, 3.4vw, 42px);
+  border-radius: 18px;
+  color: #fff;
+  background: #1f3317;
+  box-shadow: 0 18px 44px rgba(31, 51, 23, 0.22);
+  font-size: clamp(1.35rem, 2.6vw, 2.7rem);
+  font-weight: 850;
+  line-height: 1.12;
+}
+
+.origin-quote,
+.commitment-quote {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: clamp(24px, 3.4vw, 44px);
+  border: 1px solid rgba(106, 123, 65, 0.26);
+  border-left: 8px solid #c9a936;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #28351f;
+  font-size: clamp(1.25rem, 2vw, 2rem);
+  font-weight: 720;
+  line-height: 1.32;
+}
+
+.services-section {
+  background:
+    linear-gradient(180deg, #f7f4ea 0%, #eef2e6 100%);
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: clamp(30px, 4vw, 56px);
+}
+
+.service-card {
+  padding: clamp(22px, 2.6vw, 34px);
+  border: 1px solid rgba(68, 88, 48, 0.16);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 18px 46px rgba(42, 56, 29, 0.1);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(106, 123, 65, 0.44);
+  box-shadow: 0 24px 56px rgba(42, 56, 29, 0.15);
+}
+
+.service-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  color: #172211;
+  background: #f1c84b;
+}
+
+.service-card h2,
+.service-card h3 {
+  margin: 24px 0 0;
+  color: #172211;
+  font-size: clamp(1.35rem, 2vw, 2.1rem);
+  line-height: 1.05;
+}
+
+.service-card p {
+  margin: 14px 0 0;
+  color: #536244;
+  line-height: 1.58;
+}
+
+.service-card ul {
+  display: grid;
+  gap: 10px;
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.service-card li {
+  position: relative;
+  padding-left: 20px;
+  color: #26341d;
+  line-height: 1.35;
+}
+
+.service-card li::before {
+  position: absolute;
+  top: 0.58em;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  content: "";
+  background: #6a7b41;
+}
+
+.commitment-quote {
+  margin-top: clamp(30px, 4vw, 58px);
+}
+
+.matter-band {
+  margin-top: 18px;
+  background: #7b2d1c;
+}
+
+.research-section {
+  min-height: calc(100vh - 74px);
+  background:
+    linear-gradient(180deg, #f7f4ea 0%, #eef2e6 100%);
+}
+
+.research-intro {
+  margin-inline: 0;
+  text-align: left;
+}
+
+.research-intro h1,
+.research-intro p {
+  margin-inline: 0;
+}
+
+.research-collab-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: clamp(30px, 4vw, 56px);
+}
+
+.research-collab-grid article {
+  padding: clamp(22px, 2.4vw, 34px);
+  border: 1px solid rgba(68, 88, 48, 0.16);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 18px 46px rgba(42, 56, 29, 0.1);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.research-collab-grid article:hover {
+  transform: translateY(-4px);
+  border-color: rgba(106, 123, 65, 0.42);
+  box-shadow: 0 24px 56px rgba(42, 56, 29, 0.15);
+}
+
+.research-collab-grid span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  color: #172211;
+  background: #f1c84b;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.research-collab-grid h2 {
+  margin: 24px 0 0;
+  color: #172211;
+  font-size: clamp(1.3rem, 1.8vw, 1.9rem);
+  line-height: 1.08;
+}
+
+.research-collab-grid p {
+  margin: 14px 0 0;
+  color: #536244;
+  line-height: 1.58;
+}
+
+.research-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 58px;
+  margin: clamp(30px, 4vw, 56px) 0 0;
+  padding: 0 24px;
+  border-radius: 999px;
+  color: #fff;
+  background: #172211;
+  font-weight: 850;
+  text-transform: uppercase;
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.research-cta:hover {
+  transform: translateY(-2px);
+  background: #2f4f23;
+}
+
+.field-film {
+  padding: clamp(42px, 7vw, 96px) clamp(18px, 5vw, 72px);
+  background:
+    linear-gradient(180deg, #15230d 0%, #20351a 100%);
+}
+
+.field-film__frame {
+  position: relative;
+  overflow: hidden;
+  max-width: 1180px;
+  aspect-ratio: 16 / 9;
+  margin: 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  background: #0d1608;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.35);
+}
+
+.field-film__motion {
+  position: absolute;
+  inset: -4%;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.24)),
+    url("/images/susbiome-field-hero.jpg") center center / cover;
+  animation: paddy-field-placeholder 8s ease-in-out infinite alternate;
+  transform-origin: 62% 48%;
+}
+
+.field-film__caption {
+  position: absolute;
+  right: clamp(18px, 3vw, 40px);
+  bottom: clamp(18px, 3vw, 40px);
+  left: clamp(18px, 3vw, 40px);
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  color: #fff;
+}
+
+.field-film__caption span {
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  background: rgba(18, 31, 11, 0.62);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+}
+
+.field-film__caption strong {
+  max-width: 540px;
+  font-size: clamp(1.75rem, 4.2vw, 4.7rem);
+  line-height: 0.96;
+  text-align: right;
+  text-shadow: 0 3px 22px rgba(0, 0, 0, 0.42);
+}
+
+@keyframes paddy-field-placeholder {
+  0% {
+    transform: scale(1.02) translate3d(-1.5%, 0, 0);
+    filter: saturate(1.05) contrast(1.02);
+  }
+
+  50% {
+    transform: scale(1.08) translate3d(1.2%, -1.4%, 0);
+    filter: saturate(1.18) contrast(1.08);
+  }
+
+  100% {
+    transform: scale(1.04) translate3d(-0.5%, 1%, 0);
+    filter: saturate(1.08) contrast(1.04);
+  }
+}
+
+.climate-story,
+.risk-awareness {
+  background: #f7f4ea;
+  color: #172211;
+}
+
+.climate-story {
+  padding: clamp(64px, 8vw, 118px) clamp(22px, 6vw, 92px) clamp(42px, 5vw, 72px);
+  text-align: center;
+}
+
+.climate-story h2,
+.risk-awareness h2 {
+  max-width: 1080px;
+  margin: 0 auto;
+  color: #172211;
+  font-size: clamp(2.35rem, 5vw, 6rem);
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.climate-story p:not(.story-kicker),
+.risk-awareness__intro p {
+  max-width: 910px;
+  margin: 26px auto 0;
+  color: #4f5d3f;
+  font-size: clamp(1.08rem, 1.55vw, 1.45rem);
+  line-height: 1.72;
+}
+
+.story-kicker {
+  margin: 0 0 18px;
+  color: #6a7b41;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.risk-awareness {
+  padding: clamp(42px, 5vw, 72px) clamp(22px, 6vw, 92px) clamp(72px, 8vw, 128px);
+  text-align: center;
+}
+
+.risk-awareness__intro {
+  max-width: 1100px;
+  margin: 0 auto clamp(30px, 4vw, 54px);
+}
+
+.risk-preview {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: clamp(18px, 3vw, 34px);
+  border: 1px solid rgba(68, 88, 48, 0.18);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.74);
+  box-shadow: 0 24px 68px rgba(42, 56, 29, 0.14);
+  text-align: left;
+}
+
+.risk-preview__loading {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 34px;
+  border-radius: 18px;
+  background: #fff;
+  color: #637052;
+}
+
+.risk-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(180px, 0.5fr);
+  gap: 14px;
+}
+
+.risk-controls label {
+  display: grid;
+  gap: 8px;
+}
+
+.risk-controls span {
+  color: #657550;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.74rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.risk-controls select {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 14px;
+  border: 1px solid #d7dec9;
+  border-radius: 12px;
+  color: #172211;
+  background: #fff;
+  font-weight: 750;
+}
+
+.risk-score-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.risk-score-card {
+  position: relative;
+  min-height: 132px;
+  padding: 18px;
+  border: 1px solid #dce2cf;
+  border-radius: 16px;
+  background: #fff;
+  color: #172211;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 16px 30px rgba(42, 56, 29, 0.08);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.risk-score-card::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  border-radius: 16px 0 0 16px;
+  content: "";
+  background: var(--hazard-color);
+}
+
+.risk-score-card:hover,
+.risk-score-card:focus-visible {
+  transform: translateY(-3px);
+  border-color: var(--hazard-color);
+  box-shadow: 0 22px 42px rgba(42, 56, 29, 0.15);
+  outline: none;
+}
+
+.risk-score-card span,
+.risk-score-card small {
+  display: block;
+  color: #647351;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 850;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.risk-score-card strong {
+  display: block;
+  margin: 12px 0 2px;
+  font-size: clamp(2.5rem, 5vw, 4.7rem);
+  line-height: 0.95;
+}
+
+.risk-chart-card {
+  margin-top: 18px;
+  padding: clamp(18px, 3vw, 34px);
+  border: 1px solid #dfe5d8;
+  border-radius: 18px;
+  background: #fffdf7;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72);
+}
+
+.risk-preview-chart-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.risk-preview-chart-grid .risk-chart-card {
+  margin-top: 0;
+}
+
+.risk-chart-card h3 {
+  margin: 0;
+  color: #172211;
+  font-size: clamp(1.25rem, 2vw, 1.9rem);
+  line-height: 1.08;
+}
+
+.vulnerability-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 320px;
+}
+
+.vulnerability-grid {
+  stroke: rgba(33, 31, 32, 0.11);
+  stroke-width: 2;
+}
+
+.vulnerability-axis {
+  stroke: #211f20;
+  stroke-linecap: round;
+  stroke-width: 5;
+}
+
+.vulnerability-tick,
+.vulnerability-y-label,
+.vulnerability-bar-label {
+  fill: #211f20;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 800;
+}
+
+.vulnerability-tick {
+  font-size: 24px;
+}
+
+.vulnerability-y-label {
+  font-size: 25px;
+}
+
+.vulnerability-bar-label {
+  font-size: 27px;
+}
+
+.vulnerability-bar {
+  cursor: pointer;
+  outline: none;
+}
+
+.vulnerability-column {
+  stroke: #211f20;
+  stroke-width: 5;
+  transition: filter 180ms ease, transform 180ms ease;
+  transform-box: fill-box;
+  transform-origin: center bottom;
+}
+
+.vulnerability-highlight {
+  opacity: 0.28;
+  stroke: rgba(255, 255, 255, 0.85);
+  stroke-linecap: round;
+  stroke-width: 6;
+  pointer-events: none;
+}
+
+.vulnerability-value {
+  fill: #211f20;
+  font-size: 28px;
+  font-weight: 950;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.vulnerability-bar:hover .vulnerability-column,
+.vulnerability-bar:focus-visible .vulnerability-column,
+.vulnerability-bar.is-active .vulnerability-column {
+  filter: saturate(1.12) drop-shadow(0 16px 18px rgba(33, 31, 32, 0.18));
+  transform: scaleY(1.015);
+}
+
+.vulnerability-bar:hover .vulnerability-value,
+.vulnerability-bar:focus-visible .vulnerability-value,
+.vulnerability-bar.is-active .vulnerability-value {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.contact-section {
+  display: grid;
+  grid-template-columns: minmax(340px, 0.72fr) minmax(520px, 0.98fr);
+  gap: clamp(32px, 4vw, 64px);
+  align-items: center;
+  background:
+    linear-gradient(180deg, #f7f4ea 0%, #eef2e6 100%);
+}
+
+.contact-section .section-copy h1 {
+  max-width: 760px;
+  font-size: clamp(3.2rem, 5vw, 6.6rem);
+}
+
+.contact-section .section-copy p {
+  max-width: 720px;
+}
+
+.contact-form {
+  display: grid;
+  gap: 18px;
+  width: min(100%, 880px);
+  justify-self: end;
+  padding: clamp(20px, 3vw, 36px);
+  border: 1px solid rgba(68, 88, 48, 0.16);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 22px 58px rgba(42, 56, 29, 0.13);
+}
+
+.contact-field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.contact-form label {
+  display: grid;
+  gap: 9px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  min-height: 54px;
+  padding: 0 16px;
+  border: 1px solid #d7dec9;
+  border-radius: 13px;
+  color: #172211;
+  background: #fff;
+  outline: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.contact-form textarea {
+  min-height: 152px;
+  padding-block: 14px;
+  resize: vertical;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: #6a7b41;
+  box-shadow: 0 0 0 4px rgba(106, 123, 65, 0.12);
+}
+
+.contact-form button {
+  min-height: 58px;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  background: #172211;
+  cursor: pointer;
+  font-weight: 900;
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.contact-form button:hover {
+  transform: translateY(-2px);
+  background: #2f4f23;
+}
+
+.agri-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.52fr);
+  gap: clamp(28px, 6vw, 90px);
+  padding: clamp(42px, 6vw, 82px) clamp(22px, 6vw, 92px);
+  color: #fff;
+  background:
+    linear-gradient(135deg, rgba(47, 79, 35, 0.82), rgba(23, 34, 17, 0.96)),
+    #172211;
+}
+
+.agri-footer .story-kicker {
+  color: rgba(241, 200, 75, 0.92);
+}
+
+.agri-footer strong {
+  display: block;
+  max-width: 980px;
+  color: #fff;
+  font-size: clamp(1.45rem, 3vw, 3.45rem);
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.agri-footer nav {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.agri-footer nav a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.06);
+  font-weight: 760;
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.agri-footer nav a:hover {
+  transform: translateX(3px);
+  border-color: rgba(241, 200, 75, 0.52);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.agri-footer nav a:last-child {
+  color: #172211;
+  background: #f1c84b;
 }
 
 .site {
@@ -446,21 +1434,29 @@ select {
   border-top: 1px solid var(--line);
 }
 
+.console-page {
+  min-height: 100vh;
+  background: #eef3f7;
+}
+
 .console-shell {
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr);
-  min-height: 100vh;
+  min-height: calc(100vh - 74px);
+  min-width: 0;
   background: #eef3f7;
 }
 
 .console-sidebar {
   position: sticky;
-  top: 0;
+  top: 74px;
   align-self: start;
   display: flex;
   flex-direction: column;
   gap: 24px;
-  min-height: 100vh;
+  width: 100%;
+  min-width: 0;
+  min-height: calc(100vh - 74px);
   padding: 24px;
   background: var(--navy);
   color: #c4cedd;
@@ -469,6 +1465,7 @@ select {
 .control-stack {
   display: grid;
   gap: 10px;
+  min-width: 0;
   padding: 18px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
@@ -517,6 +1514,7 @@ select {
 .status-panel {
   display: flex;
   gap: 12px;
+  min-width: 0;
   padding: 16px;
   border-radius: 8px;
   background: rgba(21, 127, 120, 0.18);
@@ -552,6 +1550,8 @@ select {
   display: grid;
   gap: 6px;
   margin-top: auto;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .side-nav a {
@@ -568,6 +1568,7 @@ select {
 
 .console-main {
   min-width: 0;
+  width: 100%;
   padding: 32px;
 }
 
@@ -628,11 +1629,13 @@ select {
 .hazard-tiles article {
   position: relative;
   overflow: hidden;
+  min-width: 0;
   padding: 20px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: #fff;
   box-shadow: 0 12px 26px rgba(17, 34, 64, 0.06);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
 }
 
 .hazard-tiles article::before {
@@ -657,6 +1660,12 @@ select {
   margin: 10px 0 2px;
   color: var(--ink);
   font-size: 2.7rem;
+}
+
+.hazard-tiles article:hover {
+  transform: translateY(-3px);
+  border-color: var(--hazard);
+  box-shadow: 0 18px 34px rgba(17, 34, 64, 0.11);
 }
 
 .console-grid,
@@ -806,6 +1815,7 @@ select {
   display: block;
   width: 100%;
   height: auto;
+  min-height: 270px;
   margin-top: 16px;
   overflow: visible;
 }
@@ -831,11 +1841,84 @@ select {
   fill: var(--navy);
   font-size: 19px;
   font-weight: 800;
+  opacity: 0.72;
+  transform: translateY(6px);
+  transition: opacity 160ms ease, transform 160ms ease;
 }
 
 .line-label {
   font-size: 17px;
   font-weight: 800;
+  opacity: 0.86;
+  transition: opacity 160ms ease;
+}
+
+.chart-bar-group,
+.chart-line-group {
+  cursor: pointer;
+  outline: none;
+}
+
+.chart-bar-hit {
+  fill: transparent;
+}
+
+.chart-bar-rect {
+  filter: saturate(0.96);
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transition: filter 180ms ease, opacity 180ms ease, transform 180ms ease;
+}
+
+.chart-line-hit {
+  pointer-events: stroke;
+}
+
+.chart-line-path {
+  transition: filter 180ms ease, opacity 180ms ease, stroke-width 180ms ease;
+}
+
+.chart-point {
+  transition: filter 180ms ease, r 180ms ease, stroke-width 180ms ease;
+}
+
+.chart-svg:has(.chart-bar-group:hover) .chart-bar-rect,
+.chart-svg:has(.chart-bar-group:focus-visible) .chart-bar-rect,
+.chart-svg:has(.chart-line-group:hover) .chart-line-path,
+.chart-svg:has(.chart-line-group:focus-visible) .chart-line-path {
+  opacity: 0.38;
+}
+
+.chart-bar-group:hover .chart-bar-rect,
+.chart-bar-group:focus-visible .chart-bar-rect {
+  opacity: 1;
+  filter: saturate(1.18) drop-shadow(0 12px 12px rgba(17, 34, 64, 0.22));
+  transform: scaleY(1.035);
+}
+
+.chart-bar-group:hover .bar-label,
+.chart-bar-group:focus-visible .bar-label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.chart-line-group:hover .chart-line-path,
+.chart-line-group:focus-visible .chart-line-path {
+  opacity: 1;
+  filter: drop-shadow(0 8px 8px rgba(17, 34, 64, 0.18));
+  stroke-width: 6;
+}
+
+.chart-line-group:hover .chart-point,
+.chart-line-group:focus-visible .chart-point {
+  r: 7;
+  filter: drop-shadow(0 5px 7px rgba(17, 34, 64, 0.2));
+  stroke-width: 3;
+}
+
+.chart-line-group:hover .line-label,
+.chart-line-group:focus-visible .line-label {
+  opacity: 1;
 }
 
 .quality-metrics {
@@ -892,6 +1975,103 @@ select {
   background: #f9fbfd;
 }
 
+.source-list--accordion {
+  align-content: start;
+  grid-template-columns: 1fr;
+}
+
+.source-collection-dropdown {
+  align-self: start;
+  border: 1px solid #e1e9f2;
+  border-radius: 10px;
+  background: #f9fbfd;
+  overflow: hidden;
+}
+
+.source-collection-dropdown > summary {
+  position: relative;
+  padding: 17px 50px 17px 18px;
+  color: var(--navy);
+  cursor: pointer;
+  font-weight: 850;
+  list-style: none;
+}
+
+.source-collection-dropdown > summary::-webkit-details-marker {
+  display: none;
+}
+
+.source-collection-dropdown > summary::after {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  width: 24px;
+  height: 24px;
+  border: 1px solid #cbd7e4;
+  border-radius: 50%;
+  content: "+";
+  line-height: 22px;
+  text-align: center;
+}
+
+.source-collection-dropdown[open] > summary::after {
+  content: "-";
+}
+
+.source-collection-dropdown .source-list {
+  padding: 0 12px 12px;
+}
+
+.source-disclosure {
+  border: 1px solid #e1e9f2;
+  border-radius: 8px;
+  background: #f9fbfd;
+  overflow: hidden;
+}
+
+.source-disclosure summary {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  padding: 15px 46px 15px 15px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.source-disclosure summary::-webkit-details-marker {
+  display: none;
+}
+
+.source-disclosure summary::after {
+  position: absolute;
+  top: 18px;
+  right: 16px;
+  width: 22px;
+  height: 22px;
+  border: 1px solid #cbd7e4;
+  border-radius: 50%;
+  color: var(--navy);
+  content: "+";
+  font-size: 1rem;
+  font-weight: 850;
+  line-height: 20px;
+  text-align: center;
+}
+
+.source-disclosure[open] summary::after {
+  content: "-";
+}
+
+.source-disclosure p {
+  margin: 0;
+  padding: 0 15px 10px;
+}
+
+.source-disclosure a {
+  display: inline-flex;
+  margin: 0 15px 15px;
+}
+
 .source-list strong,
 .source-list span,
 .source-list a {
@@ -919,6 +2099,52 @@ select {
 }
 
 @media (max-width: 1120px) {
+  .agri-hero {
+    background-position: 58% center;
+  }
+
+  .agri-hero__content {
+    width: min(900px, calc(100vw - 44px));
+  }
+
+  .agri-hero__footer {
+    width: min(900px, calc(100vw - 44px));
+  }
+
+  .agri-menu {
+    gap: 14px;
+  }
+
+  .agri-menu a {
+    font-size: clamp(1.35rem, 3vw, 2.1rem);
+  }
+
+  .field-film__caption {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .field-film__caption strong {
+    text-align: left;
+  }
+
+  .about-section,
+  .contact-section {
+    grid-template-columns: 1fr;
+  }
+
+  .service-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .research-collab-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .agri-footer {
+    grid-template-columns: 1fr;
+  }
+
   .landing-hero,
   .console-grid,
   .chart-grid,
@@ -934,6 +2160,127 @@ select {
 }
 
 @media (max-width: 900px) {
+  .agri-hero {
+    min-height: 100svh;
+    background-position: 62% center;
+  }
+
+  .agri-hero__content {
+    align-self: start;
+    width: calc(100vw - 36px);
+    margin: 0;
+    padding: 34px 18px 0;
+  }
+
+  .agri-logo {
+    margin-bottom: clamp(78px, 22vw, 140px);
+  }
+
+  .agri-hero__footer {
+    bottom: 26px;
+    width: calc(100vw - 36px);
+  }
+
+  .agri-descriptor {
+    padding: 0 6px;
+    font-size: clamp(1rem, 3.3vw, 1.5rem);
+  }
+
+  .agri-menu {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .agri-menu a {
+    min-height: 58px;
+    border-radius: 18px;
+  }
+
+  .site-section {
+    padding-inline: 18px;
+  }
+
+  .agri-page-nav {
+    align-items: center;
+    flex-direction: row;
+    min-height: auto;
+    padding-block: 12px;
+    position: sticky;
+  }
+
+  .agri-menu-toggle {
+    position: relative;
+    display: inline-flex;
+    margin-left: auto;
+  }
+
+  .agri-page-nav nav {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 18px;
+    left: 18px;
+    display: none;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid rgba(68, 88, 48, 0.16);
+    border-radius: 18px;
+    background: rgba(247, 244, 234, 0.96);
+    box-shadow: 0 20px 50px rgba(42, 56, 29, 0.16);
+    backdrop-filter: blur(18px);
+  }
+
+  .agri-page-nav.is-open nav {
+    display: grid;
+  }
+
+  .agri-page-nav nav a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.58);
+  }
+
+  .side-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin-top: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  .side-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .side-nav a {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .risk-preview-chart-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-copy h1,
+  .section-copy h2 {
+    font-size: clamp(2.15rem, 8vw, 4.2rem);
+  }
+
+  .problem-band,
+  .matter-band {
+    font-size: clamp(1.25rem, 4vw, 2.2rem);
+  }
+
+  .risk-controls {
+    grid-template-columns: 1fr;
+  }
+
   .topbar {
     align-items: flex-start;
     flex-direction: column;
@@ -970,6 +2317,152 @@ select {
 }
 
 @media (max-width: 640px) {
+  .agri-hero {
+    background-position: 65% center;
+  }
+
+  .agri-hero__shade {
+    background:
+      linear-gradient(90deg, rgba(20, 26, 11, 0.58) 0%, rgba(20, 26, 11, 0.25) 62%, rgba(20, 26, 11, 0.1) 100%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0) 34%, rgba(0, 0, 0, 0.46) 100%);
+  }
+
+  .agri-logo {
+    min-width: 124px;
+    min-height: 56px;
+    margin-bottom: 94px;
+    border-radius: 17px;
+    font-size: 2.15rem;
+  }
+
+  .agri-hero h1 {
+    font-size: clamp(3.35rem, 17vw, 5.2rem);
+  }
+
+  .agri-motto {
+    max-width: 94vw;
+    font-size: clamp(1.58rem, 7.8vw, 2.35rem);
+  }
+
+  .agri-menu {
+    gap: 10px;
+  }
+
+  .agri-menu a {
+    min-height: 54px;
+    padding: 8px 12px;
+    border-radius: 16px;
+    font-size: clamp(1.08rem, 5.2vw, 1.5rem);
+  }
+
+  .field-film {
+    padding-inline: 14px;
+  }
+
+  .field-film__frame {
+    aspect-ratio: 4 / 5;
+    border-radius: 16px;
+  }
+
+  .field-film__motion {
+    background-position: 62% center;
+  }
+
+  .field-film__caption strong {
+    max-width: 300px;
+  }
+
+  .site-section {
+    padding-block: 54px;
+  }
+
+  .about-visual,
+  .service-card,
+  .contact-form {
+    border-radius: 16px;
+  }
+
+  .about-visual__image {
+    min-height: 260px;
+  }
+
+  .contact-field-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .research-cta {
+    width: 100%;
+    justify-content: center;
+    min-height: 54px;
+    padding-inline: 16px;
+    text-align: center;
+    font-size: 0.82rem;
+  }
+
+  .agri-footer {
+    padding: 42px 18px;
+  }
+
+  .agri-footer nav a {
+    min-height: 46px;
+    padding-inline: 14px;
+  }
+
+  .climate-story,
+  .risk-awareness {
+    padding-inline: 18px;
+  }
+
+  .climate-story h2,
+  .risk-awareness h2 {
+    font-size: clamp(1.85rem, 8.6vw, 3rem);
+    line-height: 1.06;
+  }
+
+  .risk-awareness h2 {
+    font-size: clamp(1.9rem, 8vw, 2.55rem);
+    white-space: nowrap;
+  }
+
+  .risk-preview {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .risk-score-row {
+    gap: 8px;
+  }
+
+  .risk-score-card {
+    min-height: 96px;
+    padding: 13px 10px 12px 14px;
+    border-radius: 13px;
+  }
+
+  .risk-score-card::before {
+    width: 4px;
+    border-radius: 13px 0 0 13px;
+  }
+
+  .risk-score-card span,
+  .risk-score-card small {
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+  }
+
+  .risk-score-card strong {
+    margin-top: 9px;
+    font-size: clamp(1.65rem, 8vw, 2.5rem);
+  }
+
+  .risk-chart-card {
+    padding: 14px 8px 18px;
+  }
+
+  .vulnerability-chart {
+    min-height: 250px;
+  }
+
   .topbar,
   .landing-hero,
   .trust-grid,
@@ -1003,10 +2496,32 @@ select {
 
   .console-panel,
   .trust-grid,
-  .hazard-tiles,
   .quality-metrics,
   .source-list {
     grid-template-columns: 1fr;
+  }
+
+  .hazard-tiles {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .hazard-tiles article {
+    padding: 14px 9px 12px 12px;
+  }
+
+  .hazard-tiles span,
+  .hazard-tiles small {
+    font-size: 0.58rem;
+    letter-spacing: 0.06em;
+  }
+
+  .hazard-tiles strong {
+    font-size: clamp(1.55rem, 8vw, 2.25rem);
+  }
+
+  .chart-svg {
+    min-height: 230px;
   }
 
   .console-map {
