@@ -5,7 +5,8 @@ import ClimateRiskPreview from "../components/ClimateRiskPreview";
 const menuItems = [
   { label: "About us", href: "/about" },
   { label: "Services", href: "/services" },
-  { label: "Research & collaboration", href: "/research-collaboration" },
+  { label: "Products", href: "/products" },
+  { label: "Research collaboration", href: "/research-collaboration" },
   { label: "Contact us", href: "/contact" },
 ];
 
@@ -60,6 +61,21 @@ export default function LandingPage() {
       </section>
 
       <section className="risk-awareness" aria-labelledby="risk-awareness-title">
+        <div className="risk-awareness__hook">
+          <p className="story-kicker">District readiness</p>
+          <h2>Is Your District Ready for Tomorrow&apos;s Climate?</h2>
+          <p className="risk-awareness__question">
+            What if you could understand your district&apos;s climate vulnerability before making critical
+            agricultural decisions?
+          </p>
+          <p>
+            Our interactive tool estimates the probability of climate vulnerability for districts across
+            Northeast India, helping you identify areas that may require greater adaptation and resilience
+            planning.
+          </p>
+          <p className="risk-awareness__start">Start exploring in less than a minute.</p>
+        </div>
+
         <div className="risk-awareness__intro">
           <h2 id="risk-awareness-title">Know Your Climate Risk</h2>
           <p>

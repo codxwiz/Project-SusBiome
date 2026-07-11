@@ -473,6 +473,19 @@ textarea {
   background: #7b2d1c;
 }
 
+.products-section {
+  display: grid;
+  align-items: center;
+  background:
+    radial-gradient(circle at 78% 16%, rgba(241, 200, 75, 0.24), rgba(241, 200, 75, 0) 28%),
+    linear-gradient(180deg, #f7f4ea 0%, #eef2e6 100%);
+}
+
+.products-intro__closing {
+  color: #172211;
+  font-weight: 900;
+}
+
 .research-section {
   min-height: calc(100vh - 74px);
   background:
@@ -1101,7 +1114,8 @@ textarea {
 }
 
 .climate-story p:not(.story-kicker),
-.risk-awareness__intro p {
+.risk-awareness__intro p,
+.risk-awareness__hook p {
   max-width: 910px;
   margin: 26px auto 0;
   color: #4f5d3f;
@@ -1122,6 +1136,31 @@ textarea {
 .risk-awareness {
   padding: clamp(42px, 5vw, 72px) clamp(22px, 6vw, 92px) clamp(72px, 8vw, 128px);
   text-align: center;
+}
+
+.risk-awareness__hook {
+  max-width: 1040px;
+  margin: 0 auto clamp(38px, 5vw, 68px);
+  padding-bottom: clamp(28px, 4vw, 52px);
+  border-bottom: 1px solid rgba(80, 99, 55, 0.16);
+}
+
+.risk-awareness__hook h2 {
+  max-width: 960px;
+  font-size: clamp(2rem, 4vw, 4.4rem);
+  line-height: 1.02;
+}
+
+.risk-awareness__hook .risk-awareness__question {
+  max-width: 840px;
+  color: #28371d;
+  font-weight: 800;
+}
+
+.risk-awareness__hook .risk-awareness__start {
+  margin-top: 18px;
+  color: #15210f;
+  font-weight: 900;
 }
 
 .risk-awareness__intro {
@@ -3182,9 +3221,14 @@ textarea {
     line-height: 1.06;
   }
 
-  .risk-awareness h2 {
+  .risk-awareness__intro h2 {
     font-size: clamp(1.9rem, 8vw, 2.55rem);
     white-space: nowrap;
+  }
+
+  .risk-awareness__hook h2 {
+    font-size: clamp(2rem, 9vw, 3.1rem);
+    white-space: normal;
   }
 
   .risk-preview {
@@ -3300,6 +3344,52 @@ textarea {
   }
 
   .console-header h1 {
-    font-size: 3.1rem;
+    font-size: 1.55rem;
+  }
+
+  .agri-hero h1 {
+    font-size: clamp(1.7rem, 8.5vw, 2.6rem);
+    line-height: 1;
+  }
+
+  .agri-motto {
+    font-size: clamp(0.8rem, 3.9vw, 1.18rem);
+    line-height: 1.08;
+  }
+
+  .section-copy h1,
+  .section-copy h2,
+  .contact-section .section-copy h1,
+  .legal-heading h1 {
+    font-size: clamp(1.12rem, 4vw, 2.1rem);
+    line-height: 1.08;
+  }
+
+  .climate-story h2,
+  .risk-awareness h2 {
+    font-size: clamp(0.95rem, 4.3vw, 1.5rem);
+    line-height: 1.12;
+  }
+
+  .risk-awareness__intro h2 {
+    font-size: clamp(1rem, 4vw, 1.28rem);
+  }
+
+  .risk-awareness__hook h2 {
+    font-size: clamp(1rem, 4.5vw, 1.55rem);
+  }
+
+  .analytics-card h2,
+  .service-card h2,
+  .research-collab-grid h2,
+  .product-card h2,
+  .ready-band h2,
+  .panel h2 {
+    font-size: clamp(0.9rem, 3.4vw, 1.08rem);
+    line-height: 1.16;
+  }
+
+  .hero-copy h1 {
+    font-size: 1.5rem;
   }
 }
