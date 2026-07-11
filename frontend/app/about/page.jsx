@@ -13,7 +13,6 @@ export default function AboutPage() {
       <AgriPageNav />
       <section id="about" className="about-section site-section subpage-section" aria-labelledby="about-title">
         <div className="section-copy">
-          <p className="story-kicker">About us</p>
           <h1 id="about-title">
             Research-driven agricultural consultancy for resilient farming systems.
           </h1>

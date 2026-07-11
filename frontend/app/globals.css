@@ -43,6 +43,11 @@ textarea {
   font: inherit;
 }
 
+.agri-site [class],
+.agri-site [class] * {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
 input,
 textarea {
   border: 0;
@@ -55,18 +60,22 @@ textarea {
 
 .agri-hero {
   position: relative;
-  min-height: 100vh;
-  min-height: 100svh;
+  width: min(1180px, calc(100% - clamp(28px, 10vw, 144px)));
+  min-height: min(820px, calc(100vh - 122px));
+  min-height: min(820px, calc(100svh - 122px));
+  margin: clamp(24px, 5vw, 72px) auto;
   overflow: hidden;
+  border-radius: 24px;
   color: #fff;
   background-image: url("/images/susbiome-field-hero.jpg");
   background-position: center center;
   background-size: cover;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.32);
 }
 
 .agri-page-nav + .agri-hero {
-  min-height: calc(100vh - 74px);
-  min-height: calc(100svh - 74px);
+  min-height: min(820px, calc(100vh - 146px));
+  min-height: min(820px, calc(100svh - 146px));
 }
 
 .agri-hero__shade {
@@ -82,7 +91,7 @@ textarea {
   position: relative;
   z-index: 1;
   top: clamp(22px, 6vh, 86px);
-  width: min(1180px, calc(100vw - 72px));
+  width: min(1080px, calc(100% - clamp(32px, 7vw, 88px)));
   margin: 0 auto;
 }
 
@@ -130,7 +139,7 @@ textarea {
   right: 0;
   bottom: clamp(18px, 4vh, 52px);
   left: 0;
-  width: min(1180px, calc(100vw - 72px));
+  width: min(1080px, calc(100% - clamp(32px, 7vw, 88px)));
   margin: 0 auto;
 }
 
@@ -148,7 +157,7 @@ textarea {
 .agri-menu {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(12px, 1.2vw, 18px);
+  gap: clamp(8px, 0.9vw, 14px);
   align-items: center;
 }
 
@@ -156,24 +165,24 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: clamp(56px, 4.1vw, 76px);
-  padding: 10px clamp(12px, 1.5vw, 24px);
-  border-radius: clamp(14px, 1.2vw, 22px);
+  min-height: clamp(42px, 3vw, 56px);
+  padding: 8px clamp(10px, 1.1vw, 18px);
+  border-radius: clamp(11px, 0.9vw, 16px);
   color: #282828;
   background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18);
-  font-size: clamp(1rem, 1.28vw, 1.38rem);
-  font-weight: 430;
-  line-height: 0.94;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
+  font-size: clamp(0.78rem, 0.92vw, 1rem);
+  font-weight: 760;
+  line-height: 1.05;
   text-align: center;
   letter-spacing: 0;
   transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
 }
 
 .agri-menu a:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   background: #fff;
-  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.24);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.2);
 }
 
 .subpage-site {
@@ -1134,8 +1143,8 @@ textarea {
 }
 
 .risk-awareness {
-  padding: clamp(42px, 5vw, 72px) clamp(22px, 6vw, 92px) clamp(72px, 8vw, 128px);
-  text-align: center;
+  padding: clamp(36px, 4.5vw, 62px) clamp(22px, 6vw, 92px) clamp(72px, 8vw, 128px);
+  text-align: left;
 }
 
 .risk-awareness__hook {
@@ -1145,8 +1154,14 @@ textarea {
   border-bottom: 1px solid rgba(80, 99, 55, 0.16);
 }
 
+.risk-awareness__hook p {
+  margin-right: 0;
+  margin-left: 0;
+}
+
 .risk-awareness__hook h2 {
   max-width: 960px;
+  margin-inline: 0;
   font-size: clamp(2rem, 4vw, 4.4rem);
   line-height: 1.02;
 }
@@ -1166,6 +1181,11 @@ textarea {
 .risk-awareness__intro {
   max-width: 1100px;
   margin: 0 auto clamp(30px, 4vw, 54px);
+  text-align: left;
+}
+
+.risk-awareness__intro h2 {
+  margin-inline: 0;
 }
 
 .risk-preview {
@@ -1186,6 +1206,50 @@ textarea {
   border-radius: 18px;
   background: #fff;
   color: #637052;
+}
+
+.homepage-console-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  max-width: 1180px;
+  margin: clamp(22px, 3vw, 38px) auto 0;
+  padding: clamp(16px, 2vw, 24px);
+  border: 1px solid rgba(68, 88, 48, 0.16);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: 0 16px 42px rgba(42, 56, 29, 0.1);
+}
+
+.homepage-console-cta p {
+  margin: 0;
+  color: #172211;
+  font-size: clamp(1rem, 1.35vw, 1.22rem);
+  font-weight: 820;
+  line-height: 1.25;
+}
+
+.homepage-console-cta a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 22px;
+  border-radius: 999px;
+  color: #fff;
+  background: #10170c;
+  font-size: 0.92rem;
+  font-weight: 880;
+  line-height: 1;
+  white-space: nowrap;
+  transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.homepage-console-cta a:hover {
+  transform: translateY(-2px);
+  background: #26351d;
+  box-shadow: 0 14px 30px rgba(16, 23, 12, 0.22);
 }
 
 .risk-controls {
@@ -1485,8 +1549,9 @@ textarea {
   display: block;
   max-width: 980px;
   color: #fff;
-  font-size: clamp(1.45rem, 3vw, 3.45rem);
-  line-height: 1.08;
+  font-size: clamp(1rem, 1.3vw, 1.25rem);
+  font-weight: 760;
+  line-height: 1.45;
   letter-spacing: 0;
 }
 
@@ -3068,14 +3133,15 @@ textarea {
   }
 
   .agri-menu {
-    gap: 10px;
+    gap: 7px;
   }
 
   .agri-menu a {
-    min-height: 54px;
-    padding: 8px 12px;
-    border-radius: 16px;
-    font-size: clamp(1.08rem, 5.2vw, 1.5rem);
+    min-height: 40px;
+    padding: 7px 8px;
+    border-radius: 12px;
+    font-size: clamp(0.7rem, 3.2vw, 0.9rem);
+    line-height: 1.08;
   }
 
   .field-film {
@@ -3234,6 +3300,18 @@ textarea {
   .risk-preview {
     padding: 14px;
     border-radius: 16px;
+  }
+
+  .homepage-console-cta {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .homepage-console-cta a {
+    width: 100%;
   }
 
   .risk-score-row {

@@ -219,7 +219,6 @@ export default function AnalyticsDashboard() {
   return (
     <section className="analytics-section site-section subpage-section" aria-labelledby="analytics-title">
       <div className="section-copy section-copy--wide analytics-intro">
-        <p className="story-kicker">Analytics</p>
         <h1 id="analytics-title">Climate disaster analytics for Northeast India.</h1>
         <p>
           A compact view of historical events, hazard distribution, state exposure, and district

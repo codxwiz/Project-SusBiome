@@ -18,7 +18,6 @@ export default function ResearchCollaborationPage() {
         aria-labelledby="research-title"
       >
         <div className="section-copy section-copy--wide research-intro">
-          <p className="story-kicker">Research collaboration</p>
           <h1 id="research-title">Research that stays accountable to the field.</h1>
           <p>
             At SusBiome, we believe meaningful agricultural innovation happens through

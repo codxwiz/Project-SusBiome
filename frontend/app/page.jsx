@@ -5,7 +5,6 @@ import ClimateRiskPreview from "../components/ClimateRiskPreview";
 const menuItems = [
   { label: "About us", href: "/about" },
   { label: "Services", href: "/services" },
-  { label: "Products", href: "/products" },
   { label: "Research collaboration", href: "/research-collaboration" },
   { label: "Contact us", href: "/contact" },
 ];
@@ -48,18 +47,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="climate-story" aria-labelledby="climate-crisis-title">
-        <h2 id="climate-crisis-title">
-          Farming decisions are now being made in a climate that no longer behaves like the past.
-        </h2>
-        <p>
-          Rain arrives late, dry spells stretch longer, floods rise faster, and storms can undo a season of
-          work in a few hours. For farmers and landowners, climate risk is no longer an abstract future
-          problem. It is becoming a local, practical question: what is changing around my land, and how
-          exposed could I be?
-        </p>
-      </section>
-
       <section className="risk-awareness" aria-labelledby="risk-awareness-title">
         <div className="risk-awareness__hook">
           <p className="story-kicker">District readiness</p>
@@ -78,12 +65,12 @@ export default function LandingPage() {
 
         <div className="risk-awareness__intro">
           <h2 id="risk-awareness-title">Know Your Climate Risk</h2>
-          <p>
-            A simple educational risk-preview experience to help visitors recognize vulnerability, build
-            trust in SusBiome, and take the first step toward a deeper consultation.
-          </p>
         </div>
         <ClimateRiskPreview />
+        <div className="homepage-console-cta">
+          <p>For more detailed vulnerability assessment</p>
+          <a href="/console">Open console</a>
+        </div>
       </section>
 
       <AgriFooter />
