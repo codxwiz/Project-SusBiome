@@ -47,10 +47,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="risk-awareness" aria-labelledby="risk-awareness-title">
+      <section className="risk-awareness" aria-labelledby="risk-readiness-title">
         <div className="risk-awareness__hook">
           <p className="story-kicker">District readiness</p>
-          <h2>Is Your District Ready for Tomorrow&apos;s Climate?</h2>
+          <h2 id="risk-readiness-title">Is Your District Ready for Tomorrow&apos;s Climate?</h2>
           <p className="risk-awareness__question">
             What if you could understand your district&apos;s climate vulnerability before making critical
             agricultural decisions?
@@ -63,12 +63,9 @@ export default function LandingPage() {
           <p className="risk-awareness__start">Start exploring in less than a minute.</p>
         </div>
 
-        <div className="risk-awareness__intro">
-          <h2 id="risk-awareness-title">Know Your Climate Risk</h2>
-        </div>
         <ClimateRiskPreview />
         <div className="homepage-console-cta">
-          <p>For more detailed vulnerability assessment</p>
+          <p>Uncover what a basic scan misses. Get the full picture!</p>
           <a href="/console">Open console</a>
         </div>
       </section>
