@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -21,8 +22,8 @@ export default function AgriPageNav() {
 
   return (
     <header className={`agri-page-nav${isOpen ? " is-open" : ""}`}>
-      <Link className="agri-page-brand" href="/">
-        SusBiome
+      <Link className="agri-page-brand" href="/" aria-label="SusBiome home">
+        <Image src="/images/susbiome-logo.png" alt="SusBiome" width={58} height={47} priority />
       </Link>
       <button
         className="agri-menu-toggle"

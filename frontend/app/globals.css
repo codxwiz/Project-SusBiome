@@ -206,9 +206,22 @@ textarea {
 }
 
 .agri-page-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 0 0 92px;
+  width: 92px;
+  height: 46px;
   color: #172211;
   font-size: 1.05rem;
   font-weight: 950;
+  overflow: hidden;
+}
+
+.agri-page-brand img {
+  display: block;
+  width: 58px;
+  height: auto;
 }
 
 .agri-menu-toggle {
