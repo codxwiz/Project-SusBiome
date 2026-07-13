@@ -141,6 +141,10 @@ textarea {
   left: 0;
   width: min(1080px, calc(100% - clamp(32px, 7vw, 88px)));
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: clamp(10px, 1.6vh, 18px);
 }
 
 .agri-descriptor {
@@ -159,6 +163,7 @@ textarea {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(8px, 0.9vw, 14px);
   align-items: center;
+  width: min(820px, 100%);
 }
 
 .agri-menu a {
@@ -2896,6 +2901,7 @@ textarea {
 
   .agri-menu {
     gap: 14px;
+    width: min(780px, 100%);
   }
 
   .agri-menu a {
@@ -2989,6 +2995,7 @@ textarea {
 
   .agri-menu {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
   }
 
   .agri-menu a {
