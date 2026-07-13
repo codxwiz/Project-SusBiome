@@ -141,10 +141,6 @@ textarea {
   left: 0;
   width: min(1080px, calc(100% - clamp(32px, 7vw, 88px)));
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: clamp(10px, 1.6vh, 18px);
 }
 
 .agri-descriptor {
@@ -163,7 +159,6 @@ textarea {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(8px, 0.9vw, 14px);
   align-items: center;
-  width: min(820px, 100%);
 }
 
 .agri-menu a {
@@ -352,7 +347,7 @@ textarea {
   min-height: clamp(260px, 29vw, 470px);
   background:
     linear-gradient(180deg, rgba(15, 28, 10, 0.05), rgba(15, 28, 10, 0.26)),
-    url("/images/susbiome-field-hero.jpg") center center / cover;
+    url("/images/about-visual.jpg") center center / cover;
 }
 
 .about-visual__statement {
@@ -2901,7 +2896,6 @@ textarea {
 
   .agri-menu {
     gap: 14px;
-    width: min(780px, 100%);
   }
 
   .agri-menu a {

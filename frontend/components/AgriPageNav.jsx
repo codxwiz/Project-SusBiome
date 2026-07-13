@@ -23,7 +23,15 @@ export default function AgriPageNav() {
   return (
     <header className={`agri-page-nav${isOpen ? " is-open" : ""}`}>
       <Link className="agri-page-brand" href="/" aria-label="SusBiome home">
-        <Image src="/images/susbiome-logo.png" alt="SusBiome" width={58} height={47} priority />
+        <Image
+          src="/images/susbiome-logo.png"
+          alt="SusBiome"
+          width={58}
+          height={47}
+          priority
+          unoptimized
+          quality={100}
+        />
       </Link>
       <button
         className="agri-menu-toggle"
