@@ -201,8 +201,8 @@ textarea {
   min-height: 74px;
   padding: 0 clamp(18px, 5vw, 72px);
   border-bottom: 1px solid rgba(68, 88, 48, 0.14);
-  background: rgba(247, 244, 234, 0.88);
-  backdrop-filter: blur(16px);
+  background: #f7f4ea;
+  backdrop-filter: none;
 }
 
 .agri-page-brand {
@@ -2953,23 +2953,23 @@ textarea {
 
   .agri-hero__content {
     align-self: start;
-    width: calc(100vw - 36px);
+    width: calc(100vw - 30px);
     margin: 0;
-    padding: 34px 18px 0;
+    padding: 28px 15px 0;
   }
 
   .agri-logo {
-    margin-bottom: clamp(78px, 22vw, 140px);
+    margin-bottom: clamp(58px, 16vw, 108px);
   }
 
   .agri-hero__footer {
     bottom: 26px;
-    width: calc(100vw - 36px);
+    width: calc(100vw - 30px);
   }
 
   .agri-descriptor {
-    padding: 0 6px;
-    font-size: clamp(1rem, 3.3vw, 1.5rem);
+    padding: 0 2px;
+    font-size: clamp(0.96rem, 3vw, 1.28rem);
   }
 
   .agri-menu {
@@ -2978,8 +2978,10 @@ textarea {
   }
 
   .agri-menu a {
-    min-height: 58px;
-    border-radius: 18px;
+    min-height: 48px;
+    padding-inline: 8px;
+    border-radius: 15px;
+    font-size: clamp(0.78rem, 2.8vw, 0.98rem);
   }
 
   .site-section {
@@ -2990,27 +2992,51 @@ textarea {
     align-items: center;
     flex-direction: row;
     min-height: auto;
-    padding-block: 12px;
+    padding: 10px 14px;
     position: sticky;
+  }
+
+  .agri-page-brand {
+    flex-basis: 76px;
+    width: 76px;
+    height: 40px;
+  }
+
+  .agri-page-brand img {
+    width: 54px;
   }
 
   .agri-menu-toggle {
     position: relative;
     display: inline-flex;
     margin-left: auto;
+    width: 38px;
+    height: 38px;
+  }
+
+  .agri-menu-toggle span {
+    width: 15px;
+  }
+
+  .agri-menu-toggle span:nth-child(1) {
+    transform: translateY(-5px);
+  }
+
+  .agri-menu-toggle span:nth-child(3) {
+    transform: translateY(5px);
   }
 
   .agri-page-nav nav {
     position: absolute;
-    top: calc(100% + 8px);
-    right: 18px;
-    left: 18px;
+    top: calc(100% + 6px);
+    right: 14px;
+    left: 14px;
     display: none;
     grid-template-columns: 1fr;
     gap: 8px;
-    padding: 12px;
+    padding: 10px;
     border: 1px solid rgba(68, 88, 48, 0.16);
-    border-radius: 18px;
+    border-radius: 16px;
     background: rgba(247, 244, 234, 0.96);
     box-shadow: 0 20px 50px rgba(42, 56, 29, 0.16);
     backdrop-filter: blur(18px);
@@ -3023,9 +3049,9 @@ textarea {
   .agri-page-nav nav a {
     display: flex;
     align-items: center;
-    min-height: 44px;
-    padding: 0 12px;
-    border-radius: 12px;
+    min-height: 40px;
+    padding: 0 10px;
+    border-radius: 11px;
     background: rgba(255, 255, 255, 0.58);
   }
 
@@ -3115,20 +3141,20 @@ textarea {
   }
 
   .agri-logo {
-    min-width: 124px;
-    min-height: 56px;
-    margin-bottom: 94px;
+    min-width: 112px;
+    min-height: 50px;
+    margin-bottom: 62px;
     border-radius: 17px;
-    font-size: 2.15rem;
+    font-size: 1.95rem;
   }
 
   .agri-hero h1 {
-    font-size: clamp(3.35rem, 17vw, 5.2rem);
+    font-size: clamp(3rem, 15vw, 4.5rem);
   }
 
   .agri-motto {
-    max-width: 94vw;
-    font-size: clamp(1.26rem, 6.2vw, 1.88rem);
+    max-width: 88vw;
+    font-size: clamp(1.14rem, 5.7vw, 1.5rem);
   }
 
   .agri-menu {
@@ -3136,10 +3162,10 @@ textarea {
   }
 
   .agri-menu a {
-    min-height: 36px;
-    padding: 5px 6px;
-    border-radius: 11px;
-    font-size: clamp(0.64rem, 2.85vw, 0.82rem);
+    min-height: 34px;
+    padding: 5px 4px;
+    border-radius: 10px;
+    font-size: clamp(0.6rem, 2.6vw, 0.76rem);
     line-height: 1.02;
   }
 
@@ -3158,6 +3184,38 @@ textarea {
 
   .field-film__caption strong {
     max-width: 300px;
+  }
+
+  .agri-hero__content {
+    width: calc(100vw - 24px);
+    padding: 24px 12px 0;
+  }
+
+  .agri-hero__footer {
+    width: calc(100vw - 24px);
+  }
+
+  .agri-descriptor {
+    font-size: clamp(0.86rem, 3.2vw, 1rem);
+  }
+
+  .agri-page-brand {
+    flex-basis: 70px;
+    width: 70px;
+    height: 38px;
+  }
+
+  .agri-page-brand img {
+    width: 50px;
+  }
+
+  .agri-menu-toggle {
+    width: 36px;
+    height: 36px;
+  }
+
+  .agri-menu-toggle span {
+    width: 14px;
   }
 
   .site-section {

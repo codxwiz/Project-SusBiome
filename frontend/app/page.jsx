@@ -39,20 +39,9 @@ export default function LandingPage() {
 
       <section className="field-film" aria-label="Farmer working in paddy field placeholder video">
         <div className="field-film__frame">
-          <video
-            className="field-film__motion"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-          >
+          <video className="field-film__motion" controls loop playsInline preload="auto">
             <source src="/videos/susbiome.mp4" type="video/mp4" />
           </video>
-          <div className="field-film__caption">
-            <span>Film</span>
-            <strong>Farmer working on a paddy field</strong>
-          </div>
         </div>
       </section>
 
