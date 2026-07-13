@@ -3,10 +3,14 @@ import AgriPageNav from "../components/AgriPageNav";
 import ClimateRiskPreview from "../components/ClimateRiskPreview";
 
 const menuItems = [
-  { label: "About us", href: "/about" },
-  { label: "Services", href: "/services" },
-  { label: "Research collaboration", href: "/research-collaboration" },
-  { label: "Contact us", href: "/contact" },
+  { id: "about", label: "About us", href: "/about" },
+  { id: "services-primary", label: "Services", href: "/services" },
+  {
+    id: "research-collaboration",
+    label: "Research collaboration",
+    href: "/research-collaboration",
+  },
+  { id: "contact", label: "Contact us", href: "/contact" },
 ];
 
 export default function LandingPage() {
@@ -29,7 +33,7 @@ export default function LandingPage() {
           </p>
           <nav className="agri-menu" aria-label="Primary">
             {menuItems.map((item) => (
-              <a key={item.href} href={item.href}>
+              <a key={item.id} href={item.href}>
                 {item.label}
               </a>
             ))}
@@ -47,7 +51,7 @@ export default function LandingPage() {
 
       <section className="risk-awareness" aria-labelledby="risk-readiness-title">
         <div className="risk-awareness__hook">
-          <h2 id="risk-readiness-title">Is Your District Ready for Tomorrow&apos;s Climate?</h2>
+          <h2 id="risk-readiness-title">Is your district ready for tomorrow&apos;s climate?</h2>
           <p className="risk-awareness__question">
             What if you could understand your district&apos;s climate vulnerability before making critical
             agricultural decisions?

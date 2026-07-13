@@ -2993,30 +2993,30 @@ textarea {
     align-items: center;
     flex-direction: row;
     min-height: auto;
-    padding: 10px 14px;
+    padding: 10px clamp(14px, 5vw, 72px);
     position: sticky;
   }
 
   .agri-page-brand {
-    flex-basis: 76px;
-    width: 76px;
-    height: 40px;
+    flex-basis: 84px;
+    width: 84px;
+    height: 48px;
   }
 
   .agri-page-brand img {
-    width: 54px;
+    width: 62px;
   }
 
   .agri-menu-toggle {
     position: relative;
     display: inline-flex;
     margin-left: auto;
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
   }
 
   .agri-menu-toggle span {
-    width: 15px;
+    width: 18px;
   }
 
   .agri-menu-toggle span:nth-child(1) {
@@ -3030,8 +3030,8 @@ textarea {
   .agri-page-nav nav {
     position: absolute;
     top: calc(100% + 6px);
-    right: 14px;
-    left: 14px;
+    right: clamp(14px, 5vw, 72px);
+    left: clamp(14px, 5vw, 72px);
     display: none;
     grid-template-columns: 1fr;
     gap: 8px;
@@ -3159,14 +3159,14 @@ textarea {
   }
 
   .agri-menu {
-    gap: 4px;
+    gap: 8px;
   }
 
   .agri-menu a {
-    min-height: 22px;
+    min-height: 27px;
     padding: 2px 4px;
     border-radius: 8px;
-    font-size: clamp(0.68rem, 2.7vw, 0.78rem);
+    font-size: clamp(0.78rem, 3.5vw, 0.88rem);
     line-height: 1.08;
   }
 
@@ -3208,22 +3208,22 @@ textarea {
   }
 
   .agri-page-brand {
-    flex-basis: 70px;
-    width: 70px;
-    height: 38px;
+    flex-basis: 78px;
+    width: 78px;
+    height: 46px;
   }
 
   .agri-page-brand img {
-    width: 48px;
+    width: 58px;
   }
 
   .agri-menu-toggle {
-    width: 34px;
-    height: 34px;
+    width: 40px;
+    height: 40px;
   }
 
   .agri-menu-toggle span {
-    width: 14px;
+    width: 17px;
   }
 
   .site-section {
