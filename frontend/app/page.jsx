@@ -39,9 +39,18 @@ export default function LandingPage() {
 
       <section className="field-film" aria-label="Farmer working in paddy field placeholder video">
         <div className="field-film__frame">
-          <div className="field-film__motion" />
+          <video
+            className="field-film__motion"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+          >
+            <source src="/videos/susbiome.mp4" type="video/mp4" />
+          </video>
           <div className="field-film__caption">
-            <span>8 sec placeholder film</span>
+            <span>Film</span>
             <strong>Farmer working on a paddy field</strong>
           </div>
         </div>
@@ -49,7 +58,6 @@ export default function LandingPage() {
 
       <section className="risk-awareness" aria-labelledby="risk-readiness-title">
         <div className="risk-awareness__hook">
-          <p className="story-kicker">District readiness</p>
           <h2 id="risk-readiness-title">Is Your District Ready for Tomorrow&apos;s Climate?</h2>
           <p className="risk-awareness__question">
             What if you could understand your district&apos;s climate vulnerability before making critical

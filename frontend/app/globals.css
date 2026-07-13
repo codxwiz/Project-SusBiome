@@ -1056,12 +1056,14 @@ textarea {
 
 .field-film__motion {
   position: absolute;
-  inset: -4%;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.24)),
-    url("/images/susbiome-field-hero.jpg") center center / cover;
-  animation: paddy-field-placeholder 8s ease-in-out infinite alternate;
-  transform-origin: 62% 48%;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #0d1608;
+  filter: saturate(1.04) contrast(1.02);
+  transform: none;
+  animation: none;
 }
 
 .field-film__caption {
@@ -1095,23 +1097,6 @@ textarea {
   line-height: 0.96;
   text-align: right;
   text-shadow: 0 3px 22px rgba(0, 0, 0, 0.42);
-}
-
-@keyframes paddy-field-placeholder {
-  0% {
-    transform: scale(1.02) translate3d(-1.5%, 0, 0);
-    filter: saturate(1.05) contrast(1.02);
-  }
-
-  50% {
-    transform: scale(1.08) translate3d(1.2%, -1.4%, 0);
-    filter: saturate(1.18) contrast(1.08);
-  }
-
-  100% {
-    transform: scale(1.04) translate3d(-0.5%, 1%, 0);
-    filter: saturate(1.08) contrast(1.04);
-  }
 }
 
 .climate-story,
@@ -3143,19 +3128,19 @@ textarea {
 
   .agri-motto {
     max-width: 94vw;
-    font-size: clamp(1.58rem, 7.8vw, 2.35rem);
+    font-size: clamp(1.26rem, 6.2vw, 1.88rem);
   }
 
   .agri-menu {
-    gap: 7px;
+    gap: 6px;
   }
 
   .agri-menu a {
-    min-height: 40px;
-    padding: 7px 8px;
-    border-radius: 12px;
-    font-size: clamp(0.7rem, 3.2vw, 0.9rem);
-    line-height: 1.08;
+    min-height: 36px;
+    padding: 5px 6px;
+    border-radius: 11px;
+    font-size: clamp(0.64rem, 2.85vw, 0.82rem);
+    line-height: 1.02;
   }
 
   .field-film {
@@ -3469,6 +3454,16 @@ textarea {
 
   .risk-awareness__hook h2 {
     font-size: clamp(1rem, 4.5vw, 1.55rem);
+  }
+
+  .agri-hero__footer {
+    width: calc(100vw - 28px);
+  }
+
+  .agri-descriptor {
+    text-align: left;
+    padding: 0;
+    font-size: clamp(0.9rem, 3.1vw, 1.08rem);
   }
 
   .analytics-card h2,
