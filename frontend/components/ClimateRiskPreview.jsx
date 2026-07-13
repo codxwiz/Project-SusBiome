@@ -10,6 +10,7 @@ const HAZARDS = [
 ];
 
 const DATA_URL = "/data/susbiome-outlook.json";
+const DEFAULT_STATE = "Manipur";
 
 function scoreLabel(value) {
   return Number.isFinite(value) ? Math.round(value).toString() : "--";
@@ -34,7 +35,7 @@ export default function ClimateRiskPreview() {
         return response.json();
       })
       .then((data) => {
-        const firstState = data.states[0];
+        const firstState = data.states.includes(DEFAULT_STATE) ? DEFAULT_STATE : data.states[0];
         const firstDistrict = data.districts.find((item) => item.state === firstState);
         setPayload(data);
         setState(firstState);

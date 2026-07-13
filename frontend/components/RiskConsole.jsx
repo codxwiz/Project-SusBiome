@@ -20,6 +20,7 @@ import {
 const DATA_URL = "/data/susbiome-outlook.json";
 const BOUNDARIES_URL = "/data/ne-district-boundaries.geojson";
 const PRODUCTION_API_BASE = "https://dashboard.susbiome.com";
+const DEFAULT_STATE = "Manipur";
 
 function defaultApiBase() {
   if (typeof window === "undefined") return "";
@@ -80,8 +81,10 @@ export default function RiskConsole() {
       .then(async ([dataResponse, boundaryResponse]) => {
         setPayload(dataResponse);
         setBoundaries(boundaryResponse);
-        setState(dataResponse.states[0]);
-        setDistrict(dataResponse.districts.find((item) => item.state === dataResponse.states[0]).district);
+        const nextState = dataResponse.states.includes(DEFAULT_STATE) ? DEFAULT_STATE : dataResponse.states[0];
+        const firstDistrict = dataResponse.districts.find((item) => item.state === nextState)?.district || "";
+        setState(nextState);
+        setDistrict(firstDistrict);
         setHorizon(dataResponse.meta.horizons.includes(30) ? 30 : dataResponse.meta.horizons[0]);
       })
       .catch((error) => {

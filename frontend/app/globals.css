@@ -2970,6 +2970,7 @@ textarea {
   .agri-descriptor {
     padding: 0 2px;
     font-size: clamp(0.96rem, 3vw, 1.28rem);
+    text-align: left;
   }
 
   .agri-menu {
@@ -2978,10 +2979,10 @@ textarea {
   }
 
   .agri-menu a {
-    min-height: 48px;
-    padding-inline: 8px;
-    border-radius: 15px;
-    font-size: clamp(0.78rem, 2.8vw, 0.98rem);
+    min-height: 40px;
+    padding: 4px 8px;
+    border-radius: 13px;
+    font-size: clamp(0.66rem, 2.4vw, 0.84rem);
   }
 
   .site-section {
@@ -3158,14 +3159,14 @@ textarea {
   }
 
   .agri-menu {
-    gap: 6px;
+    gap: 4px;
   }
 
   .agri-menu a {
-    min-height: 34px;
-    padding: 5px 4px;
-    border-radius: 10px;
-    font-size: clamp(0.6rem, 2.6vw, 0.76rem);
+    min-height: 30px;
+    padding: 3px 4px;
+    border-radius: 9px;
+    font-size: clamp(0.56rem, 2.25vw, 0.68rem);
     line-height: 1.02;
   }
 
@@ -3197,6 +3198,7 @@ textarea {
 
   .agri-descriptor {
     font-size: clamp(0.86rem, 3.2vw, 1rem);
+    text-align: left;
   }
 
   .agri-page-brand {
