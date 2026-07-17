@@ -40,7 +40,13 @@ class MinuteRateLimiter:
 
 def configure_middleware(app: FastAPI) -> None:
     environment = os.getenv("SUSBIOME_ENV", "development").lower()
-    origins = _csv_environment("SUSBIOME_CORS_ORIGINS", "http://localhost:8501")
+    origins = _csv_environment(
+        "SUSBIOME_CORS_ORIGINS",
+        (
+            "http://localhost:8501,http://localhost:3000,http://127.0.0.1:3000,"
+            "http://localhost:8705,http://127.0.0.1:8705"
+        ),
+    )
     hosts = _csv_environment(
         "SUSBIOME_ALLOWED_HOSTS",
         "localhost,127.0.0.1,testserver" if environment != "production" else "",
@@ -59,6 +65,9 @@ def configure_middleware(app: FastAPI) -> None:
 
     maximum_body = int(os.getenv("SUSBIOME_MAX_REQUEST_BYTES", str(1024 * 1024)))
     limiter = MinuteRateLimiter(int(os.getenv("SUSBIOME_RATE_LIMIT_PER_MINUTE", "60")))
+    contact_limiter = MinuteRateLimiter(
+        int(os.getenv("SUSBIOME_CONTACT_RATE_LIMIT_PER_MINUTE", "5"))
+    )
 
     @app.middleware("http")
     async def request_controls(request: Request, call_next):
@@ -79,6 +88,13 @@ def configure_middleware(app: FastAPI) -> None:
                 headers={"X-Request-ID": request_id},
             )
         client = request.client.host if request.client else "unknown"
+        if request.url.path == "/api/contact":
+            if not await contact_limiter.allow(client, time.monotonic()):
+                return JSONResponse(
+                    status_code=429,
+                    content={"detail": "Too many enquiries. Please try again shortly.", "request_id": request_id},
+                    headers={"X-Request-ID": request_id, "Retry-After": "60"},
+                )
         if request.url.path not in {"/", "/api/health", "/api/health/ready"}:
             if not await limiter.allow(client, time.monotonic()):
                 return JSONResponse(

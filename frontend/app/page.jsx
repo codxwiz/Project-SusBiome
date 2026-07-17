@@ -7,7 +7,7 @@ const menuItems = [
   { id: "services-primary", label: "Services", href: "/services" },
   {
     id: "research-collaboration",
-    label: "Research collaboration",
+    label: "Research",
     href: "/research-collaboration",
   },
   { id: "contact", label: "Contact us", href: "/contact" },

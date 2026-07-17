@@ -31,5 +31,21 @@ services:
         value: https://susbiome-frontend.onrender.com,https://susbiome.com,https://www.susbiome.com,https://dashboard.susbiome.com
       - key: SUSBIOME_RATE_LIMIT_PER_MINUTE
         value: "120"
+      - key: SUSBIOME_CONTACT_RATE_LIMIT_PER_MINUTE
+        value: "5"
       - key: SUSBIOME_MAX_REQUEST_BYTES
         value: "1048576"
+      - key: SUSBIOME_SMTP_HOST
+        value: smtp.gmail.com
+      - key: SUSBIOME_SMTP_PORT
+        value: "587"
+      - key: SUSBIOME_SMTP_USERNAME
+        value: susbiome098@gmail.com
+      - key: SUSBIOME_SMTP_PASSWORD
+        sync: false
+      - key: SUSBIOME_SMTP_USE_SSL
+        value: "false"
+      - key: SUSBIOME_CONTACT_FROM
+        value: susbiome098@gmail.com
+      - key: SUSBIOME_CONTACT_TO
+        value: susbiome098@gmail.com

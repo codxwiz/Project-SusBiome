@@ -165,6 +165,7 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: clamp(42px, 3vw, 56px);
   min-height: clamp(42px, 3vw, 56px);
   padding: 8px clamp(10px, 1.1vw, 18px);
   border-radius: clamp(11px, 0.9vw, 16px);
@@ -501,6 +502,10 @@ textarea {
   background:
     radial-gradient(circle at 78% 16%, rgba(241, 200, 75, 0.24), rgba(241, 200, 75, 0) 28%),
     linear-gradient(180deg, #f7f4ea 0%, #eef2e6 100%);
+}
+
+.products-intro h1 {
+  white-space: nowrap;
 }
 
 .products-intro__closing {
@@ -1522,9 +1527,40 @@ textarea {
   transition: transform 180ms ease, background 180ms ease;
 }
 
-.contact-form button:hover {
+.contact-form button:hover:not(:disabled) {
   transform: translateY(-2px);
   background: #2f4f23;
+}
+
+.contact-form button:disabled {
+  cursor: wait;
+  opacity: 0.68;
+}
+
+.contact-form__honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.contact-form__status {
+  min-height: 1.4em;
+  margin: -4px 0 0;
+  color: #4f5d3f;
+  font-size: 0.9rem;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.contact-form__status--success {
+  color: #2f5f2b;
+}
+
+.contact-form__status--error {
+  color: #9b2f24;
 }
 
 .agri-footer {
@@ -1543,12 +1579,13 @@ textarea {
   color: rgba(241, 200, 75, 0.92);
 }
 
-.agri-footer strong {
+.agri-footer-mission {
   display: block;
   max-width: 980px;
+  margin: 0;
   color: #fff;
   font-size: clamp(1rem, 1.3vw, 1.25rem);
-  font-weight: 760;
+  font-weight: 400;
   line-height: 1.45;
   letter-spacing: 0;
 }
@@ -1567,7 +1604,7 @@ textarea {
   border-bottom: 1px solid rgba(255, 255, 255, 0.16);
   color: rgba(255, 255, 255, 0.9);
   font-size: clamp(1rem, 1.3vw, 1.25rem);
-  font-weight: 760;
+  font-weight: 400;
   line-height: 1.45;
 }
 
@@ -1606,7 +1643,7 @@ textarea {
 .agri-footer-legal a {
   color: rgba(255, 255, 255, 0.72);
   font-size: 0.72rem;
-  font-weight: 760;
+  font-weight: 400;
   letter-spacing: 0.02em;
   text-decoration: none;
   transition: color 180ms ease;
@@ -1621,7 +1658,7 @@ textarea {
   margin: -12px 0 0;
   color: rgba(255, 255, 255, 0.58);
   font-size: 0.72rem;
-  font-weight: 720;
+  font-weight: 400;
   letter-spacing: 0.02em;
 }
 
@@ -2979,6 +3016,7 @@ textarea {
   }
 
   .agri-menu a {
+    height: 36px;
     min-height: 36px;
     padding: 3px 6px;
     border-radius: 11px;
@@ -3163,6 +3201,7 @@ textarea {
   }
 
   .agri-menu a {
+    height: 27px;
     min-height: 27px;
     padding: 2px 4px;
     border-radius: 8px;
@@ -3232,6 +3271,10 @@ textarea {
 
   .subpage-section {
     padding-top: 27px;
+  }
+
+  .products-intro h1 {
+    font-size: 1.25rem;
   }
 
   .about-visual,

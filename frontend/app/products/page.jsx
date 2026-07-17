@@ -12,7 +12,7 @@ export default function ProductsPage() {
       <AgriPageNav />
       <section className="products-section site-section subpage-section" aria-labelledby="products-title">
         <div className="section-copy section-copy--wide products-intro">
-          <h1 id="products-title">product introduction: Coming Soon</h1>
+          <h1 id="products-title">Our product : Coming Soon</h1>
           <p>
             A smarter way to help crops thrive when the heat is on. A breakthrough innovation for
             stronger, more resilient plants is on the horizon.
