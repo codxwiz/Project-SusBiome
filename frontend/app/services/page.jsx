@@ -37,7 +37,7 @@ export default function ServicesPage() {
       <AgriPageNav />
       <section id="service" className="services-section site-section subpage-section" aria-labelledby="services-title">
         <div className="section-copy section-copy--wide">
-          <h1 id="services-title">Field advisory for farms, landowners, and institutions.</h1>
+          <h1 id="services-title">Farm advisory for landowners and institutions.</h1>
           <p>
             We work across scales- from smallholder farms to institutional agricultural programs
             designing, implementing, and evaluating farming systems built for the realities of
