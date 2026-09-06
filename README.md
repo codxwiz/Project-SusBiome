@@ -4,6 +4,16 @@ SusBiome is a district weather-risk outlook for Northeast India. It combines
 weather observations, satellite precipitation, and 20-year district patterns
 to publish explainable flood, drought, and cyclone risk indices.
 
+## License and Copyright
+
+Copyright (c) 2026 SusBiome. All rights reserved.
+
+This repository is publicly viewable but is **not open source**. No general
+permission is granted to use, copy, modify, redistribute, deploy, or
+commercialize original SusBiome material. See [LICENSE](LICENSE) and
+[COPYRIGHT.md](COPYRIGHT.md). Third-party software and datasets remain subject
+to their respective licenses and terms.
+
 ## Pipeline
 
 ```text
