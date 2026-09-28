@@ -1,0 +1,780 @@
+[
+  {
+    "type": "title",
+    "text": "Leihaao Plant Care Guide"
+  },
+  {
+    "type": "subtitle",
+    "text": "Leaf colour chart, feeding doses & natural plant protection for home and rooftop gardeners"
+  },
+  {
+    "type": "meta",
+    "text": "Sep 27, 2026 · @Lam"
+  },
+  {
+    "type": "section",
+    "text": "How to use this guide"
+  },
+  {
+    "type": "paragraph",
+    "text": "Leihaao gives your plant a pH-balanced base with measured N, P and K, so feed extra only when the leaf colour chart says so. Look at your plant once a week, match a leaf to the chart, and follow the dose for that shade."
+  },
+  {
+    "type": "subheading",
+    "text": "Three rules before you feed"
+  },
+  {
+    "type": "list",
+    "ordered": true,
+    "level": 0,
+    "items": [
+      "Check the soil first. Yellow leaves in wet, soggy soil usually mean overwatering, not hunger. Let the pot dry a little before feeding.",
+      "Always feed moist soil. Water lightly, then pour the fertiliser solution, so the roots do not burn.",
+      "Less is safer. If you are unsure between two shades, use the lower dose."
+    ]
+  },
+  {
+    "type": "subheading",
+    "text": "Measuring"
+  },
+  {
+    "type": "list",
+    "ordered": false,
+    "level": 0,
+    "items": [
+      "1 tsp = one level kitchen teaspoon (about 5 ml of liquid or 4–6 g of powder). Level it off with a knife.",
+      "All doses in this guide are per 1 litre of water. Dissolve fully and use the same day.",
+      "Water at room temperature works best. Rainwater or water stored overnight is ideal."
+    ]
+  },
+  {
+    "type": "subheading",
+    "text": "How much solution to pour per pot"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Pot size",
+      "Examples",
+      "Solution per feed"
+    ],
+    "rows": [
+      [
+        "Small (4–6 inch)",
+        "herbs, seedlings, succulents",
+        "100 ml (half a cup)"
+      ],
+      [
+        "Medium (8–10 inch)",
+        "chilli, brinjal, marigold, spinach",
+        "250 ml (1 cup)"
+      ],
+      [
+        "Large (12 inch and above, grow bags)",
+        "tomato, okra, gourds, small fruit plants",
+        "500 ml (2 cups)"
+      ]
+    ]
+  },
+  {
+    "type": "paragraph",
+    "text": "The Leihaao bag itself works as a large grow bag once you cut, fold and plant."
+  },
+  {
+    "type": "section",
+    "text": "Leaf colour chart and NPK doses"
+  },
+  {
+    "type": "paragraph",
+    "text": "Match your leaf to the chart below. Shades 1 to 3 need NPK, shades 4 and 5 need nothing, and shade 6 means you have overfed."
+  },
+  {
+    "type": "image",
+    "src": "/images/leihaao-guide-1.png",
+    "alt": "Leihaao six-shade leaf colour chart"
+  },
+  {
+    "type": "paragraph",
+    "text": "Leihaao leaf colour chart · 6 shades"
+  },
+  {
+    "type": "subheading",
+    "text": "How to read the chart correctly"
+  },
+  {
+    "type": "list",
+    "ordered": true,
+    "level": 0,
+    "items": [
+      "Pick the youngest fully opened leaf, usually the 3rd leaf from the top. Very new leaves are always lighter, and old bottom leaves are always darker.",
+      "Read in daylight, but in shade, with your back to the sun. Direct sunlight makes every leaf look lighter.",
+      "Hold the middle of the leaf flat against the chart. Do not compare the tip or the base.",
+      "Check 5 leaves from different plants or branches. Use the shade most of them match.",
+      "If a leaf falls between two shades, take the lighter shade's dose of the two, only if it is 3 or below.",
+      "Some varieties are naturally light green (lettuce, some basil) or naturally dark (curry leaf, spinach). Note your plant's colour when it is healthy and compare against that."
+    ]
+  },
+  {
+    "type": "subheading",
+    "text": "What to feed for each shade"
+  },
+  {
+    "type": "paragraph",
+    "text": "Doses use a water-soluble NPK 19:19:19 fertiliser, dissolved in 1 litre of water. Pour the amount for your pot size from the table in the section above."
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Shade",
+      "What the leaf tells you",
+      "NPK 19:19:19 per litre",
+      "How often",
+      "Next step"
+    ],
+    "rows": [
+      [
+        "1 Pale yellow",
+        "Plant is starving, growth has stopped",
+        "1 tsp",
+        "Every 7 days",
+        "Re-check after 2 feeds. If still pale, see the next section"
+      ],
+      [
+        "2 Yellow-green",
+        "Nutrients are running low",
+        "¾ tsp",
+        "Every 10 days",
+        "Re-check after 2 feeds"
+      ],
+      [
+        "3 Light green",
+        "Early sign of need",
+        "½ tsp",
+        "Every 15 days",
+        "Stop once leaves reach shade 4"
+      ],
+      [
+        "4 Medium green",
+        "Healthy, balanced",
+        "None",
+        "—",
+        "At flowering and fruiting only, ¼ tsp once a month"
+      ],
+      [
+        "5 Dark green",
+        "Healthy, well fed",
+        "None",
+        "—",
+        "Keep watching weekly"
+      ],
+      [
+        "6 Blue-green",
+        "Too much nitrogen. Soft growth, few flowers, attracts aphids",
+        "Stop all feeding",
+        "—",
+        "Flush the pot with plain water (twice the pot's volume) and wait 3–4 weeks"
+      ]
+    ]
+  },
+  {
+    "type": "paragraph",
+    "text": "For fruiting plants (tomato, chilli, brinjal) that are at shade 4 or 5 but flowering poorly, a high-potash feed such as 13:0:45 at ½ tsp per litre every 15 days supports flowers and fruit."
+  },
+  {
+    "type": "section",
+    "text": "How to identify symptoms"
+  },
+  {
+    "type": "paragraph",
+    "text": "Where a symptom starts on the plant points to its cause. Nutrients that can move inside the plant (N, P, K, Mg) leave the old leaves first. Nutrients that cannot move (Ca, S, Fe, Mn, Zn, B) show up on the new leaves first."
+  },
+  {
+    "type": "image",
+    "src": "/images/leihaao-guide-2.png",
+    "alt": "Leihaao symptom finder showing three starting points"
+  },
+  {
+    "type": "paragraph",
+    "text": "Symptom finder · 3 starting points"
+  },
+  {
+    "type": "subheading",
+    "text": "The 7-step plant check (5 minutes, once a week)"
+  },
+  {
+    "type": "list",
+    "ordered": true,
+    "level": 0,
+    "items": [
+      "Look at the whole plant from 1 metre away. Is it upright or drooping? Is growth even or is one side weak? Note whether the problem is on one plant or all of them. If all plants in the same spot show it, suspect water, sun or heat first.",
+      "Push a finger 2 cm into the soil. Soggy soil with yellow leaves means overwatering. Dry, hard soil with limp leaves means underwatering. Fix watering before you feed.",
+      "Find where the symptom starts. Old bottom leaves, new top leaves, or scattered spots. Use the symptom finder above.",
+      "Read the pattern on the leaf."
+    ]
+  },
+  {
+    "type": "list",
+    "ordered": false,
+    "level": 1,
+    "items": [
+      "Uniform yellow over the whole leaf: nutrient shortage (N or S).",
+      "Yellow between the veins, veins stay green: Mg on old leaves, Fe or Mn on new leaves.",
+      "Brown or burnt edges: K shortage, salt build-up from overfeeding, or sun scorch.",
+      "Spots with rings, fuzzy growth or powder: fungus.",
+      "Irregular light and dark green patches with crinkling: virus."
+    ]
+  },
+  {
+    "type": "list",
+    "ordered": true,
+    "start": 5,
+    "level": 0,
+    "items": [
+      "Turn the leaf over. Most insects hide on the underside and at stem joints. Use your phone camera's zoom as a magnifier.",
+      "Do the white paper tap test. Hold a white sheet under a branch and tap it. Tiny moving dots are aphids, mites or thrips.",
+      "Match a healthy-looking leaf to the leaf colour chart and note the shade, date and what you saw. Re-check the same plant in a week to see if it is getting better or worse."
+    ]
+  },
+  {
+    "type": "subheading",
+    "text": "Nutrient symptoms in detail"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Nutrient",
+      "Shows first on",
+      "What you see",
+      "Often mistaken for"
+    ],
+    "rows": [
+      [
+        "Nitrogen (N)",
+        "Old leaves",
+        "Whole leaf turns pale green then yellow, slow and thin growth. Leaf colour chart shade 1–3",
+        "Overwatering, natural ageing of 1–2 bottom leaves"
+      ],
+      [
+        "Phosphorus (P)",
+        "Old leaves",
+        "Dull dark green with a purple or reddish tint on the underside and stems. Few flowers, weak roots",
+        "Cold nights, which also cause purpling"
+      ],
+      [
+        "Potassium (K)",
+        "Old leaves",
+        "Yellow then brown, crispy leaf edges and tips. Fruits small or ripen unevenly",
+        "Salt burn from overfeeding, sun scorch"
+      ],
+      [
+        "Magnesium (Mg)",
+        "Old leaves",
+        "Yellow between the veins while veins stay green, like a Christmas-tree pattern. Sometimes reddish",
+        "Potassium shortage (Mg starts in the middle of the leaf, K at the edges)"
+      ],
+      [
+        "Calcium (Ca)",
+        "New leaves, fruit",
+        "New leaves curled or hooked with burnt tips. Black, sunken bottom on tomato and chilli fruit (blossom-end rot)",
+        "Uneven watering, which blocks calcium uptake"
+      ],
+      [
+        "Sulphur (S)",
+        "New leaves",
+        "Whole young leaf evenly pale yellow, veins included",
+        "Nitrogen shortage (N starts on old leaves)"
+      ],
+      [
+        "Iron (Fe)",
+        "Newest leaves",
+        "Bright yellow to almost white between veins, veins stay sharp green",
+        "High pH or waterlogged roots"
+      ],
+      [
+        "Manganese (Mn)",
+        "New and middle leaves",
+        "Pale between veins with tiny brown dead spots, a checkered look",
+        "Iron shortage (Mn has spots, Fe does not)"
+      ],
+      [
+        "Zinc (Zn)",
+        "New leaves",
+        "Small, narrow leaves bunched at the tip (rosette), mottled yellow",
+        "Virus or mite damage"
+      ],
+      [
+        "Boron (B)",
+        "Growing tip",
+        "Tip dies, new leaves thick and brittle, flowers drop, hollow or cracked stems",
+        "Calcium shortage"
+      ],
+      [
+        "Copper (Cu)",
+        "New leaves",
+        "Rare. Young leaves limp, twisted, dark blue-green tips",
+        "Underwatering"
+      ]
+    ]
+  },
+  {
+    "type": "paragraph",
+    "text": "If two or more symptoms show at once, the cause is usually the roots: overwatering, a root-bound pot or a pH problem. Correct that before adding any single nutrient."
+  },
+  {
+    "type": "section",
+    "text": "Natural remedies for nutrient deficiencies"
+  },
+  {
+    "type": "paragraph",
+    "text": "Try the natural remedy first. Use the quick fix only if the symptom keeps spreading after 2 weeks. Organic remedies act slowly, so expect new healthy leaves in 10–20 days. Damaged leaves will not turn green again."
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Deficiency",
+      "Natural remedy and dose",
+      "How to apply",
+      "Quick fix if needed"
+    ],
+    "rows": [
+      [
+        "Nitrogen (N)",
+        "Vermicompost tea: 2 tbsp vermicompost soaked in 1 litre water for 24 hours, strained. Or fermented rice water (rice washing water left 2–3 days), 1 cup in 1 litre",
+        "Soil drench every 7–10 days. Also mix 1 tbsp neem cake or mustard cake into the top soil once a month",
+        "NPK 19:19:19 as per the leaf colour chart"
+      ],
+      [
+        "Phosphorus (P)",
+        "Bone meal, 1 tsp per medium pot. Or rock phosphate, 1 tsp per pot",
+        "Mix into the top 2–3 cm of soil and water in. Lasts 6–8 weeks",
+        "NPK 19:19:19, ½ tsp per litre"
+      ],
+      [
+        "Potassium (K)",
+        "Banana peel tea: peels of 2–3 bananas soaked in 1 litre water for 2 days, strained. Or wood ash, ½ tsp per pot",
+        "Pour the tea as it is, every 10 days. Sprinkle ash on moist soil once a month only, since it raises pH",
+        "13:0:45 (potassium nitrate), ½ tsp per litre"
+      ],
+      [
+        "Magnesium (Mg)",
+        "Epsom salt (magnesium sulphate), ½ tsp per litre",
+        "Spray on leaves or pour at the base, once every 2–3 weeks. Maximum 2 rounds",
+        "Same, but no more than 3 rounds in a season"
+      ],
+      [
+        "Calcium (Ca)",
+        "Eggshell powder: dried eggshells ground fine, 1 tsp per pot. Faster: eggshell water (a handful of crushed shells soaked in 1 litre for 3 days), 1 cup per pot",
+        "Mix powder into top soil. Water evenly, never letting the pot dry out fully",
+        "Calcium nitrate, ¼ tsp per litre, as a spray"
+      ],
+      [
+        "Sulphur (S)",
+        "Gypsum, 1 tsp per medium pot. Epsom salt (above) also supplies sulphur",
+        "Mix into top soil once a season",
+        "Same"
+      ],
+      [
+        "Iron (Fe)",
+        "First, stop overwatering and add 1 handful of compost to the top soil. Well-rotted compost releases iron slowly",
+        "Top-dress once and water well",
+        "Chelated iron (Fe-EDDHA), ¼ tsp per litre, as a drench once"
+      ],
+      [
+        "Manganese (Mn) and Zinc (Zn)",
+        "Seaweed extract, ½ tsp per litre. Seaweed contains many trace nutrients",
+        "Spray on leaves every 15 days, 2–3 rounds",
+        "Zinc sulphate, ¼ tsp in 2 litres, one spray only"
+      ],
+      [
+        "Boron (B)",
+        "Compost and seaweed extract (above) usually cover it",
+        "Top-dress and spray as above",
+        "Borax, a pinch (⅛ tsp) in 2 litres, one spray only. Boron turns toxic quickly, so never repeat within a month"
+      ]
+    ]
+  },
+  {
+    "type": "subheading",
+    "text": "Home recipe: all-purpose green tonic"
+  },
+  {
+    "type": "list",
+    "ordered": false,
+    "level": 0,
+    "items": [
+      "Fermented buttermilk and jaggery tonic: 1 cup sour buttermilk + 1 tsp jaggery in 1 litre water, left overnight.",
+      "Use: pour 1 cup per pot every 15 days to feed soil microbes, which help release nutrients already in Leihaao."
+    ]
+  },
+  {
+    "type": "section",
+    "text": "Pests: aphids and mealybugs"
+  },
+  {
+    "type": "paragraph",
+    "text": "Catch them early and a water jet or neem spray is enough. Both pests suck plant sap, multiply within days and are often farmed by ants."
+  },
+  {
+    "type": "subheading",
+    "text": "How to identify them"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Sign",
+      "Aphids",
+      "Mealybugs"
+    ],
+    "rows": [
+      [
+        "What the insect looks like",
+        "Tiny (1–3 mm), soft, pear-shaped. Green, black, yellow or brown. Some have wings",
+        "Small (3–5 mm), oval, covered in white cotton-like wax. Move slowly"
+      ],
+      [
+        "Where to look",
+        "Tender new shoots, flower buds, underside of young leaves",
+        "Stem joints, leaf bases, underside along veins, and roots near the soil surface"
+      ],
+      [
+        "Leaf damage",
+        "New leaves curl, crinkle and turn yellow. Growth becomes stunted",
+        "Leaves yellow, wilt and drop. Stems look dusted with white"
+      ],
+      [
+        "Other clues",
+        "Sticky shiny leaves (honeydew), black sooty mould, ants going up and down, white shed skins",
+        "White fluffy clumps, sticky honeydew, ants, black sooty mould. Plant wilts even when soil is moist (root mealybugs)"
+      ],
+      [
+        "Quick test",
+        "Rub the shoot with a finger. Aphids squash into a green or dark smear",
+        "Poke a white clump. It leaves a pinkish-red or orange smear"
+      ]
+    ]
+  },
+  {
+    "type": "subheading",
+    "text": "Prevention"
+  },
+  {
+    "type": "list",
+    "ordered": false,
+    "level": 0,
+    "items": [
+      "Check the underside of leaves and new shoots every week (step 5 of the plant check).",
+      "Do not overfeed nitrogen. Soft, blue-green (shade 6) growth attracts aphids.",
+      "Control ants. Ants protect these pests from their predators. Sprinkle cinnamon or turmeric powder around the pot base.",
+      "Keep new plants apart for 2 weeks before placing them with others.",
+      "Plant marigold, coriander, basil or mustard nearby. Their flowers attract ladybirds and lacewings, which eat aphids.",
+      "Hang yellow sticky traps (1 per 4–5 pots) to catch winged aphids."
+    ]
+  },
+  {
+    "type": "subheading",
+    "text": "Organic cures"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Remedy",
+      "Recipe per litre",
+      "Use against",
+      "How often"
+    ],
+    "rows": [
+      [
+        "Water jet",
+        "Plain water, strong spray",
+        "Aphids (light attack)",
+        "Every 2 days for a week, in the morning"
+      ],
+      [
+        "Alcohol swab",
+        "Cotton bud dipped in rubbing alcohol (70% isopropyl)",
+        "Mealybugs (a few clumps)",
+        "Wipe each clump directly. Repeat after 3 days"
+      ],
+      [
+        "Soap spray",
+        "1 tsp mild liquid soap (unscented, not detergent or dishwash with bleach)",
+        "Both",
+        "Every 3–4 days, 3 rounds"
+      ],
+      [
+        "Neem oil spray",
+        "1 tsp cold-pressed neem oil + ½ tsp liquid soap in warm water. Shake well",
+        "Both. Also stops eggs from hatching",
+        "Every 5–7 days, 3 rounds"
+      ],
+      [
+        "Garlic–chilli spray",
+        "Blend 10 garlic cloves + 2 green chillies in 1 cup water, soak overnight, strain, top up to 1 litre, add ½ tsp soap",
+        "Both. Also repels",
+        "Every 5 days, 3 rounds"
+      ],
+      [
+        "Neem cake drench",
+        "1 tbsp neem cake soaked in 1 litre overnight, strained",
+        "Root mealybugs in the soil",
+        "Pour 1 cup per pot, every 10 days, 2 rounds"
+      ]
+    ]
+  },
+  {
+    "type": "paragraph",
+    "text": "For a heavy mealybug attack, cut off the worst branches and put them in a sealed bag in the bin, then spray. Always spray both sides of the leaves and the stem joints."
+  },
+  {
+    "type": "section",
+    "text": "Fungal diseases"
+  },
+  {
+    "type": "paragraph",
+    "text": "Fungi spread through wet leaves, still air and wet soil, so dry leaves and good airflow prevent most of them. Remove infected leaves first, then spray."
+  },
+  {
+    "type": "subheading",
+    "text": "How to identify them"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Disease",
+      "What you see",
+      "Where and when",
+      "Common on"
+    ],
+    "rows": [
+      [
+        "Powdery mildew",
+        "White or grey flour-like powder on the top of leaves. It rubs off with a finger",
+        "Older leaves first. Dry days with humid nights",
+        "Cucumber, gourds, pumpkin, okra, roses"
+      ],
+      [
+        "Leaf spot and early blight",
+        "Brown spots with rings like a target, often with a yellow halo. Spots join and the leaf dies",
+        "Lower leaves first, moving upward. Warm, wet weather",
+        "Tomato, brinjal, chilli, potato"
+      ],
+      [
+        "Downy mildew",
+        "Yellow patches on top of the leaf with grey-purple fuzz underneath",
+        "Cool, wet, cloudy weather",
+        "Gourds, cucumber, spinach"
+      ],
+      [
+        "Damping-off",
+        "Seedling stem turns thin, watery and brown at soil level, then the seedling falls over",
+        "Seedlings in wet, crowded trays",
+        "All seedlings"
+      ],
+      [
+        "Root and collar rot",
+        "Plant wilts and yellows even when soil is wet. Base of stem is dark and soft. Roots brown and smelly",
+        "Overwatered pots, poor drainage",
+        "Chilli, tomato, curry leaf, succulents"
+      ],
+      [
+        "Rust",
+        "Small orange-brown raised dots on the leaf underside. Rub off as rusty powder",
+        "Humid weather",
+        "Beans, roses, marigold"
+      ]
+    ]
+  },
+  {
+    "type": "paragraph",
+    "text": "If the spots have no rings, no fuzz and no powder, and new leaves are affected, check the nutrient table first."
+  },
+  {
+    "type": "subheading",
+    "text": "Prevention"
+  },
+  {
+    "type": "list",
+    "ordered": false,
+    "level": 0,
+    "items": [
+      "Water the soil, not the leaves, and water in the morning so the surface dries by evening.",
+      "Space pots so leaves do not touch. Prune crowded inner branches.",
+      "Mulch the soil with dry leaves or straw so soil does not splash onto lower leaves.",
+      "Never reuse soil from a diseased plant, and clean scissors with alcohol between plants.",
+      "Add Trichoderma to the soil at planting: 1 tsp per medium pot mixed with a handful of compost."
+    ]
+  },
+  {
+    "type": "subheading",
+    "text": "Organic cures"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Remedy",
+      "Recipe per litre",
+      "Use against",
+      "How often"
+    ],
+    "rows": [
+      [
+        "Baking soda spray",
+        "1 tsp baking soda + ½ tsp liquid soap + 1 tsp vegetable oil",
+        "Powdery mildew, early leaf spot",
+        "Every 7 days, 3 rounds"
+      ],
+      [
+        "Milk spray",
+        "300 ml milk + 700 ml water",
+        "Powdery mildew. Spray on a sunny morning",
+        "Every 7 days"
+      ],
+      [
+        "Sour buttermilk spray",
+        "100 ml buttermilk fermented 5–7 days",
+        "Leaf spot, powdery and downy mildew",
+        "Every 7–10 days"
+      ],
+      [
+        "Neem oil spray",
+        "1 tsp neem oil + ½ tsp liquid soap",
+        "Mildews, rust, leaf spot",
+        "Every 7 days"
+      ],
+      [
+        "Trichoderma drench",
+        "1 tsp Trichoderma viride powder",
+        "Damping-off, root and collar rot",
+        "Pour 1 cup per pot every 15 days"
+      ],
+      [
+        "Pseudomonas spray",
+        "1 tsp Pseudomonas fluorescens powder",
+        "Leaf spot, blight, root rot",
+        "Spray or drench every 10–15 days"
+      ],
+      [
+        "Cinnamon powder",
+        "Dust directly",
+        "Damping-off on seedlings, cut stems after pruning",
+        "Once, on the soil surface or cut"
+      ]
+    ]
+  },
+  {
+    "type": "paragraph",
+    "text": "For blight or downy mildew that keeps spreading, a copper spray (copper oxychloride, ½ tsp per litre) is allowed in organic farming. Use it at most 2 times, 10 days apart."
+  },
+  {
+    "type": "section",
+    "text": "Viral diseases"
+  },
+  {
+    "type": "paragraph",
+    "text": "A virus cannot be cured, in organic or chemical farming. You can only stop it spreading by removing sick plants and controlling the insects that carry it."
+  },
+  {
+    "type": "subheading",
+    "text": "How to identify them"
+  },
+  {
+    "type": "table",
+    "headers": [
+      "Disease",
+      "What you see",
+      "Carried by",
+      "Common on"
+    ],
+    "rows": [
+      [
+        "Leaf curl",
+        "New leaves small, thick, curled upward or downward, puckered. Plant bushy and stunted, few fruits",
+        "Whitefly, thrips, mites",
+        "Chilli, tomato, papaya"
+      ],
+      [
+        "Mosaic",
+        "Irregular light and dark green or yellow patches like a jigsaw, leaves crinkled or twisted",
+        "Aphids, hands and tools",
+        "Cucumber, gourds, beans, tomato, papaya"
+      ],
+      [
+        "Yellow vein mosaic",
+        "Veins turn bright yellow in a net pattern, then whole leaf yellows. Fruits pale and hard",
+        "Whitefly",
+        "Okra (bhindi), beans"
+      ]
+    ]
+  },
+  {
+    "type": "subheading",
+    "text": "Virus or nutrient shortage?"
+  },
+  {
+    "type": "list",
+    "ordered": false,
+    "level": 0,
+    "items": [
+      "A virus pattern is uneven and patchy. Nutrient yellowing is even and repeats the same way on every affected leaf.",
+      "Virus-affected leaves are usually distorted (curled, crinkled, narrow). Nutrient-short leaves keep their normal shape.",
+      "Virus symptoms do not improve after feeding. If new leaves stay mottled 2 weeks after the right remedy, suspect a virus.",
+      "Look for the carriers: tiny white flies rising when you shake the plant, or aphids on the shoots."
+    ]
+  },
+  {
+    "type": "subheading",
+    "text": "Management"
+  },
+  {
+    "type": "list",
+    "ordered": false,
+    "level": 0,
+    "items": [
+      "Uproot the infected plant, put it in a sealed bag and bin it. Do not compost it or leave it in the garden.",
+      "Wash hands and clean tools with soap or alcohol after touching it. Avoid handling plants right after smoking, since tobacco can carry mosaic virus.",
+      "Control the carriers on the remaining plants: yellow sticky traps plus a neem oil spray (1 tsp per litre) every 7 days.",
+      "Remove weeds around the pots. They hide whitefly and aphids.",
+      "Buy healthy seedlings, and choose varieties labelled resistant to leaf curl or yellow vein mosaic where you can.",
+      "Do not replant the same crop in that pot for one season. Reuse the Leihaao medium for a different crop family instead."
+    ]
+  },
+  {
+    "type": "section",
+    "text": "Safety and weekly care checklist"
+  },
+  {
+    "type": "subheading",
+    "text": "Spray safety"
+  },
+  {
+    "type": "list",
+    "ordered": false,
+    "level": 0,
+    "items": [
+      "Test any new spray on 2–3 leaves first and wait 24 hours. Skip it if leaves burn or spot.",
+      "Spray in the early morning or evening, never in hot midday sun.",
+      "Use one spray at a time. Do not mix soap, neem, baking soda and copper sprays together.",
+      "Wait at least 3 days after a neem or garlic spray before harvesting, and wash produce well.",
+      "Label every bottle, keep it away from children and pets, and wear gloves for copper, borax and alcohol.",
+      "Never go above the doses in this guide. More fertiliser burns roots faster than it helps."
+    ]
+  },
+  {
+    "type": "subheading",
+    "text": "Weekly checklist"
+  },
+  {
+    "type": "list",
+    "ordered": false,
+    "level": 0,
+    "items": [
+      "☐ Check soil moisture with a finger before watering",
+      "☐ Match a leaf to the leaf colour chart and note the shade",
+      "☐ Turn over 5 leaves and check stem joints for insects",
+      "☐ Do the white paper tap test on 1–2 plants",
+      "☐ Remove yellow, spotted or dead leaves and bin them",
+      "☐ Check yellow sticky traps and replace when full",
+      "☐ Feed or spray only if a section of this guide says so"
+    ]
+  }
+]
