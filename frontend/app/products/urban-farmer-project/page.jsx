@@ -1,26 +1,71 @@
-import AgriFooter from "../../../components/AgriFooter";
-import AgriPageNav from "../../../components/AgriPageNav";
+import Image from "next/image";
+import Link from "next/link";
+import GuideReader from "../../guide/leihaao-9k4m2p/GuideReader";
+import guideBlocks from "../../../lib/leihaaoGuide.json";
 
 export const metadata = {
   title: "The Urban Farmer Project | SusBiome",
-  description: "An upcoming SusBiome product innovation for stronger, more resilient crops.",
+  description:
+    "Leaf colour chart, feeding doses and natural plant protection for home and rooftop gardeners.",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+  },
 };
 
-export default function UrbanFarmerProjectPage() {
+const DOWNLOAD_PATH = "/downloads/Leihaao_Plant_Care_Guide.docx";
+
+export default async function UrbanFarmerProjectPage({ searchParams }) {
+  const params = await searchParams;
+  const requestedPart = Number.parseInt(params?.part ?? "1", 10);
+  const activePart = Number.isFinite(requestedPart)
+    ? Math.min(3, Math.max(1, requestedPart)) - 1
+    : 0;
+  const title = guideBlocks.find((block) => block.type === "title");
+  const subtitle = guideBlocks.find((block) => block.type === "subtitle");
+  const meta = guideBlocks.find((block) => block.type === "meta");
+  const content = guideBlocks.filter(
+    (block) => !["title", "subtitle", "meta"].includes(block.type),
+  );
+
   return (
-    <main className="agri-site subpage-site">
-      <AgriPageNav />
-      <section className="products-section site-section subpage-section" aria-labelledby="urban-farmer-title">
-        <div className="section-copy section-copy--wide products-intro">
-          <h1 id="urban-farmer-title">Our product : Coming Soon</h1>
-          <p>
-            A smarter way to help crops thrive when the heat is on. A breakthrough innovation for
-            stronger, more resilient plants is on the horizon.
-          </p>
-          <p className="products-intro__closing">Innovation is growing.</p>
-        </div>
+    <main className="leihaao-guide">
+      <header className="leihaao-header">
+        <Link href="/" aria-label="SusBiome home">
+          <Image
+            src="/images/susbiome-logo.png"
+            alt="SusBiome"
+            width={74}
+            height={60}
+            priority
+            quality={100}
+            unoptimized
+          />
+        </Link>
+        <a className="leihaao-download leihaao-download--header" href={DOWNLOAD_PATH} download>
+          <span aria-hidden="true">↓</span>
+          Download
+        </a>
+      </header>
+
+      <section className="leihaao-intro" aria-labelledby="leihaao-title">
+        <h1 id="leihaao-title">{title.text}</h1>
+        <p className="leihaao-subtitle">{subtitle.text}</p>
+        <p className="leihaao-meta">{meta.text}</p>
       </section>
-      <AgriFooter />
+
+      <GuideReader content={content} activePart={activePart} />
+
+      <section className="leihaao-closing" aria-label="Download the guide">
+        <p>Keep the complete guide available offline.</p>
+        <a className="leihaao-download leihaao-download--light" href={DOWNLOAD_PATH} download>
+          <span aria-hidden="true">↓</span>
+          Download
+        </a>
+      </section>
+
+      <footer className="leihaao-footer">©2026 SusBiome. All rights reserved.</footer>
     </main>
   );
 }
