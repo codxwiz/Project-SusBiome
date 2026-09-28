@@ -9,7 +9,13 @@ const links = [
   { label: "Home", href: "/" },
   { label: "About us", href: "/about" },
   { label: "Services", href: "/services" },
-  { label: "Products", href: "/products" },
+  {
+    label: "Products",
+    href: "/products",
+    children: [
+      { label: "The Urban Farmer Project", href: "/products/urban-farmer-project" },
+    ],
+  },
   { label: "Research collaboration", href: "/research-collaboration" },
   { label: "Analytics", href: "/analytics" },
   { label: "Toolkit Console", href: "/console" },
@@ -47,6 +53,32 @@ export default function AgriPageNav() {
       <nav aria-label="Page navigation">
         {links.map((link) => {
           const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+          if (link.children) {
+            return (
+              <div className="agri-nav-group" key={link.href}>
+                <Link
+                  className={isActive ? "is-active" : undefined}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {link.label}
+                  <span className="agri-nav-caret" aria-hidden="true">⌄</span>
+                </Link>
+                <div className="agri-nav-submenu" aria-label={`${link.label} submenu`}>
+                  {link.children.map((child) => (
+                    <Link
+                      className={pathname === child.href ? "is-active" : undefined}
+                      key={child.href}
+                      href={child.href}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {child.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            );
+          }
           return (
             <Link
               className={isActive ? "is-active" : undefined}

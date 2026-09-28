@@ -292,6 +292,54 @@ textarea {
   background: var(--gold);
 }
 
+.agri-nav-group {
+  position: relative;
+}
+
+.agri-nav-group > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.agri-nav-caret {
+  font-size: 0.78em;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+.agri-nav-submenu {
+  position: absolute;
+  top: calc(100% + 7px);
+  left: 50%;
+  z-index: 30;
+  display: none;
+  width: max-content;
+  min-width: 218px;
+  padding: 7px;
+  border: 1px solid rgba(68, 88, 48, 0.16);
+  border-radius: 8px;
+  background: #fffdf7;
+  box-shadow: 0 16px 38px rgba(42, 56, 29, 0.15);
+  transform: translateX(-50%);
+}
+
+.agri-nav-submenu a {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.agri-nav-submenu a:hover {
+  background: #f0ecdf;
+}
+
+.agri-nav-group:hover .agri-nav-submenu,
+.agri-nav-group:focus-within .agri-nav-submenu {
+  display: block;
+}
+
 .site-section {
   padding: clamp(66px, 8vw, 128px) clamp(22px, 6vw, 92px);
   background: #f7f4ea;
@@ -1772,47 +1820,141 @@ textarea {
   padding-inline: 17px;
 }
 
-.leihaao-index {
+.leihaao-reader {
+  scroll-margin-top: 86px;
+}
+
+.leihaao-parts {
   width: min(1160px, calc(100% - 44px));
   margin: 0 auto clamp(30px, 4vw, 52px);
-  padding: clamp(20px, 2.5vw, 30px) 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  padding: clamp(16px, 2vw, 22px) 0;
   border-top: 1px solid rgba(58, 76, 39, 0.2);
   border-bottom: 1px solid rgba(58, 76, 39, 0.2);
 }
 
-.leihaao-index > div {
+.leihaao-parts a {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 4px 30px;
-}
-
-.leihaao-index a {
-  display: grid;
-  grid-template-columns: 34px minmax(0, 1fr);
-  gap: 9px;
-  align-items: baseline;
-  padding: 12px 0;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-height: 58px;
+  padding: 10px 14px;
+  border: 1px solid #ccd2c4;
+  border-radius: 6px;
   color: #39472e;
+  background: rgba(255, 255, 255, 0.5);
+  text-align: left;
   font-size: 0.95rem;
   font-weight: 680;
   line-height: 1.3;
+  cursor: pointer;
+  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
 }
 
-.leihaao-index a:hover {
+.leihaao-parts a:hover {
+  transform: translateY(-2px);
+  border-color: #8b966f;
   color: #172211;
 }
 
-.leihaao-index a span {
+.leihaao-parts a.is-active {
+  border-color: #172211;
+  color: #fff;
+  background: #172211;
+}
+
+.leihaao-parts a span {
   color: #9a7134;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.72rem;
   letter-spacing: 0.08em;
 }
 
+.leihaao-parts a.is-active span {
+  color: #d8b16f;
+}
+
+.leihaao-part-status {
+  width: min(1060px, calc(100% - 44px));
+  margin: 0 auto 26px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #6b735f;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.leihaao-part-status > div {
+  flex: 1;
+  height: 3px;
+  overflow: hidden;
+  background: #d9dccf;
+}
+
+.leihaao-part-status i {
+  display: block;
+  height: 100%;
+  background: #9a7134;
+  transition: width 260ms ease;
+}
+
 .leihaao-content {
   width: min(1060px, calc(100% - 44px));
   margin: 0 auto;
   padding-bottom: clamp(70px, 9vw, 130px);
+}
+
+.leihaao-page-actions {
+  width: min(1060px, calc(100% - 44px));
+  margin: clamp(-72px, -5vw, -42px) auto clamp(54px, 7vw, 92px);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.leihaao-page-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 150px;
+  min-height: 50px;
+  padding: 0 22px;
+  border: 1px solid #172211;
+  border-radius: 6px;
+  color: #fff;
+  background: #172211;
+  font-size: 0.94rem;
+  font-weight: 760;
+  cursor: pointer;
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.leihaao-page-button:hover {
+  transform: translateY(-2px);
+  background: #2d4022;
+}
+
+.leihaao-page-button--back {
+  color: #172211;
+  background: transparent;
+}
+
+.leihaao-complete {
+  margin: 0;
+  color: #6d7a3c;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .leihaao-content .leihaao-section-title {
@@ -2015,7 +2157,8 @@ textarea {
   }
 
   .leihaao-intro,
-  .leihaao-index,
+  .leihaao-parts,
+  .leihaao-part-status,
   .leihaao-content {
     width: calc(100% - 36px);
   }
@@ -2034,12 +2177,15 @@ textarea {
     margin-top: 22px;
   }
 
-  .leihaao-index > div {
+  .leihaao-parts {
     grid-template-columns: 1fr;
+    margin-bottom: 24px;
   }
 
-  .leihaao-index a {
-    padding: 9px 0;
+  .leihaao-parts a {
+    min-height: 48px;
+    padding: 8px 12px;
+    font-size: 0.86rem;
   }
 
   .leihaao-content .leihaao-section-title {
@@ -2087,6 +2233,16 @@ textarea {
     align-items: flex-start;
     flex-direction: column;
     padding-inline: 18px;
+  }
+
+  .leihaao-page-actions {
+    width: calc(100% - 36px);
+    margin-top: -42px;
+  }
+
+  .leihaao-page-button {
+    flex: 1;
+    min-width: 0;
   }
 }
 
@@ -3516,6 +3672,35 @@ textarea {
     padding: 0 10px;
     border-radius: 11px;
     background: rgba(255, 255, 255, 0.58);
+  }
+
+  .agri-nav-group {
+    display: grid;
+    gap: 4px;
+  }
+
+  .agri-nav-group > a {
+    justify-content: space-between;
+  }
+
+  .agri-nav-submenu {
+    position: static;
+    display: block;
+    width: auto;
+    min-width: 0;
+    margin: 0 6px 3px 18px;
+    padding: 0 0 0 12px;
+    border: 0;
+    border-left: 2px solid rgba(154, 113, 52, 0.35);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .agri-nav-submenu a {
+    padding: 8px 10px;
+    font-size: 0.86rem;
   }
 
   .side-nav {
