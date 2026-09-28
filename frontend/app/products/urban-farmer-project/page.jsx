@@ -24,9 +24,8 @@ export default async function UrbanFarmerProjectPage({ searchParams }) {
     : 0;
   const title = guideBlocks.find((block) => block.type === "title");
   const subtitle = guideBlocks.find((block) => block.type === "subtitle");
-  const meta = guideBlocks.find((block) => block.type === "meta");
   const content = guideBlocks.filter(
-    (block) => !["title", "subtitle", "meta"].includes(block.type),
+    (block) => !["title", "subtitle"].includes(block.type),
   );
 
   return (
@@ -42,7 +41,6 @@ export default async function UrbanFarmerProjectPage({ searchParams }) {
             </a>
           </div>
           <p className="leihaao-subtitle">{subtitle.text}</p>
-          <p className="leihaao-meta">{meta.text}</p>
         </section>
 
         <GuideReader content={content} activePart={activePart} />
