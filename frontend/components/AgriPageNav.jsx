@@ -25,6 +25,7 @@ const links = [
 
 export default function AgriPageNav() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isProductsOpen, setIsProductsOpen] = useState(false);
   const pathname = usePathname();
 
   return (
@@ -56,22 +57,27 @@ export default function AgriPageNav() {
           const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
           if (link.children) {
             return (
-              <div className="agri-nav-group" key={link.href}>
-                <Link
+              <div className={`agri-nav-group${isProductsOpen ? " is-open" : ""}`} key={link.href}>
+                <button
+                  type="button"
                   className={isActive ? "is-active" : undefined}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
+                  aria-expanded={isProductsOpen}
+                  aria-controls="products-submenu"
+                  onClick={() => setIsProductsOpen((value) => !value)}
                 >
                   {link.label}
                   <span className="agri-nav-caret" aria-hidden="true">⌄</span>
-                </Link>
-                <div className="agri-nav-submenu" aria-label={`${link.label} submenu`}>
+                </button>
+                <div id="products-submenu" className="agri-nav-submenu" aria-label={`${link.label} submenu`}>
                   {link.children.map((child) => (
                     <Link
                       className={pathname === child.href ? "is-active" : undefined}
                       key={child.href}
                       href={child.href}
-                      onClick={() => setIsOpen(false)}
+                      onClick={() => {
+                        setIsOpen(false);
+                        setIsProductsOpen(false);
+                      }}
                     >
                       {child.label}
                     </Link>

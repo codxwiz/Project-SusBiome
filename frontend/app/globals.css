@@ -274,20 +274,27 @@ textarea {
   gap: 8px 18px;
 }
 
-.agri-page-nav nav a {
+.agri-page-nav nav a,
+.agri-page-nav nav button {
   color: #536244;
   font-size: 0.92rem;
   font-weight: 780;
   padding: 8px 10px;
   border-radius: 999px;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
   transition: color 180ms ease, background 180ms ease;
 }
 
-.agri-page-nav nav a:hover {
+.agri-page-nav nav a:hover,
+.agri-page-nav nav button:hover {
   color: #172211;
 }
 
-.agri-page-nav nav a.is-active {
+.agri-page-nav nav a.is-active,
+.agri-page-nav nav button.is-active {
   color: #172211;
   background: var(--gold);
 }
@@ -296,7 +303,7 @@ textarea {
   position: relative;
 }
 
-.agri-nav-group > a {
+.agri-nav-group > button {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -310,7 +317,7 @@ textarea {
 
 .agri-nav-submenu {
   position: absolute;
-  top: calc(100% + 7px);
+  top: 100%;
   left: 50%;
   z-index: 30;
   display: none;
@@ -336,7 +343,8 @@ textarea {
 }
 
 .agri-nav-group:hover .agri-nav-submenu,
-.agri-nav-group:focus-within .agri-nav-submenu {
+.agri-nav-group:focus-within .agri-nav-submenu,
+.agri-nav-group.is-open .agri-nav-submenu {
   display: block;
 }
 
@@ -3669,7 +3677,8 @@ textarea {
     display: grid;
   }
 
-  .agri-page-nav nav a {
+  .agri-page-nav nav a,
+  .agri-page-nav nav button {
     display: flex;
     align-items: center;
     min-height: 40px;
@@ -3683,13 +3692,14 @@ textarea {
     gap: 4px;
   }
 
-  .agri-nav-group > a {
+  .agri-nav-group > button {
+    width: 100%;
     justify-content: space-between;
   }
 
   .agri-nav-submenu {
     position: static;
-    display: block;
+    display: none;
     width: auto;
     min-width: 0;
     margin: 0 6px 3px 18px;
@@ -3700,6 +3710,14 @@ textarea {
     background: transparent;
     box-shadow: none;
     transform: none;
+  }
+
+  .agri-nav-group.is-open .agri-nav-submenu {
+    display: block;
+  }
+
+  .agri-nav-group:not(.is-open) .agri-nav-submenu {
+    display: none;
   }
 
   .agri-nav-submenu a {
