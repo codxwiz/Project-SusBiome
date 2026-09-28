@@ -14,6 +14,7 @@ const links = [
     href: "/products",
     children: [
       { label: "The Urban Farmer Project", href: "/products/urban-farmer-project" },
+      { label: "The Miachi Project", href: "/products/miachi-project" },
     ],
   },
   { label: "Research collaboration", href: "/research-collaboration" },
