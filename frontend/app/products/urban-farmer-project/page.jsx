@@ -1,5 +1,5 @@
-import Image from "next/image";
-import Link from "next/link";
+import AgriFooter from "../../../components/AgriFooter";
+import AgriPageNav from "../../../components/AgriPageNav";
 import GuideReader from "../../guide/leihaao-9k4m2p/GuideReader";
 import guideBlocks from "../../../lib/leihaaoGuide.json";
 
@@ -30,42 +30,24 @@ export default async function UrbanFarmerProjectPage({ searchParams }) {
   );
 
   return (
-    <main className="leihaao-guide">
-      <header className="leihaao-header">
-        <Link href="/" aria-label="SusBiome home">
-          <Image
-            src="/images/susbiome-logo.png"
-            alt="SusBiome"
-            width={74}
-            height={60}
-            priority
-            quality={100}
-            unoptimized
-          />
-        </Link>
-        <a className="leihaao-download leihaao-download--header" href={DOWNLOAD_PATH} download>
-          <span aria-hidden="true">↓</span>
-          Download
-        </a>
-      </header>
+    <main className="agri-site subpage-site">
+      <AgriPageNav />
+      <section className="leihaao-guide leihaao-guide--project">
+        <section className="leihaao-intro" aria-labelledby="leihaao-title">
+          <div className="leihaao-title-row">
+            <h1 id="leihaao-title">{title.text}</h1>
+            <a className="leihaao-download leihaao-download--title" href={DOWNLOAD_PATH} download>
+              <span aria-hidden="true">↓</span>
+              Download
+            </a>
+          </div>
+          <p className="leihaao-subtitle">{subtitle.text}</p>
+          <p className="leihaao-meta">{meta.text}</p>
+        </section>
 
-      <section className="leihaao-intro" aria-labelledby="leihaao-title">
-        <h1 id="leihaao-title">{title.text}</h1>
-        <p className="leihaao-subtitle">{subtitle.text}</p>
-        <p className="leihaao-meta">{meta.text}</p>
+        <GuideReader content={content} activePart={activePart} />
       </section>
-
-      <GuideReader content={content} activePart={activePart} />
-
-      <section className="leihaao-closing" aria-label="Download the guide">
-        <p>Keep the complete guide available offline.</p>
-        <a className="leihaao-download leihaao-download--light" href={DOWNLOAD_PATH} download>
-          <span aria-hidden="true">↓</span>
-          Download
-        </a>
-      </section>
-
-      <footer className="leihaao-footer">©2026 SusBiome. All rights reserved.</footer>
+      <AgriFooter />
     </main>
   );
 }
