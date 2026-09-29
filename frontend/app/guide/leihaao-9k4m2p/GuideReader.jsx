@@ -46,6 +46,7 @@ function GuideBlock({ block, sectionNumber }) {
             ))}
           </tbody>
         </table>
+        <div className="leihaao-scroll-cue" aria-hidden="true" />
       </div>
     );
   }
